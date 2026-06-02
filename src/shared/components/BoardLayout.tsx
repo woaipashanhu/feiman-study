@@ -8,14 +8,13 @@ import { PullToRefresh } from './PullToRefresh'
 /**
  * BoardLayout — 所有带 TabBar 的页面共享布局
  *
- * 布局结构（避免嵌套过深导致 iOS PWA 高度计算异常）：
- *   div.h-screen (100dvh + fallback)
- *     main.flex-min-h-0 (flex 子项，允许收缩)
- *       PullToRefresh (relative, 不设 overflow)
- *         div.min-h-0 (确保可滚动区域正确计算)
- *           PageTransition (min-h-full)
- *             内容区 (各板块 Home 组件)
- *     TabBar (shrink-0 固定底部)
+ * 布局结构：
+ *   div.h-dvh (固定视口高度，不随内容撑高)
+ *     main.flex-1.overflow-y-auto (内容独立滚动)
+ *       PullToRefresh
+ *         PageTransition
+ *           内容区
+ *     TabBar (shrink-0 固定底部，不随内容滚动)
  */
 interface BoardLayoutProps {
   children?: ReactNode
@@ -44,11 +43,11 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-dvh overflow-hidden bg-bg" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
-      {/* 内容区域：flex-1 + min-h-0 确保 flex 子项可以正确收缩 */}
-      <main className="flex-1 min-h-0 overflow-hidden">
+    <div className="flex flex-col h-dvh overflow-hidden bg-bg" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+      {/* 内容区域：flex-1 占满剩余空间，overflow-y-auto 让内容独立滚动 */}
+      <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
         <PullToRefresh onRefresh={handleRefresh}>
-          <div className="min-h-0 overflow-y-auto overflow-x-hidden scroll-smooth">
+          <div className="min-h-full">
             <PageTransition>
               {children || <Outlet />}
             </PageTransition>
@@ -56,10 +55,9 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
         </PullToRefresh>
       </main>
 
-      {/* 底部 TabBar — shrink-0 确保不被压缩 */}
+      {/* 底部 TabBar — shrink-0 固定底部，永远不随内容滚动 */}
       <div className="shrink-0 relative z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <TabBar onTabChange={handleTabChange} />
-
         {extraButtons && (
           <div className="absolute right-12 bottom-2">{extraButtons}</div>
         )}
