@@ -44,7 +44,7 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col h-dvh overflow-hidden bg-bg">
+    <div className="flex flex-col min-h-dvh overflow-hidden bg-bg" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
       {/* 内容区域：flex-1 + min-h-0 确保 flex 子项可以正确收缩 */}
       <main className="flex-1 min-h-0 overflow-hidden">
         <PullToRefresh onRefresh={handleRefresh}>
