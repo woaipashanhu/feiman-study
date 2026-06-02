@@ -44,7 +44,7 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col h-[100dvh] h-[100vh] overflow-hidden bg-bg">
+    <div className="flex flex-col h-dvh overflow-hidden bg-bg">
       {/* 内容区域：flex-1 + min-h-0 确保 flex 子项可以正确收缩 */}
       <main className="flex-1 min-h-0 overflow-hidden">
         <PullToRefresh onRefresh={handleRefresh}>
@@ -57,7 +57,7 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
       </main>
 
       {/* 底部 TabBar — shrink-0 确保不被压缩 */}
-      <div className="flex items-center justify-center bg-surface border-t border-border shrink-0 relative z-10" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}>
+      <div className="shrink-0 relative z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <TabBar onTabChange={handleTabChange} />
 
         {extraButtons && (

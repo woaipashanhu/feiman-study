@@ -7,7 +7,7 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
   const { boards } = useBoardStore()
 
   return (
-    <nav className="shrink-0 h-16 bg-surface border-t border-border relative" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}>
+    <nav className="shrink-0 h-16 bg-surface border-t border-border relative">
       <div className="flex items-center justify-around h-full max-w-lg mx-auto px-2">
         {boards.map((board) => {
           const Icon = getIcon(board.icon)
