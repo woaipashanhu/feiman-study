@@ -57,7 +57,7 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
       </main>
 
       {/* 底部 TabBar — shrink-0 确保不被压缩 */}
-      <div className="flex items-center justify-center bg-surface border-t border-border safe-area-pb shrink-0 relative z-10">
+      <div className="flex items-center justify-center bg-surface border-t border-border shrink-0 relative z-10" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 8px)' }}>
         <TabBar onTabChange={handleTabChange} />
 
         {extraButtons && (
