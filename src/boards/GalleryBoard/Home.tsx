@@ -2,21 +2,21 @@
  * ============================================================
  *  童画廊 — 卡片主页
  *
- *  展示分类卡片，点击进入分类列表页
- *  右上角 📬 消息按钮
+ *  展示4个画家系列卡片，每个卡片有真实封面图和画家介绍
+ *  点击进入该系列的画作列表
  * ============================================================
  */
 import { useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
-import { EnvelopeSimple, Image } from 'phosphor-react'
+import { EnvelopeSimple } from 'phosphor-react'
 import type { GalleryData, GalleryCategory } from '@/types/content'
 
 const containerVariants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.1 },
+    transition: { staggerChildren: 0.12 },
   },
 }
 
@@ -45,8 +45,8 @@ export default function GalleryHome() {
           <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
         </div>
         <div className="grid grid-cols-2 gap-4 flex-1">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="bg-gray-100 rounded-2xl animate-pulse" />
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-gray-100 rounded-2xl animate-pulse aspect-[3/4]" />
           ))}
         </div>
       </div>
@@ -58,24 +58,22 @@ export default function GalleryHome() {
   return (
     <div className="h-full flex flex-col px-5 pt-4 pb-6 overflow-y-auto">
       {/* 顶部栏 */}
-      <header className="flex items-center justify-between mb-8">
+      <header className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-text font-display">童画廊</h1>
           <p className="text-sm text-text-secondary mt-1">名画鉴赏，培养艺术眼光</p>
         </div>
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => navigate('/profile')}
-          className="w-11 h-11 rounded-full bg-surface border border-border flex items-center justify-center shadow-sm hover:shadow-md transition-shadow relative"
+          className="w-11 h-11 rounded-full bg-surface border border-border flex items-center justify-center shadow-sm relative"
         >
           <EnvelopeSimple size={20} weight="regular" className="text-text" />
-          {/* 红点提示 */}
           <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
         </motion.button>
       </header>
 
-      {/* 分类卡片网格 */}
+      {/* 系列卡片网格 */}
       <motion.div
         className="grid grid-cols-2 gap-4 flex-1 content-start"
         variants={containerVariants}
@@ -83,16 +81,18 @@ export default function GalleryHome() {
         animate="show"
       >
         {categories.map((cat) => (
-          <CategoryCard key={cat.id} category={cat} />
+          <SeriesCard key={cat.id} category={cat} />
         ))}
       </motion.div>
     </div>
   )
 }
 
-function CategoryCard({ category }: { category: GalleryCategory }) {
+function SeriesCard({ category }: { category: GalleryCategory }) {
   const navigate = useNavigate()
   const artworkCount = category.artworks?.length || 0
+  // 用该系列第一幅画作为封面
+  const coverImage = category.artworks?.[0]?.image
 
   return (
     <motion.button
@@ -100,41 +100,47 @@ function CategoryCard({ category }: { category: GalleryCategory }) {
       whileHover={{ scale: 1.03, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={() => navigate(`/gallery/category/${category.id}`)}
-      className="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-sm hover:shadow-lg transition-shadow text-left group"
-      style={{ backgroundColor: (category.color || '#8B5CF6') + '10' }}
+      className="relative rounded-2xl overflow-hidden aspect-[3/4] shadow-sm hover:shadow-lg transition-shadow text-left group"
     >
-      {/* 背景装饰 */}
-      <div
-        className="absolute inset-0 opacity-10 group-hover:opacity-15 transition-opacity"
-        style={{
-          background: `radial-gradient(circle at 80% 20%, ${category.color || '#8B5CF6'}40 0%, transparent 60%)`,
-        }}
-      />
+      {/* 封面背景图 */}
+      {coverImage ? (
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+          style={{ backgroundImage: `url(${coverImage})` }}
+        >
+          {/* 渐变遮罩 */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+        </div>
+      ) : (
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: (category.color || '#8B5CF6') + '20' }}
+        />
+      )}
 
       {/* 内容 */}
       <div className="relative h-full flex flex-col p-4">
         {/* 图标 */}
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-auto"
-          style={{ backgroundColor: (category.color || '#8B5CF6') + '18', color: category.color || '#8B5CF6' }}
-        >
-          <Image size={24} weight="regular" />
-        </div>
+        <div className="text-2xl mb-auto">{category.icon || '🎨'}</div>
 
         {/* 底部信息 */}
         <div>
-          <h3 className="text-base font-bold text-text mb-1">{category.name}</h3>
-          <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
-            {artworkCount} 幅作品
+          <h3 className="text-base font-bold text-white mb-1 drop-shadow-lg">
+            {category.name}
+          </h3>
+          <p className="text-xs text-white/60 line-clamp-2 leading-relaxed">
+            {category.description || `${artworkCount} 幅作品`}
           </p>
+          <div className="mt-2 flex items-center gap-1.5">
+            <span
+              className="text-[10px] px-2 py-0.5 rounded-full text-white/80"
+              style={{ backgroundColor: (category.color || '#8B5CF6') + '80' }}
+            >
+              {artworkCount} 幅
+            </span>
+          </div>
         </div>
       </div>
-
-      {/* 底部色条 */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-1"
-        style={{ backgroundColor: category.color || '#8B5CF6' }}
-      />
     </motion.button>
   )
 }

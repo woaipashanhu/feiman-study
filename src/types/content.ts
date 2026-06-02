@@ -113,6 +113,11 @@ export const ArtworkSchema = z.object({
   image: z.string().optional(),
   description: z.string().optional(),
   order: z.number().optional(),
+  // 画廊扩展字段
+  audio: z.string().optional(),
+  artist_en: z.string().optional(),
+  title_en: z.string().optional(),
+  display_mode: z.string().optional(),
 })
 
 export const GalleryCategorySchema = z.object({
@@ -120,6 +125,7 @@ export const GalleryCategorySchema = z.object({
   name: z.string(),
   icon: z.string().optional(),
   color: z.string().optional(),
+  description: z.string().optional(),
   artworks: z.array(ArtworkSchema),
 })
 
