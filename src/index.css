@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+@theme {
+  /* ===== 主品牌色 ===== */
+  --color-brand: #4F6EF7;
+  --color-brand-light: #EEF1FF;
+  --color-brand-dark: #3A56D4;
+  --color-brand-soft: rgba(79, 110, 247, 0.08);
+
+  /* ===== 板块辅助色 ===== */
+  --color-math: #4F6EF7;
+  --color-science: #00C9A7;
+  --color-social: #FF9F43;
+  --color-gallery: #A55EEA;
+  --color-neimen: #FF6B6B;
+
+  /* ===== 中性色 ===== */
+  --color-bg: #F7F8FC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F8F9FC;
+  --color-text: #1A1D2B;
+  --color-text-secondary: #5A6078;
+  --color-text-tertiary: #9AA0B8;
+  --color-border: #E8EAF0;
+  --color-border-light: #F0F1F5;
+
+  /* ===== 功能色 ===== */
+  --color-success: #34D399;
+  --color-success-light: #D1FAE5;
+  --color-warning: #FBBF24;
+  --color-warning-light: #FEF3C7;
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  --color-info: #60A5FA;
+  --color-info-light: #DBEAFE;
+
+  /* ===== 旧色兼容（逐步替换） ===== */
+  --color-primary: #4F6EF7;
+  --color-primary-dark: #3A56D4;
+  --color-secondary: #00C9A7;
+  --color-accent: #FF9F43;
+  --color-danger: #EF4444;
+  --color-text-muted: #9AA0B8;
+
+  /* ===== 社交绘本兼容色 ===== */
+  --color-cream: #FFF8F0;
+  --color-bark: #3D2C1E;
+  --color-forest: #2D6A4F;
+  --color-forest-light: #D4EDDA;
+  --color-forest-dark: #1B4332;
+
+  /* ===== 阴影（统一 3 层） ===== */
+  --shadow-sm: 0 1px 2px rgba(26, 29, 43, 0.05);
+  --shadow-md: 0 4px 12px rgba(26, 29, 43, 0.08);
+  --shadow-lg: 0 8px 24px rgba(26, 29, 43, 0.12);
+  --shadow-float: 0 12px 32px rgba(26, 29, 43, 0.16);
+  --shadow-card: 0 4px 16px rgba(26, 29, 43, 0.08);
+  --shadow-warm: 0 4px 14px rgba(79, 110, 247, 0.25);
+
+  /* ===== 字体族 ===== */
+  --font-sans: 'Inter', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Inter', 'PingFang SC', sans-serif;
+
+  /* ===== 圆角 ===== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* ===== 动画 ===== */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-scale-in: scale-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-page-in-forward: page-in-forward 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-page-in-back: page-in-back 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-page-out-forward: page-out-forward 0.25s cubic-bezier(0.55, 0, 1, 0.45);
+  --animate-page-out-back: page-out-back 0.25s cubic-bezier(0.55, 0, 1, 0.45);
+  --animate-breathe: breathe 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s infinite;
+}
+
+/* ===== Keyframes ===== */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.03); opacity: 0.9; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 页面转场动画 */
+@keyframes page-in-forward {
+  from { transform: translateX(30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes page-in-back {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes page-out-forward {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-30px); opacity: 0; }
+}
+
+@keyframes page-out-back {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(20px); opacity: 0; }
+}
+
+/* ===== 全局样式 ===== */
+html {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+}
+
+/* iOS PWA 安全区域：防止内容跑到状态栏后面 */
+html {
+  height: -webkit-fill-available;
+}
+
+body {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+img, video {
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ===== 按钮涟漪效果 ===== */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+}
+.ripple-btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.35) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+.ripple-btn:active::after {
+  transform: scale(0, 0);
+  opacity: 1;
+  transition: 0s;
+}
+
+/* ===== 卡片悬浮效果 ===== */
+.hover-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+.hover-card:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ===== 骨架屏 shimmer ===== */
+.shimmer-bg {
+  background: linear-gradient(90deg, #f0f1f5 25%, #e8eaf0 50%, #f0f1f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ===== 深色模式 ===== */
+.dark {
+  color-scheme: dark;
+
+  --color-bg: #0F1117;
+  --color-surface: #1A1D26;
+  --color-surface-hover: #22262F;
+  --color-text: #F0F1F5;
+  --color-text-secondary: #A0A5B8;
+  --color-text-tertiary: #6B7280;
+  --color-border: #2A2E3A;
+  --color-border-light: #22262F;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+  --color-cream: #1a1a2e;
+  --color-bark: #e2e8f0;
+  --color-forest-light: #1b4332;
+}
+
+.dark body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+.dark .shimmer-bg {
+  background: linear-gradient(90deg, #2A2E3A 25%, #3A3E4A 50%, #2A2E3A 75%);
+  background-size: 200% 100%;
+}
+
+/* 深色模式下的过渡动画 */
+.dark *,
+.dark *::before,
+.dark *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.2s;
+  transition-timing-function: ease;
+}
+
+/* ===== 滚动条美化 ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ===== 安全区域适配（iOS 底部横条） ===== */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* ===== 工具类 ===== */
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}

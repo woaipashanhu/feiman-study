@@ -1,0 +1,5889 @@
+{
+  "version": "2026-05-30-v5-full-fix",
+  "title": "社交训练",
+  "description": "完整迁移自 fox-school | 86 个场景 | 自动生成",
+  "carnegieCatalog": [
+    {
+      "id": "s-01",
+      "title": "S-01 我生气了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-01/part1-painting-spill.png"
+    },
+    {
+      "id": "s-11",
+      "title": "11-我也有害怕的东西",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-11/s-11_part1.jpg"
+    },
+    {
+      "id": "s-12",
+      "title": "12-安静也可以是好孩子",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-12/s-12_part1.jpg"
+    },
+    {
+      "id": "s-13",
+      "title": "13-我和别人不一样没关系",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-13/s-13_part1.jpg"
+    },
+    {
+      "id": "s-14",
+      "title": "14-不开心的时候做什么",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-14/s-14_part1.jpg"
+    },
+    {
+      "id": "s-15",
+      "title": "15-太兴奋也要安静下来",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-15/s-15_part1.jpg"
+    },
+    {
+      "id": "s-16",
+      "title": "16-说不出口的委屈",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-16/s-16_part1.jpg"
+    },
+    {
+      "id": "s-17",
+      "title": "17-有时候什么都不想做",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-17/s-17_part1.jpg"
+    },
+    {
+      "id": "s-18",
+      "title": "18-换一种方式试试",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-18/s-18_part1.jpg"
+    },
+    {
+      "id": "s-19",
+      "title": "19-完美不需要",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-19/s-19_part1.jpg"
+    },
+    {
+      "id": "s-20",
+      "title": "20-我在慢慢长大",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-20/s-20_part1.jpg"
+    },
+    {
+      "id": "s-21",
+      "title": "21-你好我叫阿布",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-21/s-21_part1.jpg"
+    },
+    {
+      "id": "s-22",
+      "title": "22-可以和你一起玩吗",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-22/s-22_part1.jpg"
+    },
+    {
+      "id": "s-23",
+      "title": "23-主动打招呼",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-23/s-23_part1.jpg"
+    },
+    {
+      "id": "s-24",
+      "title": "24-找到共同喜欢的东西",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-24/s-24_part1.jpg"
+    },
+    {
+      "id": "s-25",
+      "title": "25-倾听也是一种关心",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-25/s-25_part1.jpg"
+    },
+    {
+      "id": "s-26",
+      "title": "26-记住别人的名字",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-26/s-26_part1.jpg"
+    },
+    {
+      "id": "s-27",
+      "title": "27-不勉强别人",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-27/s-27_part1.jpg"
+    },
+    {
+      "id": "s-28",
+      "title": "28-有时候一个人玩也挺好",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-28/s-28_part1.jpg"
+    },
+    {
+      "id": "s-29",
+      "title": "29-朋友之间也会吵架",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-29/s-29_part1.jpg"
+    },
+    {
+      "id": "s-30",
+      "title": "30-吵架之后和好",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-30/s-30_part1.jpg"
+    },
+    {
+      "id": "s-31",
+      "title": "31-对不起我错了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-31/s-31_part1.jpg"
+    },
+    {
+      "id": "s-32",
+      "title": "32-我原谅你了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-32/s-32_part1.jpg"
+    },
+    {
+      "id": "s-33",
+      "title": "33-不喜欢的触摸要说\"不\"",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-33/s-33_part1.jpg"
+    },
+    {
+      "id": "s-34",
+      "title": "34-我不想拥抱",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-34/s-34_part1.jpg"
+    },
+    {
+      "id": "s-35",
+      "title": "35-秘密可以不说",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-35/s-35_part1.jpg"
+    },
+    {
+      "id": "s-36",
+      "title": "36-朋友不只是一个",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-36/s-36_part1.jpg"
+    },
+    {
+      "id": "s-37",
+      "title": "37-被拒绝不丢人",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-37/s-37_part1.jpg"
+    },
+    {
+      "id": "s-38",
+      "title": "38-朋友搬家了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-38/s-38_part1.jpg"
+    },
+    {
+      "id": "s-39",
+      "title": "39-新同学来了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-39/s-39_part1.jpg"
+    },
+    {
+      "id": "s-40",
+      "title": "40-安慰伤心的朋友",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-40/s-40_part1.jpg"
+    },
+    {
+      "id": "s-41",
+      "title": "41-别人难过时我在旁边",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-41/s-41_part1.jpg"
+    },
+    {
+      "id": "s-42",
+      "title": "42-我需要帮助要说",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-42/s-42_part1.jpg"
+    },
+    {
+      "id": "s-43",
+      "title": "43-帮别人也要问一下",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-43/s-43_part1.jpg"
+    },
+    {
+      "id": "s-44",
+      "title": "44-说谢谢",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-44/s-44_part1.jpg"
+    },
+    {
+      "id": "s-45",
+      "title": "45-保持距离说话",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-45/s-45_part1.jpg"
+    },
+    {
+      "id": "s-46",
+      "title": "46-这个玩具可以一起玩",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-46/s-46_part1.jpg"
+    },
+    {
+      "id": "s-47",
+      "title": "47-轮流玩",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-47/s-47_part1.jpg"
+    },
+    {
+      "id": "s-48",
+      "title": "48-借东西要还",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-48/s-48_part1.jpg"
+    },
+    {
+      "id": "s-49",
+      "title": "49-别人的东西不能随便拿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-49/s-49_part1.jpg"
+    },
+    {
+      "id": "s-50",
+      "title": "50-一起搭积木",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-50/s-50_part1.jpg"
+    },
+    {
+      "id": "s-51",
+      "title": "51-小组作业怎么做",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-51/s-51_part1.jpg"
+    },
+    {
+      "id": "s-52",
+      "title": "52-听听别人的想法",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-52/s-52_part1.jpg"
+    },
+    {
+      "id": "s-53",
+      "title": "53-分工合作",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-53/s-53_part1.jpg"
+    },
+    {
+      "id": "s-54",
+      "title": "54-有人不配合怎么办",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-54/s-54_part1.jpg"
+    },
+    {
+      "id": "s-55",
+      "title": "55-公平不是一模一样",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-55/s-55_part1.jpg"
+    },
+    {
+      "id": "s-56",
+      "title": "56-我不想分享了",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-56/s-56_part1.jpg"
+    },
+    {
+      "id": "s-57",
+      "title": "57-别人不愿分享怎么办",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-57/s-57_part1.jpg"
+    },
+    {
+      "id": "s-58",
+      "title": "58-一起想办法",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-58/s-58_part1.jpg"
+    },
+    {
+      "id": "s-59",
+      "title": "59-妥协是一种智慧",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-59/s-59_part1.jpg"
+    },
+    {
+      "id": "s-60",
+      "title": "60-赢了不要太得意",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-60/s-60_part1.jpg"
+    },
+    {
+      "id": "s-61",
+      "title": "61-输了不生气",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-61/s-61_part1.jpg"
+    },
+    {
+      "id": "s-62",
+      "title": "62-比赛规则要遵守",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-62/s-62_part1.jpg"
+    },
+    {
+      "id": "s-63",
+      "title": "63-团队里有不同的角色",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-63/s-63_part1.jpg"
+    },
+    {
+      "id": "s-64",
+      "title": "64-帮助比自己小的",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-64/s-64_part1.jpg"
+    },
+    {
+      "id": "s-65",
+      "title": "65-一起收拾",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s-65/s-65_part1.jpg"
+    },
+    {
+      "id": "s06-深呼",
+      "title": "深呼吸让自己平静",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s06-深呼/s06p1.jpg"
+    },
+    {
+      "id": "s07-每个",
+      "title": "每个人都会犯错",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s07-每个/s07p1.jpg"
+    },
+    {
+      "id": "s08-我可",
+      "title": "我可以慢慢来",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s08-我可/s08p1.jpg"
+    },
+    {
+      "id": "s09-让对",
+      "title": "S09 - 让对方感到重要（每个人都有闪光点）",
+      "principle": "让对方感到自己重要",
+      "difficulty": 2,
+      "unlocked": true,
+      "coverImage": "/images/s09-让对/part1-fawn-assigns-tasks.png"
+    },
+    {
+      "id": "s09-身体",
+      "title": "身体不舒服要说",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s09-身体/s09p1.jpg"
+    },
+    {
+      "id": "s10-有些",
+      "title": "有些事情会变好",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s10-有些/s10p1.jpg"
+    },
+    {
+      "id": "s10-避免",
+      "title": "S10 - 避免争论（霸王龙是最强的）",
+      "principle": "避免争论",
+      "difficulty": 2,
+      "unlocked": true,
+      "coverImage": "/images/s10-避免/part1-pip-shouting-trex.png"
+    },
+    {
+      "id": "s11-老师",
+      "title": "S11 明天不用上学吗 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s11-老师/part1-teacher-announces-saturday.png"
+    },
+    {
+      "id": "s12-我搞",
+      "title": "S12 我搞砸了怎么办 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s12-我搞/part1-soccer-crashes-vase.png"
+    },
+    {
+      "id": "s13-借壮",
+      "title": "S13 借壮壮的足球 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s13-借壮/s13-part1-aboo-asks-bobo.png"
+    },
+    {
+      "id": "s14-交换",
+      "title": "S14 交换课间游戏 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s14-交换/s14-part1-aboo-asks-pip.png"
+    },
+    {
+      "id": "s15-秋游",
+      "title": "S15 秋游去哪里 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s15-秋游/s15-part1-arguing-destination.png"
+    },
+    {
+      "id": "s16-小豆",
+      "title": "S16 小豆收拾房间 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s16-小豆/part1-xiaodou-refuses.png"
+    },
+    {
+      "id": "s17-棉花",
+      "title": "S17 棉花考砸了 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s17-棉花/part1-huahua-sad-test.png"
+    },
+    {
+      "id": "s18-球球",
+      "title": "S18 球球的虫子去世了 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s18-球球/part1-spike-sad-beetle.png"
+    },
+    {
+      "id": "s19-跳跳",
+      "title": "S19 跳跳偷懒了 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s19-跳跳/part1-pip-hiding-acorns.png"
+    },
+    {
+      "id": "s20-河边",
+      "title": "S20 河边的故事 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s20-河边/part1-riverbank-mushrooms.png"
+    },
+    {
+      "id": "s21-读书",
+      "title": "S21 读书挑战赛 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s21-读书/part1-huahua-rejects-book.png"
+    },
+    {
+      "id": "s22-壮壮",
+      "title": "S22 壮壮做值日 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s22-壮壮/part1-bobo-lazy-blackboard.png"
+    },
+    {
+      "id": "s23-小豆",
+      "title": "S23 小豆写反了b和d — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s23-小豆/part1-xiaodou-proud-notebook.png"
+    },
+    {
+      "id": "s24-妈妈",
+      "title": "S24 妈妈小时候也考砸过 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s24-妈妈/part1-huahua-sad-test.png"
+    },
+    {
+      "id": "s25-作业",
+      "title": "S25 作业还是先吃饭 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s25-作业/part1-aboo-homework-mom-kitchen.png"
+    },
+    {
+      "id": "s26-合作",
+      "title": "S26 合作搭积木 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s26-合作/part1-owl-teacher-assigns-task.png"
+    },
+    {
+      "id": "s27-棉花",
+      "title": "S27 棉花学骑车 — 称赞细小进步",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s27-棉花/part1-mianhua-nervous-bicycle.png"
+    },
+    {
+      "id": "s28-壮壮",
+      "title": "壮壮最靠谱",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s28-壮壮/s28-part1-teacher-assigns-lantern.png"
+    },
+    {
+      "id": "s29-球球",
+      "title": "球球怕水",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/s29-球球/s29-part1-bobo-afraid-poolside.jpg"
+    }
+  ],
+  "socialStoryCatalog": [
+    {
+      "id": "social-02",
+      "title": "S-02 心里不舒服的时候 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/social-02/part1-tummy-hurts.png"
+    },
+    {
+      "id": "social-03",
+      "title": "S-03 难过的时候可以哭 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/social-03/part1-wilting-flower.png"
+    },
+    {
+      "id": "social-04",
+      "title": "S-04 害怕不丢人 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/social-04/part1-afraid-shot.png"
+    },
+    {
+      "id": "social-05",
+      "title": "S-05 开心可以分享 — 精炼双语文字稿",
+      "principle": "",
+      "difficulty": 1,
+      "unlocked": true,
+      "coverImage": "/images/social-05/part1-yummy-cake.png"
+    }
+  ],
+  "sceneData": {
+    "s-01": {
+      "title": "S-01 我生气了",
+      "subtitle": "社交故事（认识自己与情绪）",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-01/part1-painting-spill.png",
+          "audio": {
+            "zh": "/audio/s-01/part1-zh.mp3",
+            "en": "/audio/s-01/part1-en.mp3"
+          },
+          "narration": "花花在画画，不小心把颜料泼到了阿布的画上。",
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-01/part2-angry-face.png",
+          "audio": {
+            "zh": "/audio/s-01/part2-zh.mp3",
+            "en": "/audio/s-01/part2-en.mp3"
+          },
+          "narration": "阿布很生气，脸都红了。",
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-01/part3-painting-together.png",
+          "audio": {
+            "zh": "/audio/s-01/part3-zh.mp3",
+            "en": "/audio/s-01/part3-en.mp3"
+          },
+          "narration": "阿布深呼吸，冷静下来。然后和花花一起重新画画，画得比原来还好看。",
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "生气的时候，先深呼吸冷静一下，再想办法解决。",
+        "socialSteps": [
+          "生气的时候",
+          "先深呼吸冷静一下",
+          "再想办法解决"
+        ]
+      },
+      "id": "s-01"
+    },
+    "s-11": {
+      "id": "s-11",
+      "title": "11-我也有害怕的东西",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-11/s-11_part1.jpg",
+          "narration": {
+            "zh": "11-我也有害怕的东西",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-11/s-11_part2.jpg",
+          "narration": {
+            "zh": "11-我也有害怕的东西",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-11/s-11_part3.jpg",
+          "narration": {
+            "zh": "11-我也有害怕的东西",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-12": {
+      "id": "s-12",
+      "title": "12-安静也可以是好孩子",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-12/s-12_part1.jpg",
+          "narration": {
+            "zh": "12-安静也可以是好孩子",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-12/s-12_part2.jpg",
+          "narration": {
+            "zh": "12-安静也可以是好孩子",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-12/s-12_part3.jpg",
+          "narration": {
+            "zh": "12-安静也可以是好孩子",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-13": {
+      "id": "s-13",
+      "title": "13-我和别人不一样没关系",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-13/s-13_part1.jpg",
+          "narration": {
+            "zh": "13-我和别人不一样没关系",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-13/s-13_part2.jpg",
+          "narration": {
+            "zh": "13-我和别人不一样没关系",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-13/s-13_part3.jpg",
+          "narration": {
+            "zh": "13-我和别人不一样没关系",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-14": {
+      "id": "s-14",
+      "title": "14-不开心的时候做什么",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-14/s-14_part1.jpg",
+          "narration": {
+            "zh": "14-不开心的时候做什么",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-14/s-14_part2.jpg",
+          "narration": {
+            "zh": "14-不开心的时候做什么",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-14/s-14_part3.jpg",
+          "narration": {
+            "zh": "14-不开心的时候做什么",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-15": {
+      "id": "s-15",
+      "title": "15-太兴奋也要安静下来",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-15/s-15_part1.jpg",
+          "narration": {
+            "zh": "15-太兴奋也要安静下来",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-15/s-15_part2.jpg",
+          "narration": {
+            "zh": "15-太兴奋也要安静下来",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-15/s-15_part3.jpg",
+          "narration": {
+            "zh": "15-太兴奋也要安静下来",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-16": {
+      "id": "s-16",
+      "title": "16-说不出口的委屈",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-16/s-16_part1.jpg",
+          "narration": {
+            "zh": "16-说不出口的委屈",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-16/s-16_part2.jpg",
+          "narration": {
+            "zh": "16-说不出口的委屈",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-16/s-16_part3.jpg",
+          "narration": {
+            "zh": "16-说不出口的委屈",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-17": {
+      "id": "s-17",
+      "title": "17-有时候什么都不想做",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-17/s-17_part1.jpg",
+          "narration": {
+            "zh": "17-有时候什么都不想做",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-17/s-17_part2.jpg",
+          "narration": {
+            "zh": "17-有时候什么都不想做",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-17/s-17_part3.jpg",
+          "narration": {
+            "zh": "17-有时候什么都不想做",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-18": {
+      "id": "s-18",
+      "title": "18-换一种方式试试",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-18/s-18_part1.jpg",
+          "narration": {
+            "zh": "18-换一种方式试试",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-18/s-18_part2.jpg",
+          "narration": {
+            "zh": "18-换一种方式试试",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-18/s-18_part3.jpg",
+          "narration": {
+            "zh": "18-换一种方式试试",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-19": {
+      "id": "s-19",
+      "title": "19-完美不需要",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-19/s-19_part1.jpg",
+          "narration": {
+            "zh": "19-完美不需要",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-19/s-19_part2.jpg",
+          "narration": {
+            "zh": "19-完美不需要",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-19/s-19_part3.jpg",
+          "narration": {
+            "zh": "19-完美不需要",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-20": {
+      "id": "s-20",
+      "title": "20-我在慢慢长大",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-20/s-20_part1.jpg",
+          "narration": {
+            "zh": "20-我在慢慢长大",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-20/s-20_part2.jpg",
+          "narration": {
+            "zh": "20-我在慢慢长大",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-20/s-20_part3.jpg",
+          "narration": {
+            "zh": "20-我在慢慢长大",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-21": {
+      "id": "s-21",
+      "title": "21-你好我叫阿布",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-21/s-21_part1.jpg",
+          "narration": {
+            "zh": "21-你好我叫阿布",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-21/s-21_part2.jpg",
+          "narration": {
+            "zh": "21-你好我叫阿布",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-21/s-21_part3.jpg",
+          "narration": {
+            "zh": "21-你好我叫阿布",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-22": {
+      "id": "s-22",
+      "title": "22-可以和你一起玩吗",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-22/s-22_part1.jpg",
+          "narration": {
+            "zh": "22-可以和你一起玩吗",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-22/s-22_part2.jpg",
+          "narration": {
+            "zh": "22-可以和你一起玩吗",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-22/s-22_part3.jpg",
+          "narration": {
+            "zh": "22-可以和你一起玩吗",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-23": {
+      "id": "s-23",
+      "title": "23-主动打招呼",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-23/s-23_part1.jpg",
+          "narration": {
+            "zh": "23-主动打招呼",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-23/s-23_part2.jpg",
+          "narration": {
+            "zh": "23-主动打招呼",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-23/s-23_part3.jpg",
+          "narration": {
+            "zh": "23-主动打招呼",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-24": {
+      "id": "s-24",
+      "title": "24-找到共同喜欢的东西",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-24/s-24_part1.jpg",
+          "narration": {
+            "zh": "24-找到共同喜欢的东西",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-24/s-24_part2.jpg",
+          "narration": {
+            "zh": "24-找到共同喜欢的东西",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-24/s-24_part3.jpg",
+          "narration": {
+            "zh": "24-找到共同喜欢的东西",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-25": {
+      "id": "s-25",
+      "title": "25-倾听也是一种关心",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-25/s-25_part1.jpg",
+          "narration": {
+            "zh": "25-倾听也是一种关心",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-25/s-25_part2.jpg",
+          "narration": {
+            "zh": "25-倾听也是一种关心",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-25/s-25_part3.jpg",
+          "narration": {
+            "zh": "25-倾听也是一种关心",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-26": {
+      "id": "s-26",
+      "title": "26-记住别人的名字",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-26/s-26_part1.jpg",
+          "narration": {
+            "zh": "26-记住别人的名字",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-26/s-26_part2.jpg",
+          "narration": {
+            "zh": "26-记住别人的名字",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-26/s-26_part3.jpg",
+          "narration": {
+            "zh": "26-记住别人的名字",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-27": {
+      "id": "s-27",
+      "title": "27-不勉强别人",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-27/s-27_part1.jpg",
+          "narration": {
+            "zh": "27-不勉强别人",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-27/s-27_part2.jpg",
+          "narration": {
+            "zh": "27-不勉强别人",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-27/s-27_part3.jpg",
+          "narration": {
+            "zh": "27-不勉强别人",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-28": {
+      "id": "s-28",
+      "title": "28-有时候一个人玩也挺好",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-28/s-28_part1.jpg",
+          "narration": {
+            "zh": "28-有时候一个人玩也挺好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-28/s-28_part2.jpg",
+          "narration": {
+            "zh": "28-有时候一个人玩也挺好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-28/s-28_part3.jpg",
+          "narration": {
+            "zh": "28-有时候一个人玩也挺好",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-29": {
+      "id": "s-29",
+      "title": "29-朋友之间也会吵架",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-29/s-29_part1.jpg",
+          "narration": {
+            "zh": "29-朋友之间也会吵架",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-29/s-29_part2.jpg",
+          "narration": {
+            "zh": "29-朋友之间也会吵架",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-29/s-29_part3.jpg",
+          "narration": {
+            "zh": "29-朋友之间也会吵架",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-30": {
+      "id": "s-30",
+      "title": "30-吵架之后和好",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-30/s-30_part1.jpg",
+          "narration": {
+            "zh": "30-吵架之后和好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-30/s-30_part2.jpg",
+          "narration": {
+            "zh": "30-吵架之后和好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-30/s-30_part3.jpg",
+          "narration": {
+            "zh": "30-吵架之后和好",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-31": {
+      "id": "s-31",
+      "title": "31-对不起我错了",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-31/s-31_part1.jpg",
+          "narration": {
+            "zh": "31-对不起我错了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-31/s-31_part2.jpg",
+          "narration": {
+            "zh": "31-对不起我错了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-31/s-31_part3.jpg",
+          "narration": {
+            "zh": "31-对不起我错了",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-32": {
+      "id": "s-32",
+      "title": "32-我原谅你了",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-32/s-32_part1.jpg",
+          "narration": {
+            "zh": "32-我原谅你了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-32/s-32_part2.jpg",
+          "narration": {
+            "zh": "32-我原谅你了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-32/s-32_part3.jpg",
+          "narration": {
+            "zh": "32-我原谅你了",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-33": {
+      "id": "s-33",
+      "title": "33-不喜欢的触摸要说\"不\"",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-33/s-33_part1.jpg",
+          "narration": {
+            "zh": "33-不喜欢的触摸要说\"不\"",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-33/s-33_part2.jpg",
+          "narration": {
+            "zh": "33-不喜欢的触摸要说\"不\"",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-33/s-33_part3.jpg",
+          "narration": {
+            "zh": "33-不喜欢的触摸要说\"不\"",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-34": {
+      "id": "s-34",
+      "title": "34-我不想拥抱",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-34/s-34_part1.jpg",
+          "narration": {
+            "zh": "34-我不想拥抱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-34/s-34_part2.jpg",
+          "narration": {
+            "zh": "34-我不想拥抱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-34/s-34_part3.jpg",
+          "narration": {
+            "zh": "34-我不想拥抱",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-35": {
+      "id": "s-35",
+      "title": "35-秘密可以不说",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-35/s-35_part1.jpg",
+          "narration": {
+            "zh": "35-秘密可以不说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-35/s-35_part2.jpg",
+          "narration": {
+            "zh": "35-秘密可以不说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-35/s-35_part3.jpg",
+          "narration": {
+            "zh": "35-秘密可以不说",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-36": {
+      "id": "s-36",
+      "title": "36-朋友不只是一个",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-36/s-36_part1.jpg",
+          "narration": {
+            "zh": "36-朋友不只是一个",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-36/s-36_part2.jpg",
+          "narration": {
+            "zh": "36-朋友不只是一个",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-36/s-36_part3.jpg",
+          "narration": {
+            "zh": "36-朋友不只是一个",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-37": {
+      "id": "s-37",
+      "title": "37-被拒绝不丢人",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-37/s-37_part1.jpg",
+          "narration": {
+            "zh": "37-被拒绝不丢人",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-37/s-37_part2.jpg",
+          "narration": {
+            "zh": "37-被拒绝不丢人",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-37/s-37_part3.jpg",
+          "narration": {
+            "zh": "37-被拒绝不丢人",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-38": {
+      "id": "s-38",
+      "title": "38-朋友搬家了",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-38/s-38_part1.jpg",
+          "narration": {
+            "zh": "38-朋友搬家了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-38/s-38_part2.jpg",
+          "narration": {
+            "zh": "38-朋友搬家了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-38/s-38_part3.jpg",
+          "narration": {
+            "zh": "38-朋友搬家了",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-39": {
+      "id": "s-39",
+      "title": "39-新同学来了",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-39/s-39_part1.jpg",
+          "narration": {
+            "zh": "39-新同学来了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-39/s-39_part2.jpg",
+          "narration": {
+            "zh": "39-新同学来了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-39/s-39_part3.jpg",
+          "narration": {
+            "zh": "39-新同学来了",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-40": {
+      "id": "s-40",
+      "title": "40-安慰伤心的朋友",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-40/s-40_part1.jpg",
+          "narration": {
+            "zh": "40-安慰伤心的朋友",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-40/s-40_part2.jpg",
+          "narration": {
+            "zh": "40-安慰伤心的朋友",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-40/s-40_part3.jpg",
+          "narration": {
+            "zh": "40-安慰伤心的朋友",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-41": {
+      "id": "s-41",
+      "title": "41-别人难过时我在旁边",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-41/s-41_part1.jpg",
+          "narration": {
+            "zh": "41-别人难过时我在旁边",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-41/s-41_part2.jpg",
+          "narration": {
+            "zh": "41-别人难过时我在旁边",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-41/s-41_part3.jpg",
+          "narration": {
+            "zh": "41-别人难过时我在旁边",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-42": {
+      "id": "s-42",
+      "title": "42-我需要帮助要说",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-42/s-42_part1.jpg",
+          "narration": {
+            "zh": "42-我需要帮助要说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-42/s-42_part2.jpg",
+          "narration": {
+            "zh": "42-我需要帮助要说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-42/s-42_part3.jpg",
+          "narration": {
+            "zh": "42-我需要帮助要说",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-43": {
+      "id": "s-43",
+      "title": "43-帮别人也要问一下",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-43/s-43_part1.jpg",
+          "narration": {
+            "zh": "43-帮别人也要问一下",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-43/s-43_part2.jpg",
+          "narration": {
+            "zh": "43-帮别人也要问一下",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-43/s-43_part3.jpg",
+          "narration": {
+            "zh": "43-帮别人也要问一下",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-44": {
+      "id": "s-44",
+      "title": "44-说谢谢",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-44/s-44_part1.jpg",
+          "narration": {
+            "zh": "44-说谢谢",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-44/s-44_part2.jpg",
+          "narration": {
+            "zh": "44-说谢谢",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-44/s-44_part3.jpg",
+          "narration": {
+            "zh": "44-说谢谢",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-45": {
+      "id": "s-45",
+      "title": "45-保持距离说话",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-45/s-45_part1.jpg",
+          "narration": {
+            "zh": "45-保持距离说话",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-45/s-45_part2.jpg",
+          "narration": {
+            "zh": "45-保持距离说话",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-45/s-45_part3.jpg",
+          "narration": {
+            "zh": "45-保持距离说话",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-46": {
+      "id": "s-46",
+      "title": "46-这个玩具可以一起玩",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-46/s-46_part1.jpg",
+          "narration": {
+            "zh": "46-这个玩具可以一起玩",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-46/s-46_part2.jpg",
+          "narration": {
+            "zh": "46-这个玩具可以一起玩",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-46/s-46_part3.jpg",
+          "narration": {
+            "zh": "46-这个玩具可以一起玩",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-47": {
+      "id": "s-47",
+      "title": "47-轮流玩",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-47/s-47_part1.jpg",
+          "narration": {
+            "zh": "47-轮流玩",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-47/s-47_part2.jpg",
+          "narration": {
+            "zh": "47-轮流玩",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-47/s-47_part3.jpg",
+          "narration": {
+            "zh": "47-轮流玩",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-48": {
+      "id": "s-48",
+      "title": "48-借东西要还",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-48/s-48_part1.jpg",
+          "narration": {
+            "zh": "48-借东西要还",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-48/s-48_part2.jpg",
+          "narration": {
+            "zh": "48-借东西要还",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-48/s-48_part3.jpg",
+          "narration": {
+            "zh": "48-借东西要还",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-49": {
+      "id": "s-49",
+      "title": "49-别人的东西不能随便拿",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-49/s-49_part1.jpg",
+          "narration": {
+            "zh": "49-别人的东西不能随便拿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-49/s-49_part2.jpg",
+          "narration": {
+            "zh": "49-别人的东西不能随便拿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-49/s-49_part3.jpg",
+          "narration": {
+            "zh": "49-别人的东西不能随便拿",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-50": {
+      "id": "s-50",
+      "title": "50-一起搭积木",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-50/s-50_part1.jpg",
+          "narration": {
+            "zh": "50-一起搭积木",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-50/s-50_part2.jpg",
+          "narration": {
+            "zh": "50-一起搭积木",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-50/s-50_part3.jpg",
+          "narration": {
+            "zh": "50-一起搭积木",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-51": {
+      "id": "s-51",
+      "title": "51-小组作业怎么做",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-51/s-51_part1.jpg",
+          "narration": {
+            "zh": "51-小组作业怎么做",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-51/s-51_part2.jpg",
+          "narration": {
+            "zh": "51-小组作业怎么做",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-51/s-51_part3.jpg",
+          "narration": {
+            "zh": "51-小组作业怎么做",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-52": {
+      "id": "s-52",
+      "title": "52-听听别人的想法",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-52/s-52_part1.jpg",
+          "narration": {
+            "zh": "52-听听别人的想法",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-52/s-52_part2.jpg",
+          "narration": {
+            "zh": "52-听听别人的想法",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-52/s-52_part3.jpg",
+          "narration": {
+            "zh": "52-听听别人的想法",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-53": {
+      "id": "s-53",
+      "title": "53-分工合作",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-53/s-53_part1.jpg",
+          "narration": {
+            "zh": "53-分工合作",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-53/s-53_part2.jpg",
+          "narration": {
+            "zh": "53-分工合作",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-53/s-53_part3.jpg",
+          "narration": {
+            "zh": "53-分工合作",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-54": {
+      "id": "s-54",
+      "title": "54-有人不配合怎么办",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-54/s-54_part1.jpg",
+          "narration": {
+            "zh": "54-有人不配合怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-54/s-54_part2.jpg",
+          "narration": {
+            "zh": "54-有人不配合怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-54/s-54_part3.jpg",
+          "narration": {
+            "zh": "54-有人不配合怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-55": {
+      "id": "s-55",
+      "title": "55-公平不是一模一样",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-55/s-55_part1.jpg",
+          "narration": {
+            "zh": "55-公平不是一模一样",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-55/s-55_part2.jpg",
+          "narration": {
+            "zh": "55-公平不是一模一样",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-55/s-55_part3.jpg",
+          "narration": {
+            "zh": "55-公平不是一模一样",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-56": {
+      "id": "s-56",
+      "title": "56-我不想分享了",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-56/s-56_part1.jpg",
+          "narration": {
+            "zh": "56-我不想分享了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-56/s-56_part2.jpg",
+          "narration": {
+            "zh": "56-我不想分享了",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-56/s-56_part3.jpg",
+          "narration": {
+            "zh": "56-我不想分享了",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-57": {
+      "id": "s-57",
+      "title": "57-别人不愿分享怎么办",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-57/s-57_part1.jpg",
+          "narration": {
+            "zh": "57-别人不愿分享怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-57/s-57_part2.jpg",
+          "narration": {
+            "zh": "57-别人不愿分享怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-57/s-57_part3.jpg",
+          "narration": {
+            "zh": "57-别人不愿分享怎么办",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-58": {
+      "id": "s-58",
+      "title": "58-一起想办法",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-58/s-58_part1.jpg",
+          "narration": {
+            "zh": "58-一起想办法",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-58/s-58_part2.jpg",
+          "narration": {
+            "zh": "58-一起想办法",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-58/s-58_part3.jpg",
+          "narration": {
+            "zh": "58-一起想办法",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-59": {
+      "id": "s-59",
+      "title": "59-妥协是一种智慧",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-59/s-59_part1.jpg",
+          "narration": {
+            "zh": "59-妥协是一种智慧",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-59/s-59_part2.jpg",
+          "narration": {
+            "zh": "59-妥协是一种智慧",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-59/s-59_part3.jpg",
+          "narration": {
+            "zh": "59-妥协是一种智慧",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-60": {
+      "id": "s-60",
+      "title": "60-赢了不要太得意",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-60/s-60_part1.jpg",
+          "narration": {
+            "zh": "60-赢了不要太得意",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-60/s-60_part2.jpg",
+          "narration": {
+            "zh": "60-赢了不要太得意",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-60/s-60_part3.jpg",
+          "narration": {
+            "zh": "60-赢了不要太得意",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-61": {
+      "id": "s-61",
+      "title": "61-输了不生气",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-61/s-61_part1.jpg",
+          "narration": {
+            "zh": "61-输了不生气",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-61/s-61_part2.jpg",
+          "narration": {
+            "zh": "61-输了不生气",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-61/s-61_part3.jpg",
+          "narration": {
+            "zh": "61-输了不生气",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-62": {
+      "id": "s-62",
+      "title": "62-比赛规则要遵守",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-62/s-62_part1.jpg",
+          "narration": {
+            "zh": "62-比赛规则要遵守",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-62/s-62_part2.jpg",
+          "narration": {
+            "zh": "62-比赛规则要遵守",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-62/s-62_part3.jpg",
+          "narration": {
+            "zh": "62-比赛规则要遵守",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-63": {
+      "id": "s-63",
+      "title": "63-团队里有不同的角色",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-63/s-63_part1.jpg",
+          "narration": {
+            "zh": "63-团队里有不同的角色",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-63/s-63_part2.jpg",
+          "narration": {
+            "zh": "63-团队里有不同的角色",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-63/s-63_part3.jpg",
+          "narration": {
+            "zh": "63-团队里有不同的角色",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-64": {
+      "id": "s-64",
+      "title": "64-帮助比自己小的",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-64/s-64_part1.jpg",
+          "narration": {
+            "zh": "64-帮助比自己小的",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-64/s-64_part2.jpg",
+          "narration": {
+            "zh": "64-帮助比自己小的",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-64/s-64_part3.jpg",
+          "narration": {
+            "zh": "64-帮助比自己小的",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s-65": {
+      "id": "s-65",
+      "title": "65-一起收拾",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s-65/s-65_part1.jpg",
+          "narration": {
+            "zh": "65-一起收拾",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s-65/s-65_part2.jpg",
+          "narration": {
+            "zh": "65-一起收拾",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s-65/s-65_part3.jpg",
+          "narration": {
+            "zh": "65-一起收拾",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s06-深呼": {
+      "id": "s06-深呼",
+      "title": "深呼吸让自己平静",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s06-深呼/s06p1.jpg",
+          "narration": {
+            "zh": "深呼吸让自己平静",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s06-深呼/s06p2.jpg",
+          "narration": {
+            "zh": "深呼吸让自己平静",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s06-深呼/s06p3.jpg",
+          "narration": {
+            "zh": "深呼吸让自己平静",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s07-每个": {
+      "id": "s07-每个",
+      "title": "每个人都会犯错",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s07-每个/s07p1.jpg",
+          "narration": {
+            "zh": "每个人都会犯错",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s07-每个/s07p2.jpg",
+          "narration": {
+            "zh": "每个人都会犯错",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s07-每个/s07p3.jpg",
+          "narration": {
+            "zh": "每个人都会犯错",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s08-我可": {
+      "id": "s08-我可",
+      "title": "我可以慢慢来",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s08-我可/s08p1.jpg",
+          "narration": {
+            "zh": "我可以慢慢来",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s08-我可/s08p2.jpg",
+          "narration": {
+            "zh": "我可以慢慢来",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s08-我可/s08p3.jpg",
+          "narration": {
+            "zh": "我可以慢慢来",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s09-让对": {
+      "title": "S09 - 让对方感到重要（每个人都有闪光点）",
+      "subtitle": "",
+      "principle": "让对方感到自己重要",
+      "difficulty": 2,
+      "characters": [
+        "班长斑斑",
+        "刺猬球球",
+        "棕熊壮壮",
+        "白猫花花",
+        "松鼠跳跳"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s09-让对/part1-fawn-assigns-tasks.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part1-zh.mp3",
+            "en": "/audio/s09-让对/part1-en.mp3"
+          },
+          "narration": "手工课，分组做森林海报。班长斑斑分了任务——壮壮剪纸，花花画装饰，跳跳出主意。",
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s09-让对/part2-spike-alone.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part2-zh.mp3",
+            "en": "/audio/s09-让对/part2-en.mp3"
+          },
+          "narration": "大家都忙起来了。只有球球一个人站在旁边，没人给他任务。",
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s09-让对/part3-spike-whispers.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part3-zh.mp3",
+            "en": "/audio/s09-让对/part3-en.mp3"
+          },
+          "narration": "球球小声说——\"我……我能帮忙吗？\"没有人在听。",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "球球在想：是不是因为我是透明的，所以大家忘记了我……"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s09-让对/part4-fawn-invites-spike.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part4-zh.mp3",
+            "en": "/audio/s09-让对/part4-en.mp3"
+          },
+          "narration": "斑斑突然想起来了——\"球球！最后的装饰你来画好不好？这个部分最关键，只有你画得最仔细！\"",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "斑斑在想：哎呀，差点忘了球球。大家都说他画画特别仔细。"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s09-让对/part5-spike-painting.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part5-zh.mp3",
+            "en": "/audio/s09-让对/part5-en.mp3"
+          },
+          "narration": "球球的眼睛亮了。他拿起画笔，画出了最漂亮的蝴蝶和花朵。",
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s09-让对/part6-spike-recognized.png",
+          "audio": {
+            "zh": "/audio/s09-让对/part6-zh.mp3",
+            "en": "/audio/s09-让对/part6-en.mp3"
+          },
+          "narration": "海报完成了，大家都在夸球球。球球第一次觉得——原来我也是不可缺少的。",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "球球在想：原来我也是不可缺少的……"
+            }
+          ],
+          "owlWisdom": "团队合作时，记得给每个人分配一个\"只有他能做好\"的任务。当你告诉别人\"这个部分最关键，只有你能做好\"的时候，对方会觉得自己是不可缺少的。"
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s09-让对"
+    },
+    "s09-身体": {
+      "id": "s09-身体",
+      "title": "身体不舒服要说",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s09-身体/s09p1.jpg",
+          "narration": {
+            "zh": "身体不舒服要说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s09-身体/s09p2.jpg",
+          "narration": {
+            "zh": "身体不舒服要说",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s09-身体/s09p3.jpg",
+          "narration": {
+            "zh": "身体不舒服要说",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s10-有些": {
+      "id": "s10-有些",
+      "title": "有些事情会变好",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s10-有些/s10p1.jpg",
+          "narration": {
+            "zh": "有些事情会变好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s10-有些/s10p2.jpg",
+          "narration": {
+            "zh": "有些事情会变好",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s10-有些/s10p3.jpg",
+          "narration": {
+            "zh": "有些事情会变好",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s10-避免": {
+      "title": "S10 - 避免争论（霸王龙是最强的）",
+      "subtitle": "",
+      "principle": "避免争论",
+      "difficulty": 2,
+      "characters": [
+        "松鼠跳跳",
+        "小狐阿布",
+        "白猫花花"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s10-避免/part1-pip-shouting-trex.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part1-zh.mp3",
+            "en": "/audio/s10-避免/part1-en.mp3"
+          },
+          "narration": "课间，跳跳拍着桌子大喊——\"霸王龙是世界上最强的恐龙！谁也比不过它！\"",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "跳跳在想：我懂的可多了，没人比我更懂恐龙！"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s10-避免/part2-aboo-pip-arguing.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part2-zh.mp3",
+            "en": "/audio/s10-避免/part2-en.mp3"
+          },
+          "narration": "阿布说——\"其实是沧龙更强，沧龙在海里，比霸王龙大多了。\"跳跳不服气，两人越吵声音越大。",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "阿布在想：我说的是事实啊，为什么他不听呢？"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s10-避免/part3-huahua-advises-aboo.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part3-zh.mp3",
+            "en": "/audio/s10-避免/part3-en.mp3"
+          },
+          "narration": "花花走过来拉住阿布——\"你越跟他争，他就越不服。你先说他说的对的那部分，他自然就愿意听了。\"",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "阿布在想：先说他对的地方……对，霸王龙确实是陆地上最强的！"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s10-避免/part4-aboo-agrees-first.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part4-zh.mp3",
+            "en": "/audio/s10-避免/part4-en.mp3"
+          },
+          "narration": "阿布想了想，对跳跳说——\"你说得对，霸王龙确实是陆地上最强的！不过你听说过沧龙吗？它在海里比霸王龙还大！\"",
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s10-避免/part5-pip-eager-to-learn.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part5-zh.mp3",
+            "en": "/audio/s10-避免/part5-en.mp3"
+          },
+          "narration": "跳跳眨了眨眼——\"沧龙？在海里的？比霸王龙还大？\"他凑过来，\"快给我讲讲！\"",
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s10-避免/part6-friendly-resolution.png",
+          "audio": {
+            "zh": "/audio/s10-避免/part6-zh.mp3",
+            "en": "/audio/s10-避免/part6-en.mp3"
+          },
+          "narration": "阿布笑了。争论没有赢来一个朋友，但先认同对方却赢得了一次愉快的交流。",
+          "thoughts": [
+            {
+              "character": "在想",
+              "characterColor": "#9B8BB4",
+              "text": "阿布在想：原来不争对错，反而更能让他听进去……"
+            }
+          ],
+          "owlWisdom": "赢得争论的唯一方法是避免争论。先说\"你说得对\"（找到对方观点中合理的部分），再说你的想法。这样对方不会觉得你在否定他，反而愿意听你说。"
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s10-避免"
+    },
+    "s11-老师": {
+      "title": "S11 明天不用上学吗 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s11-老师/part1-teacher-announces-saturday.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part1-zh.mp3",
+            "en": "/audio/s11-老师/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "放学了，猫头鹰老师对大家说——\"明天星期六，同学们好好玩！\"教室里一下子炸开了锅。",
+            "en": "After school, Owl Teacher announces, \"Tomorrow is Saturday, have fun everyone!\" The classroom erupts with excitement."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：明天星期六？太好了！ / 英文：Tomorrow's Saturday? Awesome!"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s11-老师/part2-aboo-checks-calendar.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part2-zh.mp3",
+            "en": "/audio/s11-老师/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布看了看墙上的日历——明天明明是星期五！他想告诉老师，又怕老师没面子。",
+            "en": "Aboo checks the calendar on the wall — tomorrow is clearly Friday! He wants to tell the teacher, but doesn't want to embarrass him."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在看",
+              "characterColor": "#E8985E",
+              "text": "中文：明天是星期五呀……直接说\"你说错了\"太不礼貌了吧。 / 英文：Tomorrow is Friday... Saying \"you're wrong\" would be rude."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s11-老师/part3-pip-rushes-to-door.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part3-zh.mp3",
+            "en": "/audio/s11-老师/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳已经冲到门口了——\"老师说不用上学！回家玩去喽！\"",
+            "en": "Pip is already rushing to the door. \"Teacher said no school! Let's go play!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：要是大家明天真不来上学，老师会更尴尬的。我得想办法。 / 英文：If nobody comes tomorrow, the teacher will be even more embarrassed. I need to do something."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s11-老师/part4-aboo-asks-question.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part4-zh.mp3",
+            "en": "/audio/s11-老师/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布举起手——\"老师，我有个问题！明天是不是该交手工课的作业呀？\"猫头鹰老师低头一看日历——\"哎呀！明天是星期五！\"",
+            "en": "Aboo raises his hand. \"Teacher, I have a question! Isn't the art project due tomorrow?\" Owl Teacher checks the calendar. \"Oh my! Tomorrow IS Friday!\""
+          },
+          "thoughts": [
+            {
+              "character": "猫头鹰老师在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：幸亏阿布提醒我，不然闹笑话了。 / 英文：Good thing Aboo reminded me, that would have been embarrassing."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s11-老师/part5-teacher-redraws.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part5-zh.mp3",
+            "en": "/audio/s11-老师/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "猫头鹰老师不好意思地笑了——\"谢谢阿布提醒！老师看错日历了。明天大家记得来上学哦。\"",
+            "en": "Owl Teacher smiles sheepishly. \"Thank you, Aboo! I read the calendar wrong. Everyone, remember to come to school tomorrow.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在看",
+              "characterColor": "#E8985E",
+              "text": "中文：我没说\"你错了\"，只是问了个问题，老师自己就发现了。 / 英文：I didn't say \"you're wrong,\" just asked a question, and the teacher figured it out himself."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s11-老师/part6-huahua-whispers-aboo.png",
+          "audio": {
+            "zh": "/audio/s11-老师/part6-zh.mp3",
+            "en": "/audio/s11-老师/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "花花凑过来小声说——\"你怎么不说老师说错了？\"阿布眨眨眼——\"这样说，老师不会觉得难为情呀。\"",
+            "en": "Huahua whispers, \"Why didn't you just say the teacher was wrong?\" Aboo winks. \"This way, the teacher doesn't feel embarrassed.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来不直接说\"你错了\"，也能帮别人改正！ / 英文：So you can help someone fix a mistake without saying \"you're wrong\"!"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s11-老师"
+    },
+    "s12-我搞": {
+      "title": "S12 我搞砸了怎么办 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s12-我搞/part1-soccer-crashes-vase.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part1-zh.mp3",
+            "en": "/audio/s12-我搞/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "课间，跳跳在教室里传足球。阿布也想加入——\"砰！\"足球砸翻了桌上的花瓶，水洒了一地。",
+            "en": "During recess, Pip passes a soccer ball around the classroom. Aboo wants to join in — crash! The ball knocks over a vase on a desk, and water spills everywhere."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：完了完了，那是老师最喜欢的花瓶…… / 英文：Oh no, that was the teacher's favorite vase..."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s12-我搞/part2-huahua-confronts-aboo.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part2-zh.mp3",
+            "en": "/audio/s12-我搞/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "花花看见了——\"是不是你踢的？\"阿布缩了缩脖子——\"是跳跳传给我的……\"",
+            "en": "Huahua sees it. \"Was that you?\" Aboo shrinks back. \"Pip passed it to me...\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：不是我一个人的错，跳跳也有份。 / 英文：It wasn't just me — Pip was involved too."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s12-我搞/part3-aboo-hangs-head.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part3-zh.mp3",
+            "en": "/audio/s12-我搞/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "花花摇摇头——\"可是球到你脚边，是你踢出去的呀。\"阿布低下头，不说话了。",
+            "en": "Huahua shakes her head. \"But the ball was at your feet. You kicked it.\" Aboo hangs his head and goes quiet."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：……她说得对。花瓶是我踢碎的。 / 英文：... She’s right. I’m the one who broke the vase."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s12-我搞/part4-aboo-admits-mistake.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part4-zh.mp3",
+            "en": "/audio/s12-我搞/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "猫头鹰老师回来了。阿布深吸一口气——\"老师，对不起，花瓶是我踢碎的。\"老师看看地上的碎片——\"嗯，承认错误需要勇气。\"",
+            "en": "Owl Teacher returns. Aboo takes a deep breath. \"Teacher, I'm sorry. I broke the vase.\" The teacher looks at the pieces. \"It takes courage to admit a mistake.\""
+          },
+          "thoughts": [
+            {
+              "character": "猫头鹰老师在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：阿布能主动承认，比找借口强多了。 / 英文：Aboo admitting it on his own is much better than making excuses."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s12-我搞/part5-pip-admits-too.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part5-zh.mp3",
+            "en": "/audio/s12-我搞/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳跑过来——\"我也有错！是我先传球的！\"老师笑了——\"你们两个都诚实，花瓶碎了可以再买，诚实碎了就补不回来了。\"",
+            "en": "Pip runs over. \"It's my fault too! I started the passing!\" Owl Teacher smiles. \"You're both honest. A vase can be replaced, but honesty, once lost, can never be repaired.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：承认错误之后，心里反而轻松了。 / 英文：After admitting my mistake, I actually feel lighter."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s12-我搞/part6-cleanup-thumbs-up.png",
+          "audio": {
+            "zh": "/audio/s12-我搞/part6-zh.mp3",
+            "en": "/audio/s12-我搞/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布和跳跳一起把地上的水擦干净。花花竖起大拇指——\"你们好棒！\"",
+            "en": "Aboo and Pip clean up the water together. Huahua gives them a thumbs up. \"You guys are awesome!\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：勇敢承认错误，才是真正了不起的事情！ / 英文：Bravely admitting a mistake is what's truly impressive!"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s12-我搞"
+    },
+    "s13-借壮": {
+      "title": "S13 借壮壮的足球 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s13-借壮/s13-part1-aboo-asks-bobo.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s13-借壮/s13-part2-huahua-advises.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s13-借壮/s13-part3-aboo-praises-bobo.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s13-借壮/s13-part4-bobo-teaches-aboo.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s13-借壮/s13-part5-both-laughing.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s13-借壮/s13-part6-huahua-wisdom.png",
+          "narration": {
+            "zh": "S13 借壮壮的足球 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s13-借壮"
+    },
+    "s14-交换": {
+      "title": "S14 交换课间游戏 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s14-交换/s14-part1-aboo-asks-pip.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s14-交换/s14-part2-stubborn-debate.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s14-交换/s14-part3-huahua-advises.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s14-交换/s14-part4-aboo-praises-pip.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s14-交换/s14-part5-deal-agreed.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s14-交换/s14-part6-playing-together.png",
+          "narration": {
+            "zh": "S14 交换课间游戏 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s14-交换"
+    },
+    "s15-秋游": {
+      "title": "S15 秋游去哪里 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s15-秋游/s15-part1-arguing-destination.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s15-秋游/s15-part2-huahua-frowns.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s15-秋游/s15-part3-aboo-asks-pip.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s15-秋游/s15-part4-aboo-asks-bobo.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s15-秋游/s15-part5-vote-proposed.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s15-秋游/s15-part6-vote-result.png",
+          "narration": {
+            "zh": "S15 秋游去哪里 — 精炼双语文字稿",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s15-秋游"
+    },
+    "s16-小豆": {
+      "title": "S16 小豆收拾房间 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s16-小豆/part1-xiaodou-refuses.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part1-zh.mp3",
+            "en": "/audio/s16-小豆/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "妈妈让小豆收拾房间。小豆嘟着嘴——\"我不想收拾。\"",
+            "en": "Mom tells Xiaodou to tidy up. Xiaodou pouts — \"I don't wanna.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：收拾太累了…… / 英文：Cleaning up is too much work…"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s16-小豆/part2-aboo-visits-xiaodou.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part2-zh.mp3",
+            "en": "/audio/s16-小豆/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布来找小豆玩，小豆抱着手臂嘟着嘴——\"我不想收拾。\"",
+            "en": "Abu comes to play. Xiaodou crosses his arms and pouts — \"I don't wanna clean up.\""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s16-小豆/part3-aboo-thinks-with-xiaodou.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part3-zh.mp3",
+            "en": "/audio/s16-小豆/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布歪着头想了一下——\"小豆，你想想，房间收拾好了，能做什么呀？\"",
+            "en": "Abu tilts his head — \"Xiaodou, think about it — what could you do with a tidy room?\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：房间干净了能干嘛呢…… / 英文：What could I do in a clean room…"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s16-小豆/part4-xiaodou-excited-castle.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part4-zh.mp3",
+            "en": "/audio/s16-小豆/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "小豆眼睛亮了——\"我可以搭一个大积木城堡！地上都没地方放了。\"",
+            "en": "Xiaodou's eyes light up — \"I could build a huge block castle! There's no space on the floor right now.\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：对！我要搭城堡！ / 英文：Yes! I'm gonna build a castle!"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s16-小豆/part5-cleaning-together.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part5-zh.mp3",
+            "en": "/audio/s16-小豆/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "小豆和阿布一起把积木归位、书放好，房间越来越整齐。",
+            "en": "Xiaodou and Abu put blocks away and line up books. The room gets tidier and tidier."
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s16-小豆/part6-clean-room-proud.png",
+          "audio": {
+            "zh": "/audio/s16-小豆/part6-zh.mp3",
+            "en": "/audio/s16-小豆/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "房间干干净净。小豆开心地笑了——\"你看，是我自己想干的！\"",
+            "en": "The room is spotless. Xiaodou grins — \"See? I wanted to do it myself!\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：是我自己想收拾的！ / 英文：I wanted to clean up myself!"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s16-小豆"
+    },
+    "s17-棉花": {
+      "title": "S17 棉花考砸了 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s17-棉花/part1-huahua-sad-test.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part1-zh.mp3",
+            "en": "/audio/s17-棉花/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "棉花拿着考了60分的试卷，低着头走出教室。",
+            "en": "Huahua walks out of the classroom, head down, holding a test paper with a big 60."
+          },
+          "thoughts": [
+            {
+              "character": "棉花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：考这么差，大家会不会笑我…… / 英文：Everyone's gonna laugh at me..."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s17-棉花/part2-fawn-calls-huahua.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part2-zh.mp3",
+            "en": "/audio/s17-棉花/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "花花路过操场，斑斑喊——\"花花，我们踢球吧！\"花花摇摇头，快步走开了。",
+            "en": "Huahua passes the playground. Fawn calls, \"Huahua, let's play soccer!\" Huahua shakes her head and hurries away."
+          },
+          "thoughts": [
+            {
+              "character": "棉花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我没心情玩…… / 英文：I don't feel like playing..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s17-棉花/part3-aboo-comforts-huahua.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part3-zh.mp3",
+            "en": "/audio/s17-棉花/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布追上花花——\"花花，你怎么了？\"花花眼眶红红地说——\"我数学考砸了……\"",
+            "en": "Aboo catches up. \"Huahua, what's wrong?\" Huahua's eyes are red. \"I bombed my math test...\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：她一定很难过，我不能说\"没关系\"。 / 英文：She must be really sad. I shouldn't say \"it's no big deal.\""
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s17-棉花/part4-aboo-shares-60.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part4-zh.mp3",
+            "en": "/audio/s17-棉花/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布想了想——\"上次我拼音听写也考了60分，当时我也特别难受。\"花花抬起头看着阿布。",
+            "en": "Aboo thinks. \"Last time I got a 60 on my dictation test too. I felt terrible.\" Huahua looks up at Aboo."
+          },
+          "thoughts": [
+            {
+              "character": "棉花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来阿布也考过60分啊…… / 英文：Aboo got a 60 too..."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s17-棉花/part5-huahua-nods-hopeful.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part5-zh.mp3",
+            "en": "/audio/s17-棉花/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布笑了——\"后来我每天多练十分钟，下次就考了85分。\"花花点点头——\"那我也可以试试。\"",
+            "en": "Aboo smiles. \"After that I practiced ten extra minutes every day. Next time I got an 85.\" Huahua nods. \"Maybe I can try that too.\""
+          },
+          "thoughts": [
+            {
+              "character": "棉花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：下次我一定也能进步！ / 英文：I can improve next time too!"
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s17-棉花/part6-heading-to-playground.png",
+          "audio": {
+            "zh": "/audio/s17-棉花/part6-zh.mp3",
+            "en": "/audio/s17-棉花/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "花花擦干眼泪，和阿布一起去操场了。阿布说——\"走，踢球去！先玩一会儿，回去再复习。\"",
+            "en": "Huahua dries her tears and heads to the playground with Aboo. \"Let's go play! Have fun first, study later.\""
+          },
+          "thoughts": [
+            {
+              "character": "棉花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：谢谢阿布，她懂我的感受。 / 英文：Thanks, Aboo. She understands how I feel."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s17-棉花"
+    },
+    "s18-球球": {
+      "title": "S18 球球的虫子去世了 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s18-球球/part1-spike-sad-beetle.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part1-zh.mp3",
+            "en": "/audio/s18-球球/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "球球养的小甲虫一动不动了。球球蹲在盒子旁边，眼睛红红的。",
+            "en": "Spike's pet beetle isn't moving. Spike crouches beside the box with red eyes."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：它是不是永远睡着了…… / 英文：Is it asleep forever..."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s18-球球/part2-pip-runs-to-spike.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part2-zh.mp3",
+            "en": "/audio/s18-球球/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳跑过来看——\"它怎么不动了？\"球球低着头说——\"它死了。\"",
+            "en": "Pip runs over. \"Why isn't it moving?\" Spike looks down. \"It died.\""
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#E8985E",
+              "text": "中文：啊……我不知道该说什么。 / 英文：Oh... I don't know what to say."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s18-球球/part3-aboo-sits-with-spike.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part3-zh.mp3",
+            "en": "/audio/s18-球球/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布走过来，蹲在球球旁边，安安静静地陪着。",
+            "en": "Aboo walks over, crouches next to Spike, and quietly stays."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：阿布什么都没说，但她在我身边。 / 英文：Aboo didn't say anything, but she's right here with me."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s18-球球/part4-spike-crying-nods.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part4-zh.mp3",
+            "en": "/audio/s18-球球/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "过了一会儿，阿布轻声说——\"你一定很舍不得它吧。\"球球点点头，眼泪掉了下来。",
+            "en": "After a while, Aboo says softly, \"You must really miss it already.\" Spike nods and tears fall."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：嗯，它陪了我好久…… / 英文：Yeah, it was with me for so long..."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s18-球球/part5-burying-beetle.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part5-zh.mp3",
+            "en": "/audio/s18-球球/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "球球用小手把甲虫埋在花园的泥土里，放了一片小树叶。阿布在旁边帮忙。",
+            "en": "Spike buries the beetle in the garden soil with his little paws, placing a small leaf on top. Aboo helps beside him."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：他需要时间难过，我陪着他就好。 / 英文：He needs time to be sad. I'll just stay with him."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s18-球球/part6-spike-thanks-aboo.png",
+          "audio": {
+            "zh": "/audio/s18-球球/part6-zh.mp3",
+            "en": "/audio/s18-球球/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "球球站起来，擦擦眼睛——\"谢谢你陪着我。\"阿布拍拍球球的背——\"它知道你很爱它。\"",
+            "en": "Spike stands up and wipes his eyes. \"Thanks for staying with me.\" Aboo gently pats Spike's back. \"It knew you loved it very much.\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我永远不会忘记它。 / 英文：I'll never forget it."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s18-球球"
+    },
+    "s19-跳跳": {
+      "title": "S19 跳跳偷懒了 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s19-跳跳/part1-pip-hiding-acorns.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part1-zh.mp3",
+            "en": "/audio/s19-跳跳/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "大扫除时间，大家都在干活。只有跳跳躲在树后面吃橡果。",
+            "en": "Cleanup time. Everyone is working. Only Pip hides behind a tree eating acorns."
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：扫地好无聊，先吃点东西再说。 / 英文：Sweeping is boring. Let me snack first."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s19-跳跳/part2-aboo-confronts-pip.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part2-zh.mp3",
+            "en": "/audio/s19-跳跳/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布走过来——\"跳跳，大家都在忙呢。\"跳跳嘟着嘴——\"我不想扫。\"",
+            "en": "Aboo walks over. \"Pip, everyone's busy.\" Pip pouts. \"I don't wanna sweep.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：直接叫他去做，他肯定不听。 / 英文：If I just tell him to do it, he won't listen."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s19-跳跳/part3-aboo-asks-best-sweeper.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part3-zh.mp3",
+            "en": "/audio/s19-跳跳/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布想了想——\"跳跳，你知道谁扫地最厉害吗？\"跳跳好奇地歪着头。",
+            "en": "Aboo thinks. \"Pip, do you know who's the best sweeper?\" Pip tilts his head curiously."
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：谁最厉害？ / 英文：Who's the best?"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s19-跳跳/part4-pip-eyes-light-up.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part4-zh.mp3",
+            "en": "/audio/s19-跳跳/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "\"是你呀！上次你把操场扫得干干净净，老师都夸你了。\"跳跳眼睛亮了。",
+            "en": "\"You! Last time you swept the playground spotless, even the teacher praised you!\" Pip's eyes light up."
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：对！我扫得可好了！ / 英文：That's right! I'm a great sweeper!"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s19-跳跳/part5-pip-sweeping.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part5-zh.mp3",
+            "en": "/audio/s19-跳跳/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳拿起扫把，认真地扫起来。阿布在旁边竖起大拇指。",
+            "en": "Pip picks up the broom and sweeps carefully. Aboo gives him a thumbs up."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：每个人都想做好，你只需要让他看到自己的价值。 / 英文：Everyone wants to do well. You just need to show them their own value."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s19-跳跳/part6-clean-classroom-praise.png",
+          "audio": {
+            "zh": "/audio/s19-跳跳/part6-zh.mp3",
+            "en": "/audio/s19-跳跳/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "教室干干净净的。花花说——\"今天多亏了跳跳！\"跳跳开心地笑了——\"下次大扫除，我还来！\"",
+            "en": "The classroom is spotless. Huahua says, \"We couldn't have done it without Pip today!\" Pip grins. \"Next cleanup, count me in!\""
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我是扫地小能手！ / 英文：I'm the cleanup champion!"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s19-跳跳"
+    },
+    "s20-河边": {
+      "title": "S20 河边的故事 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s20-河边/part1-riverbank-mushrooms.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part1-zh.mp3",
+            "en": "/audio/s20-河边/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "球球想让大家过河去采蘑菇，但河水哗哗地流着。",
+            "en": "Spike wants everyone to cross the river to pick mushrooms. But the river rushes by."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：河对面肯定有很多蘑菇！ / 英文：There must be lots of mushrooms across the river!"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s20-河边/part2-pip-worried-spike-confident.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part2-zh.mp3",
+            "en": "/audio/s20-河边/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳摆摆手——\"太危险了，会掉进水里的！\"球球说——\"不会的，踩着石头就能过去。\"",
+            "en": "Pip waves his hands. \"Too dangerous! You'll fall in!\" Spike says, \"No you won't. Just step on the rocks.\""
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#E8985E",
+              "text": "中文：万一石头滑了怎么办…… / 英文：What if the rocks are slippery..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s20-河边/part3-aboo-tells-story.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part3-zh.mp3",
+            "en": "/audio/s20-河边/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布想了想——\"我给你们讲个小兔过河的故事吧。\"大家安静下来。",
+            "en": "Aboo thinks. \"Let me tell you a story about a little rabbit crossing a river.\" Everyone quiets down."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：故事？和过河有什么关系？ / 英文：A story? What does that have to do with crossing?"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s20-河边/part4-rabbit-crossing-story.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part4-zh.mp3",
+            "en": "/audio/s20-河边/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "\"有一只小兔，也想去对岸采花。她没有急，先在水边观察了很久——水很浅，只到脚踝。她又找到最稳的几块石头，一步一步，安安全全就过去了。\"",
+            "en": "\"A little rabbit wanted to pick flowers across the river too. She didn't rush. She watched the water for a long time — it was shallow, only up to her ankles. Then she found the steadiest rocks, and stepped across one by one — safe and sound.\""
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：先看水浅不浅，再找稳石头……有道理。 / 英文：Check if the water is shallow first, then find steady rocks... That makes sense."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s20-河边/part5-spike-checking-stones.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part5-zh.mp3",
+            "en": "/audio/s20-河边/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "球球跑到水边看了看石头，说——\"阿布，我们像那只小兔一样，先看好每块石头再走！\"",
+            "en": "Spike runs to the water's edge and checks the rocks. \"Aboo, let's do what the little rabbit did — check each rock before we step!\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我得先看看哪块石头最稳。 / 英文：I need to find the steadiest rocks first."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s20-河边/part6-safe-crossing-mushrooms.png",
+          "audio": {
+            "zh": "/audio/s20-河边/part6-zh.mp3",
+            "en": "/audio/s20-河边/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "大家一个一个踩着石头过了河，安安全全的。对岸果然有一大片蘑菇！",
+            "en": "Everyone crosses one by one, stepping carefully on the rocks. Safe and sound! And sure enough, a big patch of mushrooms on the other side!"
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：讲故事比讲道理管用多了。 / 英文：A story works much better than a lecture."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s20-河边"
+    },
+    "s21-读书": {
+      "title": "S21 读书挑战赛 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s21-读书/part1-huahua-rejects-book.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part1-zh.mp3",
+            "en": "/audio/s21-读书/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "花花拿了一本厚厚的《森林探险记》，但只翻了两页就放下了——\"太长了，我不想看。\"",
+            "en": "Huahua picked up a thick book called \"Forest Adventures.\" But after just two pages, she put it down. \"It's too long. I don't want to read it.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：这本书这么厚，什么时候才能看完啊…… / 英文：This book is so thick. When will I ever finish it..."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s21-读书/part2-aboo-challenges-huahua.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part2-zh.mp3",
+            "en": "/audio/s21-读书/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布走过来翻了翻说——\"花花，这本书可有意思了。我打赌你三天读不完。\"",
+            "en": "Aboo walked over, flipped through it and said, \"Huahua, this book is really interesting. I bet you can't finish it in three days.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#E8985E",
+              "text": "中文：什么？三天？我偏要看完给你看！ / 英文：What? Three days? I'll show you I can finish it!"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s21-读书/part3-huahua-reading-intently.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part3-zh.mp3",
+            "en": "/audio/s21-读书/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "花花一把抓过书，认认真真地读了起来。跳跳凑过来看——\"花花你在干嘛？\"花花头也不抬——\"挑战！\"",
+            "en": "Huahua grabbed the book and started reading seriously. Pip peeked over. \"What are you doing, Huahua?\" Huahua didn't even look up. \"A challenge!\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：阿布居然小看我，我一定要读完！ / 英文：Aboo thinks I can't do it. I'll definitely finish it!"
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s21-读书/part4-huahua-halfway-garden.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part4-zh.mp3",
+            "en": "/audio/s21-读书/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "第二天，花花一早就在花园里看书。阿布路过笑着问——\"进度怎么样？\"花花举起来——\"已经读到一半了！\"",
+            "en": "The next morning, Huahua was already reading in the garden. Aboo walked by and asked with a smile, \"How's the progress?\" Huahua held up the book. \"I'm already halfway through!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：看来这个挑战有效，她比谁都认真。 / 英文：Looks like the challenge worked. She's reading harder than anyone."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s21-读书/part5-huahua-finished-aboo-thumbsup.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part5-zh.mp3",
+            "en": "/audio/s21-读书/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "第三天放学，花花跑到阿布面前——\"我读完了！从第一页到最后一页！\"阿布竖起大拇指——\"你真的做到了！\"",
+            "en": "After school on the third day, Huahua ran to Aboo. \"I finished it! Every single page!\" Aboo gave her a big thumbs up. \"You really did it!\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来厚书也没那么可怕嘛！ / 英文：Turns out thick books aren't so scary after all!"
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s21-读书/part6-huahua-challenges-pip.png",
+          "audio": {
+            "zh": "/audio/s21-读书/part6-zh.mp3",
+            "en": "/audio/s21-读书/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "花花把书递给跳跳——\"这本超好看，我打赌你也读不完！\"跳跳眼睛一亮——\"才怪，看我的！\"",
+            "en": "Huahua handed the book to Pip. \"This book is amazing. I bet YOU can't finish it!\" Pip's eyes lit up. \"No way! Watch me!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：想让别人做事，抛个挑战比说一百句\"你应该\"都有用。 / 英文：If you want someone to do something, a challenge works much better than a hundred \"you should\"s."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s21-读书"
+    },
+    "s22-壮壮": {
+      "title": "S22 壮壮做值日 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s22-壮壮/part1-bobo-lazy-blackboard.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part1-zh.mp3",
+            "en": "/audio/s22-壮壮/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "今天是壮壮做值日。他力气大，桌子搬得又快又好。可是擦黑板的时候，壮壮够不到最上面，随便擦了两下就走了。",
+            "en": "Today is Bobo's turn for classroom duty. He's so strong, he moved all the desks quickly. But when wiping the blackboard, he couldn't reach the top. He just gave it a couple of lazy swipes and walked away."
+          },
+          "thoughts": [
+            {
+              "character": "壮壮在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：反正上面也看不太见，差不多就行了。 / 英文：You can barely see the top anyway. Good enough."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s22-壮壮/part2-huahua-points-board.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part2-zh.mp3",
+            "en": "/audio/s22-壮壮/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "花花走进来抬头一看——\"黑板上半边还是白的呢！\"壮壮嘟囔——\"我够不到嘛。\"",
+            "en": "Huahua walked in and looked up. \"The top half of the board is still covered in chalk!\" Bobo mumbled, \"I couldn't reach it.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#E8985E",
+              "text": "中文：可是这样下一节课老师怎么写字呀…… / 英文：But how will the teacher write on it next class..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s22-壮壮/part3-aboo-praises-bobo.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part3-zh.mp3",
+            "en": "/audio/s22-壮壮/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布走过来，先看了看壮壮摆好的桌子——\"壮壮，你今天搬桌子搬得又快又整齐，力气真大！\"壮壮不好意思地笑了。",
+            "en": "Aboo walked over and first looked at the desks Bobo had arranged. \"Bobo, you moved all the desks so fast and so neat today! You're so strong!\" Bobo smiled shyly."
+          },
+          "thoughts": [
+            {
+              "character": "壮壮在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：嘿嘿，阿布居然夸我了。 / 英文: Hehe, Aboo actually praised me."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s22-壮壮/part4-bobo-pats-chest.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part4-zh.mp3",
+            "en": "/audio/s22-壮壮/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布接着说——\"不过，黑板上面还差一点点。你这么厉害，找个小板凳踩上去，肯定能擦得干干净净。\"壮壮拍拍胸口——\"包在我身上！\"",
+            "en": "Aboo continued, \"But the top of the board still needs a little work. You're so capable. Just grab a small stool and you'll wipe it spotless.\" Bobo patted his chest. \"Leave it to me!\""
+          },
+          "thoughts": [
+            {
+              "character": "壮壮在想",
+              "characterColor": "#E8985E",
+              "text": "中文：阿布相信我能做好，那我就认真做！ / 英文：Aboo believes I can do it. Then I'll do it properly!"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s22-壮壮/part5-bobo-wipes-board.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part5-zh.mp3",
+            "en": "/audio/s22-壮壮/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "壮壮搬来小板凳，踩上去把黑板擦得干干净净。花花在旁边拍手——\"壮壮好厉害！\"壮壮憨憨地笑了。",
+            "en": "Bobo grabbed a small stool, stepped up, and wiped the board completely clean. Huahua clapped beside him. \"Bobo, you're amazing!\" Bobo grinned sheepishly."
+          },
+          "thoughts": [
+            {
+              "character": "壮壮在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：擦干净也就多花两分钟嘛，挺简单的。 / 英文：Wiping it clean only took two extra minutes. Not bad at all."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s22-壮壮/part6-aboo-teaches-huahua.png",
+          "audio": {
+            "zh": "/audio/s22-壮壮/part6-zh.mp3",
+            "en": "/audio/s22-壮壮/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布对花花说——\"你看，先说壮壮做得好的地方，他再听建议就开心多了。\"花花点点头——\"学到了！\"",
+            "en": "Aboo said to Huahua, \"See? If you praise what someone did well first, they're much happier to hear suggestions.\" Huahua nodded. \"Good to know!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：批评之前先赞美，对方才不会觉得你在找茬。 / 英文：Praise before you criticize. Otherwise people think you're just picking on them."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s22-壮壮"
+    },
+    "s23-小豆": {
+      "title": "S23 小豆写反了b和d — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s23-小豆/part1-xiaodou-proud-notebook.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part1-zh.mp3",
+            "en": "/audio/s23-小豆/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "小豆在练习本上写字母，写了很多很多。他开心地把本子拿给阿布看——\"哥哥你看！我全写完了！\"",
+            "en": "Xiaodou was practicing letters in his notebook. He wrote and wrote. He happily showed the notebook to Aboo. \"Big brother, look! I finished them all!\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我写得又多又整齐，哥哥肯定夸我！ / 英文：I wrote so many and so neatly. Big brother will definitely praise me!"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s23-小豆/part2-aboo-notices-reversed.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part2-zh.mp3",
+            "en": "/audio/s23-小豆/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布一看，发现小豆把好几个b写成了d，把d写成了b。他想直接告诉小豆，但又怕弟弟伤心。",
+            "en": "Aboo looked and noticed Xiaodou had written several b's as d's and d's as b's. He wanted to tell him directly, but worried it would hurt his little brother's feelings."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：直接说他写错了，他肯定不高兴…… / 英文：If I tell him he's wrong directly, he'll definitely be upset..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s23-小豆/part3-aboo-twin-game.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part3-zh.mp3",
+            "en": "/audio/s23-小豆/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布笑着说——\"小豆，你写得真多真整齐！来，哥哥跟你玩个游戏。你看看这两个，像不像一对双胞胎？\"",
+            "en": "Aboo smiled and said, \"Xiaodou, you wrote so many and so neatly! Hey, let's play a game. Look at these two. Don't they look like twins?\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：双胞胎？b和d长得是有点像…… / 英文：Twins? b and d do look kind of similar..."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s23-小豆/part4-balloon-b-and-d.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part4-zh.mp3",
+            "en": "/audio/s23-小豆/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布在本子上画了一个气球拴在左边，一个拴在右边——\"你看，气球往左的是b，气球往右的是d。谁先分清楚谁请吃糖！\"",
+            "en": "Aboo drew a balloon tied on the left side and one on the right side. \"See? Balloon on the left is b, balloon on the right is d. Whoever tells them apart first gets a candy!\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#E8985E",
+              "text": "中文：气球左边是b，右边是d……我好像写反了好几个！ / 英文：Balloon left is b, right is d... I think I wrote several of them backwards!"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s23-小豆/part5-xiaodou-correcting.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part5-zh.mp3",
+            "en": "/audio/s23-小豆/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "小豆自己翻开本子看了看，发现真的写反了一些。他拿起橡皮认真地一个一个改过来。阿布在旁边竖起大拇指。",
+            "en": "Xiaodou flipped through his notebook and realized he really had written some backwards. He picked up his eraser and carefully corrected them one by one. Aboo gave him a thumbs up beside him."
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：还好哥哥跟我玩游戏让我自己发现的，不然好丢人。 / 英文: Good thing big brother made it a game so I found out myself. Otherwise that would have been embarrassing."
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s23-小豆/part6-xiaodou-all-correct.png",
+          "audio": {
+            "zh": "/audio/s23-小豆/part6-zh.mp3",
+            "en": "/audio/s23-小豆/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "小豆改完了，开心地给阿布看——\"这次全对了！\"阿布摸摸他的头——\"你真棒，自己就能发现问题。\"",
+            "en": "Xiaodou finished correcting and happily showed Aboo. \"They're all correct this time!\" Aboo patted his head. \"You're awesome. You found the problem all by yourself.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：让他自己发现错误，比直接说\"你写错了\"好多了。 / 英文：Letting him find his own mistake is much better than just saying \"you're wrong.\""
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s23-小豆"
+    },
+    "s24-妈妈": {
+      "title": "S24 妈妈小时候也考砸过 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s24-妈妈/part1-huahua-sad-test.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part1-zh.mp3",
+            "en": "/audio/s24-妈妈/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "花花低着头走进教室，手里攥着一张试卷，眼眶红红的。跳跳偷偷看了一眼——\"花花你考了多少分？\"花花把试卷藏到身后，不说话。",
+            "en": "Huahua walked into the classroom with her head down, clutching a test paper, eyes red. Pip peeked. \"Huahua, what did you get?\" Huahua hid the paper behind her and said nothing."
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：才考了58分……我不想让任何人知道。 / 英文：I only got 58... I don't want anyone to know."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s24-妈妈/part2-aboo-shares-secret.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part2-zh.mp3",
+            "en": "/audio/s24-妈妈/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布走过来，没有问分数，而是坐到花花旁边说——\"花花，我告诉你一个秘密。我上学期数学也考过52分。\"",
+            "en": "Aboo walked over. He didn't ask about the score. He sat beside Huahua and said, \"Huahua, I'll tell you a secret. Last semester, I got a 52 on my math test too.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#E8985E",
+              "text": "中文：阿布也会考这么低？不可能吧…… / 英文：Aboo got a low score too? No way..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s24-妈妈/part3-huahua-surprised.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part3-zh.mp3",
+            "en": "/audio/s24-妈妈/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "花花瞪大了眼睛——\"真的吗？\"阿布点点头——\"真的。那时候我也觉得天都要塌了，躲在房间里不敢出来。后来我发现，一次考试不代表什么。\"",
+            "en": "Huahua's eyes went wide. \"Really?\" Aboo nodded. \"Really. I thought the sky was falling too. I hid in my room and didn't want to come out. But later I realized, one test doesn't define you.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来阿布也有过这种感觉……那我不是一个人。 / 英文：So Aboo felt the same way too... I'm not the only one."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s24-妈妈/part4-huahua-shows-paper.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part4-zh.mp3",
+            "en": "/audio/s24-妈妈/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "花花慢慢把试卷拿出来。阿布看了看说——\"58分，这道应用题确实挺难的，我也做错了。不过你看，后面的大题你全对了，很厉害！\"",
+            "en": "Huahua slowly took out the test paper. Aboo looked at it and said, \"58 points. This word problem is really tricky, I got it wrong too. But look, you got all the big questions at the end right. That's impressive!\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#E8985E",
+              "text": "中文：后面的大题我真的全会，就是前面粗心了。 / 英文：I actually knew all the big questions. I was just careless on the earlier ones."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s24-妈妈/part5-huahua-correcting-happy.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part5-zh.mp3",
+            "en": "/audio/s24-妈妈/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "花花的心情好多了，认真地看着错题说——\"那我把错的重新做一遍吧。\"阿布笑着说——\"对了，我还知道一个秘密——妈妈小时候英语也考过不及格呢！\"",
+            "en": "Huahua felt much better. She looked at her mistakes carefully and said, \"I'll redo the wrong ones.\" Aboo laughed. \"By the way, here's another secret — Mom failed her English test when she was little too!\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：妈妈也会不及格？那我更不着急了，下次一定考好！ / 英文：Mom failed too? Then I shouldn't worry so much. I'll do better next time!"
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s24-妈妈/part6-huahua-teaches-pip.png",
+          "audio": {
+            "zh": "/audio/s24-妈妈/part6-zh.mp3",
+            "en": "/audio/s24-妈妈/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "花花破涕为笑，拿出笔开始认真订正。跳跳凑过来看——\"花花你教教我这道题呗？\"花花开心地说——\"好呀，我们一起做！\"",
+            "en": "Huahua laughed through her tears, took out her pencil, and started correcting seriously. Pip peeked over. \"Huahua, can you teach me this question?\" Huahua said happily, \"Sure! Let's do it together!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：先说自己也犯过同样的错，对方就不会觉得孤单了。 / 英文：When you share your own mistakes first, the other person doesn't feel so alone."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s24-妈妈"
+    },
+    "s25-作业": {
+      "title": "S25 作业还是先吃饭 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s25-作业/part1-aboo-homework-mom-kitchen.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part1-zh.mp3",
+            "en": "/audio/s25-作业/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "晚饭做好了，妈妈在厨房喊——\"吃饭啦！\"阿布正坐在书桌前写作业，头也没抬。",
+            "en": "Dinner is ready! Mom called from the kitchen. But Aboo sat at his desk doing homework, without looking up."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：我的数学题还没做完呢，不能停。 / 英文：I haven't finished my math problems yet. I can't stop now."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s25-作业/part2-mom-urges-aboo-impatient.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part2-zh.mp3",
+            "en": "/audio/s25-作业/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "妈妈走过来催他——\"快去洗手吃饭，作业吃完再写。\"阿布有点不耐烦——\"知道了！\"",
+            "en": "Mom walked over and urged him. \"Go wash your hands and eat. You can do your homework after dinner.\" Aboo sounded a bit impatient. \"I know!\""
+          },
+          "thoughts": [
+            {
+              "character": "妈妈在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：每次都要催好几遍…… / 英文：I have to remind him every single time..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s25-作业/part3-mom-asks-question-aboo-curious.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part3-zh.mp3",
+            "en": "/audio/s25-作业/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "妈妈深呼吸了一下，换成笑着说——\"阿布，妈妈做了你最爱吃的红烧肉。你能猜猜还有几个菜吗？\"",
+            "en": "Mom took a deep breath, smiled and asked instead, \"Aboo, I made your favorite braised pork for dinner. Can you guess how many other dishes there are?\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：红烧肉？还有别的菜？我想知道…… / 英文：Braised pork? And other dishes too? I wonder what else..."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s25-作业/part4-aboo-guesses-dishes-kitchen.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part4-zh.mp3",
+            "en": "/audio/s25-作业/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布放下铅笔跑进厨房——\"三个！有红烧肉、炒青菜，还有蛋汤！\"妈妈竖起大拇指——\"全猜对了！\"",
+            "en": "Aboo put down his pencil and ran to the kitchen. \"Three! Braised pork, stir-fried greens, and egg soup!\" Mom gave him a thumbs up. \"You got them all right!\""
+          },
+          "thoughts": [
+            {
+              "character": "妈妈在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：问句比命令管用多了，他自己就跑过来了。 / 英文：Asking works so much better than ordering. He came over all by himself."
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s25-作业/part5-aboo-homework-after-dinner.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part5-zh.mp3",
+            "en": "/audio/s25-作业/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "吃完饭，阿布主动坐回书桌前——\"妈妈，我吃饱了，现在继续写作业！\"妈妈在门口笑着看他。",
+            "en": "After dinner, Aboo went back to his desk on his own. \"Mom, I'm full now! I'll keep going with my homework!\" Mom smiled at him from the doorway."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：吃饱了脑子转得快，这道题我会做了！ / 英文：My brain works better after a good meal. I can solve this problem now!"
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s25-作业/part6-aboo-realizes-mom-winks.png",
+          "audio": {
+            "zh": "/audio/s25-作业/part6-zh.mp3",
+            "en": "/audio/s25-作业/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布忽然想起什么，回头问妈妈——\"妈妈，你是故意问我菜有几道，对不对？\"妈妈眨眨眼——\"你觉得呢？\"",
+            "en": "Aboo suddenly thought of something and turned to Mom. \"Mom, did you ask me about the dishes on purpose?\" Mom blinked. \"What do you think?\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：原来妈妈不是命令我吃饭，而是让我自己想来。用问句代替命令，我也想试试！ / 英文：So Mom didn't order me to eat. She made me want to come on my own! Using questions instead of commands — I want to try that too!"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s25-作业"
+    },
+    "s26-合作": {
+      "title": "S26 合作搭积木 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s26-合作/part1-owl-teacher-assigns-task.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part1-zh.mp3",
+            "en": "/audio/s26-合作/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "猫头鹰老师给大家发了一大筐积木——\"今天的任务：两人一组，合作搭一座城堡。\"",
+            "en": "Owl Teacher gave everyone a big basket of blocks. \"Today's task: work in pairs to build a castle together.\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：搭城堡！我要搭一座最酷的！ / 英文：Build a castle! I'm going to build the coolest one!"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/s26-合作/part2-aboo-bossy-spike-ignored.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part2-zh.mp3",
+            "en": "/audio/s26-合作/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布和球球分到了一组。阿布立刻拿起积木说——\"我来搭城墙，你来搭塔楼，就这么定了！\"球球小声说——\"可是……我想搭城墙……\"",
+            "en": "Aboo and Spike were paired up. Aboo grabbed the blocks right away. \"I'll build the walls, you build the towers. That's settled!\" Spike said quietly, \"But... I wanted to build the walls...\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：他都没问我想要搭什么…… / 英文：He didn't even ask what I wanted to build..."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/s26-合作/part3-tower-falls-spike-silent.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part3-zh.mp3",
+            "en": "/audio/s26-合作/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "城堡搭了一半，塔楼老是倒。阿布有点着急——\"你怎么搭的呀，又倒了！\"球球低下头，不想说话了。",
+            "en": "Halfway through, the towers kept falling over. Aboo got frustrated. \"How did you build this? It fell again!\" Spike lowered his head and stopped talking."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：怎么搞的，一点进展都没有…… / 英文：What's going on? We're not making any progress..."
+            }
+          ]
+        },
+        {
+          "id": "part4",
+          "image": "/images/s26-合作/part4-huahua-reminds-aboo-asks-spike.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part4-zh.mp3",
+            "en": "/audio/s26-合作/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "花花路过提醒阿布——\"你问过球球擅长搭什么吗？\"阿布愣了一下，转头问球球——\"球球，你最喜欢搭什么？\"",
+            "en": "Huahua walked by and reminded Aboo, \"Did you ask Spike what he's good at building?\" Aboo paused, then turned to Spike. \"Spike, what do you like building the most?\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：终于有人问我的想法了！ / 英文：Finally someone asked what I think!"
+            }
+          ]
+        },
+        {
+          "id": "part5",
+          "image": "/images/s26-合作/part5-spike-excited-arch-aboo-claps.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part5-zh.mp3",
+            "en": "/audio/s26-合作/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "球球眼睛亮了——\"我最喜欢搭拱桥！我觉得城堡应该有一座漂亮的拱门。\"阿布拍拍手——\"太好了！你搭拱门，我来搭城墙配合你！\"",
+            "en": "Spike's eyes lit up. \"I love building arches! I think the castle should have a beautiful arch gate.\" Aboo clapped his hands. \"That's great! You build the arch, and I'll build the walls to match it!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：原来让他自己说想法，出来的方案比我拍脑袋好多了！ / 英文：So when you let him share his ideas, the plan turns out much better than me just deciding!"
+            }
+          ]
+        },
+        {
+          "id": "part6",
+          "image": "/images/s26-合作/part6-castle-done-teacher-praises.png",
+          "audio": {
+            "zh": "/audio/s26-合作/part6-zh.mp3",
+            "en": "/audio/s26-合作/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "两人的城堡搭好了，有高高的城墙、漂亮的拱门，还有两座对称的塔楼。猫头鹰老师竖起大拇指——\"这是我见过最棒的城堡！\"",
+            "en": "Their castle was finished — tall walls, a beautiful arch gate, and two matching towers. Owl Teacher gave them a big thumbs up. \"This is the best castle I've ever seen!\""
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：合作不是一个人说了算，让队友多说，才能搭出最好的城堡。 / 英文：Cooperation isn't one person making all the decisions. Let your partner talk more, and you'll build the best castle together."
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s26-合作"
+    },
+    "s27-棉花": {
+      "title": "S27 棉花学骑车 — 称赞细小进步",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s27-棉花/part1-mianhua-nervous-bicycle.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part1-zh.mp3",
+            "en": "/audio/s27-棉花/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s27-棉花/part2-mianhua-falls-sad.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part2-zh.mp3",
+            "en": "/audio/s27-棉花/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s27-棉花/part3-aboo-praises-mianhua.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part3-zh.mp3",
+            "en": "/audio/s27-棉花/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s27-棉花/part4-mianhua-rides-two-rounds.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part4-zh.mp3",
+            "en": "/audio/s27-棉花/part4-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s27-棉花/part5-mianhua-rides-joyfully.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part5-zh.mp3",
+            "en": "/audio/s27-棉花/part5-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s27-棉花/part6-mianhua-rides-smoothly-applause.png",
+          "audio": {
+            "zh": "/audio/s27-棉花/part6-zh.mp3",
+            "en": "/audio/s27-棉花/part6-en.mp3"
+          },
+          "narration": {
+            "zh": "S27 棉花学骑车 — 称赞细小进步",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      },
+      "id": "s27-棉花"
+    },
+    "s28-壮壮": {
+      "id": "s28-壮壮",
+      "title": "壮壮最靠谱",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s28-壮壮/s28-part1-teacher-assigns-lantern.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s28-壮壮/s28-part2-bobo-bends-frame.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s28-壮壮/s28-part3-aboo-praises-bobo-frame.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s28-壮壮/s28-part4-aboo-thumbs-up-reliable.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s28-壮壮/s28-part5-cooperate-lantern-growing.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s28-壮壮/s28-part6-lantern-lit-best-in-class.png",
+          "narration": {
+            "zh": "壮壮最靠谱",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "s29-球球": {
+      "id": "s29-球球",
+      "title": "球球怕水",
+      "subtitle": "社交故事",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [
+        "阿布"
+      ],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/s29-球球/s29-part1-bobo-afraid-poolside.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part2",
+          "image": "/images/s29-球球/s29-part2-aboo-calls-bobo-water.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part3",
+          "image": "/images/s29-球球/s29-part3-aboo-crouches-bobo-blocks.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part4",
+          "image": "/images/s29-球球/s29-part4-bobo-eyes-light-encouraged.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part5",
+          "image": "/images/s29-球球/s29-part5-bobo-wades-splashes.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        },
+        {
+          "id": "part6",
+          "image": "/images/s29-球球/s29-part6-bobo-thanks-owl-wisdom.jpg",
+          "narration": {
+            "zh": "球球怕水",
+            "en": ""
+          },
+          "thoughts": []
+        }
+      ],
+      "summary": {
+        "title": "",
+        "socialSteps": []
+      }
+    },
+    "social-02": {
+      "title": "S-02 心里不舒服的时候 — 精炼双语文字稿",
+      "subtitle": "社交故事（认识自己与情绪）",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/social-02/part1-tummy-hurts.png",
+          "audio": {
+            "zh": "/audio/social-02/part1-zh.mp3",
+            "en": "/audio/social-02/part1-en.mp3"
+          },
+          "narration": {
+            "zh": "阿布吃完苹果，肚子突然疼了起来，但他不知道怎么跟别人说。",
+            "en": "Aboo finished eating an apple and his tummy suddenly started hurting, but he didn't know how to tell anyone."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：咦……肚子怎么怪怪的，但又说不上来哪里不对。 / 英文：Hm... my tummy feels weird, but I can't explain what's wrong."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/social-02/part2-cant-explain.png",
+          "audio": {
+            "zh": "/audio/social-02/part2-zh.mp3",
+            "en": "/audio/social-02/part2-en.mp3"
+          },
+          "narration": {
+            "zh": "跳跳喊阿布去爬树，阿布说\"不舒服\"，却说不清到底是哪里疼。",
+            "en": "Pip called Aboo to climb the tree. Aboo said \"I don't feel well,\" but couldn't explain what hurt."
+          },
+          "thoughts": [
+            {
+              "character": "跳跳在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：阿布看起来不太对劲，但我不知道怎么帮他。 / 英文：Aboo doesn't look right, but I don't know how to help."
+            },
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：明明没受伤，为什么就是难受呢？ / 英文：I didn't even get hurt, so why do I feel so bad?"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/social-02/part3-tell-mom.png",
+          "audio": {
+            "zh": "/audio/social-02/part3-zh.mp3",
+            "en": "/audio/social-02/part3-en.mp3"
+          },
+          "narration": {
+            "zh": "妈妈走过来蹲下问阿布哪里不舒服，阿布指指肚子说\"这里疼\"。妈妈给他喝了温水，靠着树休息一会儿就好了。",
+            "en": "Mom walked over and crouched down to ask what was bothering Aboo. He pointed to his tummy and said \"It hurts here.\" Mom gave him warm water to drink and let him rest against the tree until he felt better."
+          },
+          "thoughts": [
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：说出来就好多了！下次不舒服，我要早点告诉大人！ / 英文：I feel so much better after saying it! Next time I'll tell a grown-up sooner! **猫头鹰总结**：身体不舒服的时候，虽然说不清哪里不对，但告诉大人，大人会帮你。 ---"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "身体不舒服的时候，告诉大人，大人会帮助你。",
+        "socialSteps": [
+          "身体不舒服的时候",
+          "大人会帮助你"
+        ]
+      },
+      "id": "social-02"
+    },
+    "social-03": {
+      "title": "S-03 难过的时候可以哭 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/social-03/part1-wilting-flower.png",
+          "narration": {
+            "zh": "花花精心照顾的小花枯萎了，花瓣低垂着，叶子也变黄了。花花蹲在花盆旁边，眼泪一滴一滴往下掉。",
+            "en": "Huahua's carefully tended flower wilted. Petals drooped and leaves turned yellow. Huahua crouched beside the pot, tears rolling down one by one."
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我的小花……我每天都给你浇水，为什么你还是枯了？ / 英文：My little flower... I watered you every day, why did you still wilt?"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/social-03/part2-aboo-comfort.png",
+          "narration": {
+            "zh": "阿布走过来轻声说——\"别哭了。\"花花摇摇头——\"我想哭，哭出来心里好受一点。\"",
+            "en": "Aboo walked over and whispered, \"Don't cry.\" Huahua shook her head. \"I want to cry. Crying makes me feel better.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：我想哭就哭，哭出来好受一点。 / 英文：I want to cry. Crying makes me feel better."
+            },
+            {
+              "character": "阿布在想",
+              "characterColor": "#E8985E",
+              "text": "中文：花花想哭就让她哭吧，她不是在闹，她只是很难过。 / 英文：If Huahua wants to cry, let her. She's not being difficult, she's just sad."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/social-03/part3-feel-better.png",
+          "narration": {
+            "zh": "花花擦擦眼泪，站起来深呼了一口气——\"谢谢你陪着我。\"阿布拍拍花花的肩膀——\"难过的时候，哭一哭没关系的。\"",
+            "en": "Huahua wiped her tears, stood up, and took a deep breath. \"Thanks for staying with me.\" Aboo gently patted her shoulder. \"It's okay to cry when you're sad.\""
+          },
+          "thoughts": [
+            {
+              "character": "花花在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：哭完了好像没那么难过了，明天我种一盆新的！ / 英文：After crying, I don't feel so bad. Tomorrow I'll plant a new one! **猫头鹰总结**：难过的时候可以哭，哭出来心里会好受一些。"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "难过的时候可以哭，哭不是软弱，是让心里好受一点的方式。",
+        "socialSteps": [
+          "难过的时候可以哭",
+          "哭不是软弱",
+          "是让心里好受一点的方式"
+        ]
+      },
+      "id": "social-03"
+    },
+    "social-04": {
+      "title": "S-04 害怕不丢人 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/social-04/part1-afraid-shot.png",
+          "narration": {
+            "zh": "学校体检，轮到球球打针了。球球抱着手臂往后退，眼睛紧紧闭着，身体发抖。",
+            "en": "It was school health check day, and it was Spike's turn for a shot. Spike clutched his arms and stepped backward, eyes squeezed shut, body trembling."
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：好害怕……针好长，一定很疼…… / 英文：I'm so scared... The needle is so long, it must hurt a lot."
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/social-04/part2-zhuangzhuang-afraid.png",
+          "narration": {
+            "zh": "壮壮走过来小声说——\"其实我也有点怕。\"球球睁开眼——\"你这么大胆子也怕？\"壮壮挠挠头——\"害怕不丢人，每个人都有害怕的东西。\"",
+            "en": "Zhuangzhuang walked over and whispered, \"Actually, I'm a bit scared too.\" Spike opened his eyes wide. \"You're so brave and you're scared?\" Zhuangzhuang scratched his head. \"Being scared isn't embarrassing. Everyone has things they're afraid of.\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来壮壮也会害怕，那我不是胆小鬼。 / 英文：Even Zhuangzhuang gets scared? Then I'm not a coward."
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/social-04/part3-brave-together.png",
+          "narration": {
+            "zh": "球球和壮壮手拉手一起走到护士面前，球球伸出胳膊闭上眼——\"一下就好了。\"打完针球球睁开眼——\"嘿，没那么疼嘛！\"",
+            "en": "Spike and Zhuangzhuang held hands and walked to the nurse together. Spike extended his arm and closed his eyes. \"It'll be over in a second.\" After the shot, Spike opened his eyes. \"Hey, that didn't hurt much!\""
+          },
+          "thoughts": [
+            {
+              "character": "球球在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：害怕不丢人，勇敢去做就好了！ / 英文：Being scared isn't embarrassing. Just be brave and do it! **猫头鹰总结**：每个人都有害怕的东西，害怕不丢人。"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "每个人都有害怕的时候，害怕不丢人，勇敢去做就好了。",
+        "socialSteps": [
+          "每个人都有害怕的时候",
+          "害怕不丢人",
+          "勇敢去做就好了"
+        ]
+      },
+      "id": "social-04"
+    },
+    "social-05": {
+      "title": "S-05 开心可以分享 — 精炼双语文字稿",
+      "subtitle": "",
+      "principle": "",
+      "difficulty": 1,
+      "characters": [],
+      "parts": [
+        {
+          "id": "part1",
+          "image": "/images/social-05/part1-yummy-cake.png",
+          "narration": {
+            "zh": "妈妈做了一个草莓蛋糕，小豆咬了一口，眼睛一下子亮了起来——\"妈妈！这个蛋糕太好吃了！\"",
+            "en": "Mom made a strawberry cake. Xiaodou took a bite and his eyes lit up. \"Mom, this cake is so yummy!\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：这是我吃过最好吃的蛋糕！好开心！ / 英文：This is the best cake I've ever had! I'm so happy!"
+            }
+          ]
+        },
+        {
+          "id": "part2",
+          "image": "/images/social-05/part2-share-cake.png",
+          "narration": {
+            "zh": "小豆端着蛋糕跑去找阿布——\"哥哥！你快尝尝！\"阿布咬了一口——\"哇，真的好好吃！\"小豆笑得眯起了眼。",
+            "en": "Xiaodou ran to find Aboo with the cake. \"Brother, try this!\" Aboo took a bite. \"Wow, it's really delicious!\" Xiaodou smiled so hard his eyes squeezed shut."
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：看哥哥也喜欢，我比一个人吃还开心！ / 英文：Seeing Brother like it too makes me even happier than eating alone!"
+            }
+          ]
+        },
+        {
+          "id": "part3",
+          "image": "/images/social-05/part3-hug-mom.png",
+          "narration": {
+            "zh": "妈妈看着两个孩子笑——\"开心的事情说出来，就会变成两份开心哦。\"小豆抱住妈妈——\"妈妈，我也要分给你！\"",
+            "en": "Mom watched the two children smile. \"When you share something happy, it becomes double the happiness.\" Xiaodou hugged Mom. \"Mom, I want to share with you too!\""
+          },
+          "thoughts": [
+            {
+              "character": "小豆在想",
+              "characterColor": "#5B9BD5",
+              "text": "中文：原来开心越分享越多！ / 英文：So happiness grows the more you share it! **猫头鹰总结**：开心的事情说出来，就会变成更多的开心。"
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "title": "开心的事情分享给别人，快乐就会越来越多。",
+        "socialSteps": [
+          "开心的事情分享给别人",
+          "快乐就会越来越多"
+        ]
+      },
+      "id": "social-05"
+    }
+  }
+}

@@ -1,0 +1,635 @@
+# 刘费曼的科学课 — feiman-v3 架构设计文档
+
+> 架构师审查 · 2026-05-30
+> 标杆参考：得到App、洪恩识字、美团、小红书、可汗学院
+
+---
+
+## 一、产品定位与端规划
+
+### 1.1 产品定位
+
+面向K-12阶段的STEM科学教育平台，包含5大内容板块：
+数学课（视频）、科学可视化（3D交互）、社交训练（互动绘本）、童画廊（名画鉴赏）、内功养生法（绘本卡片）。
+
+### 1.2 端规划
+
+| 优先级 | 端形态 | 技术方案 | 定位 |
+|--------|--------|---------|------|
+| 1 | **Web网站** | React SPA（当前） | 主战场，全功能，SEO引流 |
+| 2 | **PWA** | vite-plugin-pwa + Service Worker | "添加到桌面"，接近原生体验，离线可用 |
+| 3 | **Android/iOS App** | **Capacitor** 打包当前Web代码 | 一套代码直接变原生App，调用推送/通知等原生能力 |
+| 4 | **微信小程序** | 单独项目（非套壳） | 引流钩子，只放视频+轻交互 |
+
+**核心决策：Web是源，App是壳。80%内容用WebView渲染，壳层用Native（得到App经验）。**
+
+---
+
+## 二、当前功能 vs 未来功能全景
+
+### 2.1 功能分期
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      第一阶段（当前）                          │
+│  5个内容板块 + 底部Tab + 播放/列表 + 基础分享链接              │
+└──────────────────────────────────────────────────────────────┘
+                              ↓
+┌──────────────────────────────────────────────────────────────┐
+│                    第二阶段（3-6个月后）                       │
+│  + 个人中心（学习记录、成就徽章、连续打卡）                      │
+│  + 每日互动（盲盒/名言/心情记录）                              │
+│  + 分享海报（Canvas生成，朋友圈传播）                          │
+│  + PWA离线可用                                                │
+└──────────────────────────────────────────────────────────────┘
+                              ↓
+┌──────────────────────────────────────────────────────────────┐
+│                    第三阶段（6-12个月后）                      │
+│  + 用户注册/登录（手机号/微信）                                │
+│  + 个人设置（头像/昵称/学习偏好）                              │
+│  + 多端同步（学习记录云端同步）                                │
+│  + 家长端（查看孩子学习报告）                                  │
+│  + App推送通知                                                │
+│  + 微信小程序                                                 │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 播放页右侧扩展区（你提到的隐藏界面）
+
+**设计：播放页右上角除了☰内容菜单，再加一个👤/📊按钮。**
+
+```
+播放页顶栏布局（改进后）：
+
+┌─────────────────────────────────────────────────┐
+│  ←返回    内容标题              📊个人  ☰菜单    │
+└─────────────────────────────────────────────────┘
+              ↑                    ↑
+         从Tab点进来时          新加的入口
+         显示←返回列表          点击弹出侧边栏
+```
+
+**📊按钮点击 → 右侧滑出侧边栏（Drawer），包含：**
+
+| 模块 | 内容 | 阶段 |
+|------|------|------|
+| **今日学习** | 今天看了几个内容、学了多久 | 第二阶段 |
+| **学习轨迹** | 最近7天/30天的学习记录列表 | 第二阶段 |
+| **成就徽章** | 已获得的徽章、进度条 | 第二阶段 |
+| **每日盲盒** | 点击抽取今日鼓励名言 | 第二阶段 |
+| **心情记录** | 今天学了什么感受（写一句话） | 第二阶段 |
+| **我的收藏** | 收藏的内容（⭐标记） | 第三阶段 |
+| **个人设置** | 头像/昵称/偏好设置 | 第三阶段 |
+
+**架构预留要点：**
+1. 顶栏右侧预留一个 `extraButton` 插槽，当前不渲染，第二阶段加
+2. 侧边栏组件 `ProfileDrawer` 现在创建空壳，后续填充
+3. 学什么数据、写什么感受 — 数据层现在设计好，UI后加
+
+---
+
+## 三、22个架构问题审查
+
+### 第一类：基础架构
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 1 | 无路由，URL永远不变 | 致命 | React Router，每个内容独立URL |
+| 2 | 5板块全量加载 | 高 | React.lazy 按需加载 |
+| 3 | 5板块重复实现逻辑 | 高 | 提取共享层 |
+| 4 | JSON写错=整个板块白屏 | 致命 | ErrorBoundary + 数据校验 + 降级 |
+
+### 第二类：分享与推广
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 5 | 分享到微信是空白卡片 | 高 | 动态OG meta + 微信JSSDK |
+| 6 | 无法生成分享海报 | 高 | Canvas海报生成 |
+| 7 | 无分享追踪 | 中 | 分享链接带referrer参数 |
+
+### 第三类：用户体验与留存
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 8 | 没有学习记录系统 | 高 | useLearningTracker hook |
+| 9 | 没有成就/激励系统 | 中 | 星星/徽章/连续打卡 |
+| 10 | 没有PWA离线支持 | 高 | Service Worker预缓存 |
+| 11 | 没有通知/提醒 | 中 | App端Capacitor本地通知 |
+| 12 | **没有个人中心入口** | 高 | 播放页右侧📊按钮 + ProfileDrawer |
+| 13 | **没有每日互动机制** | 中 | 盲盒/名言组件（预留接口） |
+| 14 | **没有用户反馈通道** | 中 | 意见反馈入口（预留） |
+
+### 第四类：数据与缓存
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 15 | 图片音频无版本号 | 高 | manifest.json版本号 |
+| 16 | localStorage无约束 | 中 | zustand partialize严格限制 |
+| 17 | JSON无TypeScript类型校验 | 中 | src/types/ + zod校验 |
+
+### 第五类：App端适配
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 18 | iframe在App里体验差 | 高 | 后续react-three-fiber重写 |
+| 19 | 没有Capacitor集成准备 | 中 | 目录预留 + 环境检测代码 |
+
+### 第六类：多Agent协作
+
+| # | 问题 | 严重度 | 解决方案 |
+|---|------|--------|---------|
+| 20 | 没有Agent操作手册 | 高 | content/README.md |
+| 21 | **没有用户系统预留** | 高 | 数据模型预留userId字段 |
+| 22 | **没有设置系统预留** | 中 | store.ts预留settings对象 |
+
+---
+
+## 四、完整目录结构（含未来功能预留）
+
+```
+feiman-v3/
+├── capacitor.config.ts              ← 预留，App时激活
+├── vite.config.ts
+├── index.html                       ← 基础OG标签
+│
+├── public/
+│   ├── manifest.json                ← 全局版本号
+│   ├── robots.txt                   ← SEO
+│   ├── icons/                       ← PWA图标
+│   └── data/                        ← Agent只改这里
+│       ├── math.json
+│       ├── science.json
+│       ├── social-scenes.json
+│       ├── gallery.json
+│       ├── neimen.json
+│       ├── scenes/
+│       └── README.md                ← Agent操作手册
+│
+└── src/
+    ├── main.tsx                      ← React入口
+    ├── App.tsx                       ← 路由壳层 + TabBar
+    ├── router.tsx                    ← 路由定义
+    ├── store.ts                      ← Zustand（全局偏好+设置预留）
+    ├── index.css
+    │
+    ├── types/                        ← TypeScript类型定义
+    │   ├── math.ts
+    │   ├── science.ts
+    │   ├── social.ts
+    │   ├── gallery.ts
+    │   ├── neimen.ts
+    │   └── learning.ts              ← 学习记录/成就/用户类型
+    │
+    ├── shared/                       ← 共享组件和hooks
+    │   ├── components/
+    │   │   ├── BoardLayout.tsx       ← 播放页通用壳
+    │   │   ├── ContentMenu.tsx        ← ☰菜单
+    │   │   ├── ErrorBoundary.tsx      ← 错误边界
+    │   │   ├── LoadingScreen.tsx
+    │   │   ├── EmptyState.tsx
+    │   │   ├── ShareButton.tsx        ← 分享按钮（第二阶段）
+    │   │   └── ProfileDrawer/         ← 个人中心侧边栏（第二阶段）
+    │   │       ├── index.tsx
+    │   │       ├── TodayCard.tsx      ← 今日学习卡片
+    │   │       ├── HistoryList.tsx    ← 学习轨迹
+    │   │       ├── BadgeGrid.tsx      ← 成就徽章
+    │   │       ├── DailyBox.tsx       ← 每日盲盒
+    │   │       └── MoodInput.tsx      ← 心情记录
+    │   ├── hooks/
+    │   │   ├── useContentLoader.ts
+    │   │   ├── usePlayerState.ts
+    │   │   ├── useLearningTracker.ts ← 学习记录追踪
+    │   │   ├── useShare.ts           ← 分享功能
+    │   │   ├── useVersionCheck.ts
+    │   │   └── useDailyBox.ts        ← 每日盲盒逻辑
+    │   └── utils/
+    │       ├── env.ts                ← 环境检测（Web/App）
+    │       ├── share.ts              ← 海报生成
+    │       ├── tracker.ts            ← 学习数据
+    │       ├── validator.ts          ← JSON校验
+    │       └── dailyQuotes.ts        ← 名言库（每日盲盒用）
+    │
+    └── boards/                       ← 各板块（React.lazy懒加载）
+        ├── MathBoard/
+        │   ├── index.tsx              ← 路由入口
+        │   ├── Player.tsx
+        │   └── List.tsx
+        ├── ScienceBoard/
+        ├── SocialBoard/
+        ├── GalleryBoard/
+        └── NeimenBoard/
+```
+
+---
+
+## 五、路由设计（含未来页面）
+
+```
+/feiman/                              → 重定向到 /feiman/math
+/feiman/math                          → 数学课列表
+/feiman/math/:lessonId                → 数学课播放页
+/feiman/science                       → 科学可视化列表
+/feiman/science/:pageId               → 科学可视化播放页
+/feiman/social                        → 社交训练列表
+/feiman/social/:sceneId               → 社交训练播放页
+/feiman/gallery                       → 童画廊列表
+/feiman/gallery/:artworkId            → 童画廊播放页
+/feiman/neimen                        → 内功养生法列表
+/feiman/neimen/:cardId                → 内功养生法播放页
+
+/* ===== 第二阶段新增路由 ===== */
+/feiman/profile                       → 个人中心（全屏页面）
+/feiman/profile/history               → 学习记录
+/feiman/profile/badges                → 成就徽章
+/feiman/profile/settings              → 设置（第三阶段）
+
+/* ===== 第三阶段新增路由 ===== */
+/feiman/login                         → 登录/注册页
+/feiman/login?redirect=/feiman/math   → 登录后跳转
+```
+
+---
+
+## 六、数据模型设计（含未来用户系统预留）
+
+### 6.1 学习记录
+
+```typescript
+// src/types/learning.ts
+
+/** 单次学习记录 */
+interface LearningRecord {
+  id: string              // 唯一ID：boardId + contentId + timestamp
+  boardId: 'math' | 'science' | 'social' | 'gallery' | 'neimen'
+  contentId: string       // "m1-03" / "s01" / "art_5"
+  contentTitle: string
+  boardTitle: string      // "数学课" / "社交训练"
+  completed: boolean      // 是否完整学完
+  duration: number        // 学习时长（秒）
+  startedAt: number       // 开始时间戳
+  finishedAt: number      // 结束时间戳
+}
+
+/** 每日学习汇总 */
+interface DailySummary {
+  date: string            // "2026-05-30"
+  totalDuration: number   // 当日总学习时长
+  contentCount: number    // 学了几个内容
+  records: LearningRecord[]
+  mood?: string           // 当日心情（可选）
+  dailyQuote?: string     // 当日盲盒名言
+}
+
+/** 成就状态 */
+interface AchievementState {
+  totalLearned: number
+  totalDuration: number
+  streakDays: number          // 连续学习天数
+  longestStreak: number       // 最长连续天数
+  stars: number
+  badges: string[]            // 徽章ID列表
+  lastLearnDate: string
+}
+
+/** 用户设置（第三阶段） */
+interface UserSettings {
+  nickname: string
+  avatar: string
+  preferredLang: 'zh' | 'en'
+  autoPlay: boolean           // 自动播放下一个
+  dailyReminder: boolean      // 每日提醒（App端）
+  reminderTime: string        // "19:00"
+}
+```
+
+### 6.2 名言库（每日盲盒用）
+
+```typescript
+// src/shared/utils/dailyQuotes.ts
+
+const QUOTES = [
+  { text: "每天进步一点点，一年后你会感谢今天的自己。", author: "" },
+  { text: "学习不是为了考试，是为了让未来的你更有选择。", author: "" },
+  { text: "你今天学到的知识，是别人偷不走的财富。", author: "" },
+  { text: "好奇心是最好的老师，你今天又发现了什么？", author: "" },
+  { text: "不怕学得慢，就怕你不开始。你已经开始了！", author: "" },
+  { text: "世界上没有笨孩子，只有还没找到方法的孩子。", author: "" },
+  { text: "你每学会一个知识，大脑就多了一条高速公路。", author: "" },
+  { text: "今天的学习，是给未来自己最好的礼物。", author: "" },
+  { text: "科学家也是从"为什么"开始的，保持好奇心！", author: "" },
+  { text: "你比昨天更厉害了，这就是进步。", author: "" },
+  // ... 30-50条，按日期取模循环
+]
+
+export function getDailyQuote(date?: Date): { text: string; author: string } {
+  const d = date || new Date()
+  const dayOfYear = Math.floor((d.getTime() - new Date(d.getFullYear(), 0, 0).getTime()) / 86400000)
+  return QUOTES[dayOfYear % QUOTES.length]
+}
+```
+
+---
+
+## 七、播放页顶栏扩展设计（核心预留）
+
+### 7.1 顶栏布局演进
+
+```
+第一阶段（当前）：
+┌──────────────────────────────────────────────┐
+│  ←返回    内容标题                ☰菜单      │
+└──────────────────────────────────────────────┘
+
+第二阶段（加个人中心入口）：
+┌──────────────────────────────────────────────┐
+│  ←返回    内容标题        📊个人  ☰菜单      │
+└──────────────────────────────────────────────┘
+
+第三阶段（加设置入口，可选）：
+┌──────────────────────────────────────────────┐
+│  ←返回    内容标题   ⚙️  📊个人  ☰菜单      │
+└──────────────────────────────────────────────┘
+```
+
+### 7.2 BoardLayout 组件接口预留
+
+```typescript
+interface BoardLayoutProps {
+  title?: string
+  onBack: () => void
+  onMenu?: () => void
+  dark?: boolean
+  footer?: ReactNode
+  
+  // 预留：右侧额外按钮区域
+  extraButtons?: ReactNode[]     // 第二阶段加📊按钮
+  
+  // 预留：侧边栏
+  sidebar?: ReactNode            // ProfileDrawer内容
+  sidebarOpen?: boolean
+  onSidebarClose?: () => void
+}
+```
+
+### 7.3 ProfileDrawer 侧边栏（第二阶段）
+
+**从右侧滑出的抽屉组件，包含：**
+
+```
+┌─────────────────────────┐
+│  👤 个人中心         ✕ │
+├─────────────────────────┤
+│                         │
+│  📊 今日学习            │
+│  ┌───────────────────┐  │
+│  │ 已学 3 个内容      │  │
+│  │ 学习时长 25 分钟   │  │
+│  │ 🔥 连续 5 天      │  │
+│  └───────────────────┘  │
+│                         │
+│  🎁 每日盲盒            │
+│  ┌───────────────────┐  │
+│  │ "每天进步一点点，  │  │
+│  │  一年后你会感谢    │  │
+│  │  今天的自己。"     │  │
+│  │              [换一条]│  │
+│  └───────────────────┘  │
+│                         │
+│  📝 今日心情            │
+│  ┌───────────────────┐  │
+│  │ 今天学了什么感受？  │  │
+│  │ [____________] [保存]│  │
+│  └───────────────────┘  │
+│                         │
+│  🏆 成就徽章            │
+│  ┌───────────────────┐  │
+│  │ ⭐×15  🔥×5  🦊×3  │  │
+│  │ [查看全部 →]        │  │
+│  └───────────────────┘  │
+│                         │
+│  📚 最近学习            │
+│  ┌───────────────────┐  │
+│  │ ▸ 第3课 数键入门   │  │
+│  │ ▸ S01 积木城堡     │  │
+│  │ ▸ 冬日晚晴的森林   │  │
+│  │ [查看全部 →]        │  │
+│  └───────────────────┘  │
+│                         │
+└─────────────────────────┘
+```
+
+---
+
+## 八、Zustand Store 设计（含未来用户系统预留）
+
+```typescript
+// src/store.ts
+
+interface AppState {
+  // === 当前 ===
+  activeBoard: BoardId
+  boardState: Record<string, BoardLocalState>
+  setActiveBoard: (id: BoardId) => void
+  setBoardState: (boardId: string, state: any) => void
+  
+  // === 第二阶段预留 ===
+  learningRecords: LearningRecord[]
+  achievement: AchievementState
+  addLearningRecord: (record: LearningRecord) => void
+  updateAchievement: () => void          // 自动从records计算
+  
+  // === 第三阶段预留 ===
+  user: UserSettings | null             // null = 未登录
+  isLoggedIn: boolean
+  login: (user: UserSettings) => void
+  logout: () => void
+  updateSettings: (settings: Partial<UserSettings>) => void
+  
+  // === 通用 ===
+  settings: {
+    version: string                       // 当前内容版本号
+    lastSyncAt: number                    // 上次同步时间
+  }
+}
+
+// localStorage只存必要字段
+partialize: (s) => ({
+  activeBoard: s.activeBoard,
+  boardState: s.boardState,
+  achievement: s.achievement,            // 成就需要持久化
+  settings: s.settings,
+  // 学习记录：只存最近30条（防止localStorage爆满）
+  learningRecords: s.learningRecords.slice(-30),
+  // 用户信息：第三阶段才需要持久化
+  user: s.user,
+})
+```
+
+---
+
+## 九、分享海报设计（第二阶段）
+
+### 9.1 海报模板
+
+```
+┌──────────────────────────────────┐
+│                                  │
+│         [内容封面图]              │
+│                                  │
+│     "第3课 以5为基准的数键入门"    │
+│         刘费曼的科学课             │
+│                                  │
+│  ┌────────────────────────────┐  │
+│  │  ⭐ 已学习 15 课            │  │
+│  │  🔥 连续学习 7 天           │  │
+│  │  🦊 完成 8 个社交场景       │  │
+│  └────────────────────────────┘  │
+│                                  │
+│        ┌────────┐                │
+│        │ 二维码  │                │
+│        │        │                │
+│        └────────┘                │
+│    扫码一起学科学                  │
+│  science.timebook.xin            │
+└──────────────────────────────────┘
+```
+
+### 9.2 海报生成流程
+
+```typescript
+// src/shared/utils/share.ts
+
+export async function generatePoster(params: {
+  coverImage: string       // 内容封面图URL
+  title: string            // 内容标题
+  boardTitle: string       // 板块名称
+  stats: {
+    totalLearned: number
+    streakDays: number
+    socialCount: number
+  }
+  qrCodeUrl: string        // 二维码图片URL
+}): Promise<string> {      // 返回 base64 图片数据
+
+  const canvas = document.createElement('canvas')
+  canvas.width = 750
+  canvas.height = 1334
+  const ctx = canvas.getContext('2d')!
+
+  // 1. 绘制背景渐变
+  const gradient = ctx.createLinearGradient(0, 0, 0, 1334)
+  gradient.addColorStop(0, '#1a1a2e')
+  gradient.addColorStop(1, '#16213e')
+  ctx.fillStyle = gradient
+  ctx.fillRect(0, 0, 750, 1334)
+
+  // 2. 绘制封面图（圆角裁剪）
+  const coverImg = await loadImage(params.coverImage)
+  drawRoundedImage(ctx, coverImg, 50, 100, 650, 366, 20)
+
+  // 3. 绘制标题
+  ctx.fillStyle = '#ffffff'
+  ctx.font = 'bold 36px "PingFang SC", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText(params.title, 375, 520)
+
+  // 4. 绘制品牌名
+  ctx.fillStyle = 'rgba(255,255,255,0.6)'
+  ctx.font = '24px "PingFang SC", sans-serif'
+  ctx.fillText('刘费曼的科学课', 375, 560)
+
+  // 5. 绘制学习数据卡片
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'
+  roundRect(ctx, 100, 620, 550, 200, 20)
+  ctx.fill()
+
+  ctx.fillStyle = '#ffffff'
+  ctx.font = '28px "PingFang SC", sans-serif'
+  ctx.textAlign = 'left'
+  ctx.fillText(`⭐ 已学习 ${params.stats.totalLearned} 课`, 150, 680)
+  ctx.fillText(`🔥 连续学习 ${params.stats.streakDays} 天`, 150, 730)
+  ctx.fillText(`🦊 完成 ${params.stats.socialCount} 个社交场景`, 150, 780)
+
+  // 6. 绘制二维码
+  const qrImg = await loadImage(params.qrCodeUrl)
+  ctx.drawImage(qrImg, 300, 860, 150, 150)
+
+  // 7. 绘制底部文字
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'
+  ctx.font = '20px "PingFang SC", sans-serif'
+  ctx.textAlign = 'center'
+  ctx.fillText('扫码一起学科学', 375, 1060)
+  ctx.fillText('science.timebook.xin', 375, 1090)
+
+  return canvas.toDataURL('image/jpeg', 0.9)
+}
+```
+
+---
+
+## 十、实施计划
+
+### P0 — 现在做（2.5小时）
+
+| # | 改动 | 解决的问题 |
+|---|------|-----------|
+| 1 | React Router 路由系统 | #1 |
+| 2 | React.lazy 懒加载 | #2 |
+| 3 | 共享层提取（BoardLayout + hooks） | #3 |
+| 4 | ErrorBoundary | #4 |
+| 5 | OG动态标签 | #5 |
+| 6 | 数据fetch容错 | #4 |
+| 7 | manifest.json版本号 | #15 |
+
+### P1 — 尽快做（3小时）
+
+| # | 改动 | 解决的问题 |
+|---|------|-----------|
+| 8 | TypeScript类型定义 | #17 |
+| 9 | PWA + Service Worker | #10 |
+| 10 | useLearningTracker | #8 |
+| 11 | localStorage状态约束 | #16 |
+| 12 | Agent操作手册 | #20 |
+| 13 | Capacitor目录预留 | #19 |
+| 14 | 分享海报生成 | #6 |
+| 15 | **播放页顶栏extraButtons预留** | #12 |
+| 16 | **ProfileDrawer空壳组件** | #12 |
+| 17 | **每日盲盒名言库** | #13 |
+| 18 | **学习记录类型定义** | #8 |
+
+### P2 — 后续迭代
+
+| # | 改动 | 阶段 |
+|---|------|------|
+| 19 | 成就徽章UI | 第二阶段 |
+| 20 | 个人中心全屏页面 | 第二阶段 |
+| 21 | 心情记录功能 | 第二阶段 |
+| 22 | 意见反馈入口 | 第二阶段 |
+| 23 | 用户注册/登录 | 第三阶段 |
+| 24 | 个人设置页面 | 第三阶段 |
+| 25 | 多端同步 | 第三阶段 |
+| 26 | App推送通知 | 第三阶段 |
+| 27 | 微信小程序 | 第三阶段 |
+| 28 | iframe→react-three-fiber | 第三阶段 |
+
+---
+
+## 十一、技术决策记录（ADR）
+
+### ADR-1: Capacitor做App（而非RN/Flutter）
+**理由：** 当前已是React Web项目，Capacitor零改造即可打包。得到App经验：80%内容用WebView。教育产品内容更新频繁，WebView可热更新。
+
+### ADR-2: localStorage而非后端数据库
+**理由：** 零服务器成本，零登录门槛。第一阶段重点是内容不是用户系统。换设备丢失数据的问题第二阶段加登录后解决。
+
+### ADR-3: 内容与代码彻底分离
+**理由：** Agent只需改JSON，不需要懂React。新增内容不需要重新编译。多Agent并行不冲突。
+
+### ADR-4: 社交训练功能100%复刻
+**理由：** 用户花了很多时间调整交互细节。技术栈变了必须重写代码，但交互体验不能丢。
+
+### ADR-5: 播放页右侧预留📊入口
+**理由：** 你提到的个人中心/学习记录/每日互动功能，需要一个统一的入口。放在播放页右上角，所有板块都能访问，不需要每个板块单独加。第二阶段加按钮，第三阶段加设置。
+
+### ADR-6: ProfileDrawer而非全屏页面
+**理由：** 侧边栏比全屏页面更轻量，不打断当前学习体验。用户看一眼学习记录可以关掉继续学。全屏个人中心页面作为第二阶段更深层的入口。
