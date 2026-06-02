@@ -58,6 +58,17 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
       {/* 底部 TabBar — shrink-0 固定底部，永远不随内容滚动 */}
       <div className="shrink-0 relative z-10" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <TabBar onTabChange={handleTabChange} />
+        {/* 刷新按钮 — 用于代码更新后手动刷新PWA */}
+        <button
+          onClick={() => window.location.reload()}
+          className="absolute right-3 top-2 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+          title="刷新页面"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+            <path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+          </svg>
+        </button>
         {extraButtons && (
           <div className="absolute right-12 bottom-2">{extraButtons}</div>
         )}
