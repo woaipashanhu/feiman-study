@@ -123,7 +123,7 @@ function CategoryCard({
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 3D场景预览区 — 72% 上半部,封面占主导(用户反馈去掉 iframe→文字的渐变) */}
+      {/* 3D场景预览区 — 72% 上半部,封面占主导(用户反馈文字区"还是偏厚") */}
       <div className="absolute inset-x-0 top-0 h-[72%] overflow-hidden">
         {hasPreview ? (
           <iframe
@@ -147,6 +147,9 @@ function CategoryCard({
             }}
           />
         )}
+
+        {/* 顶部渐变遮罩 */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent" />
 
         {/* 场景数量角标 — 内敛样式:小号 + 半透明胶囊 */}
         <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-[11px] text-white/85 font-medium tracking-wide">
