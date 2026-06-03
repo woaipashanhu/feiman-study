@@ -160,6 +160,27 @@ if [ -d "${TMP_DEPLOY}/data" ]; then
   cp -rf "${TMP_DEPLOY}/data/"* "${REMOTE_DIR}/data/" 2>/dev/null || true
 fi
 
+# 同步 science/ 目录（Three.js 场景 HTML,iframe 加载）
+if [ -d "${TMP_DEPLOY}/science" ]; then
+  echo "  🔬 同步 science/ 目录..."
+  mkdir -p "${REMOTE_DIR}/science"
+  cp -rf "${TMP_DEPLOY}/science/"* "${REMOTE_DIR}/science/" 2>/dev/null || true
+fi
+
+# 同步 gallery/ 目录（童画廊图片/音频）
+if [ -d "${TMP_DEPLOY}/gallery" ]; then
+  echo "  🖼️  同步 gallery/ 目录..."
+  mkdir -p "${REMOTE_DIR}/gallery"
+  cp -rf "${TMP_DEPLOY}/gallery/"* "${REMOTE_DIR}/gallery/" 2>/dev/null || true
+fi
+
+# 同步 images/ 目录（场景缩略图等）
+if [ -d "${TMP_DEPLOY}/images" ]; then
+  echo "  🎨 同步 images/ 目录..."
+  mkdir -p "${REMOTE_DIR}/images"
+  cp -rf "${TMP_DEPLOY}/images/"* "${REMOTE_DIR}/images/" 2>/dev/null || true
+fi
+
 # 同步 favicon / manifest 等静态资源
 for static_file in favicon.svg manifest.json robots.txt; do
   if [ -f "${TMP_DEPLOY}/${static_file}" ]; then
