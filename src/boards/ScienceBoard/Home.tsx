@@ -1,9 +1,10 @@
 /**
  * ============================================================
- *  科学可视化 — 卡片主页
+ *  科学可视化 — 卡片主页（动态3D预览版）
  *
- *  展示4大分类卡片，点击进入分类列表页
- *  右上角 📬 消息按钮（盲盒+个人+设置）
+ *  分类卡片内嵌 iframe 实时预览3D场景
+ *  每个分类展示其下第一个场景的动态缩略图
+ *  点击卡片进入分类列表页
  * ============================================================
  */
 import { useNavigate } from 'react-router-dom'
@@ -92,6 +93,10 @@ export default function ScienceHome() {
 
 function CategoryCard({ category }: { category: ScienceCategory }) {
   const navigate = useNavigate()
+  
+  // 取该分类下第一个场景作为预览
+  const previewScene = category.scenes?.[0]
+  const hasPreview = previewScene?.type === 'iframe' && previewScene?.src
 
   return (
     <motion.button
@@ -102,31 +107,64 @@ function CategoryCard({ category }: { category: ScienceCategory }) {
       className="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-sm hover:shadow-lg transition-shadow text-left group"
       style={{ backgroundColor: category.color + '10' }}
     >
-      {/* 背景装饰 */}
-      <div
-        className="absolute inset-0 opacity-10 group-hover:opacity-15 transition-opacity"
-        style={{
-          background: `radial-gradient(circle at 80% 20%, ${category.color}40 0%, transparent 60%)`,
-        }}
-      />
+      {/* 3D场景预览区（上半部分） */}
+      <div className="absolute inset-x-0 top-0 h-[55%] overflow-hidden bg-gray-900">
+        {hasPreview ? (
+          <iframe
+            src={previewScene.src}
+            className="w-full h-full border-0"
+            style={{
+              // 缩小渲染：通过scale让内容变小，再调整尺寸填满容器
+              transform: 'scale(0.35)',
+              transformOrigin: 'top left',
+              width: '286%',  // 100/0.35 ≈ 286
+              height: '286%',
+              pointerEvents: 'none', // 禁止交互，点击穿透到卡片
+            }}
+            loading="lazy"
+            title={previewScene.title}
+          />
+        ) : (
+          /* 无预览时的渐变背景 */
+          <div
+            className="w-full h-full"
+            style={{
+              background: `radial-gradient(circle at 50% 50%, ${category.color}30 0%, ${category.color}10 100%)`,
+            }}
+          />
+        )}
+        
+        {/* 顶部渐变遮罩（让文字区域更清晰） */}
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-gray-900/80 to-transparent" />
+        
+        {/* 场景数量角标 */}
+        <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-sm text-[10px] text-white/90 font-medium">
+          {category.scenes?.length || 0} 个场景
+        </div>
+      </div>
 
-      {/* 内容 */}
-      <div className="relative h-full flex flex-col p-4">
+      {/* 内容区（下半部分） */}
+      <div className="absolute inset-x-0 bottom-0 h-[45%] flex flex-col p-3 pt-2">
         {/* 图标 */}
         <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-auto"
+          className="w-9 h-9 rounded-lg flex items-center justify-center text-lg mb-1.5"
           style={{ backgroundColor: category.color + '18', color: category.color }}
         >
           {category.icon}
         </div>
 
-        {/* 底部信息 */}
-        <div>
-          <h3 className="text-base font-bold text-text mb-1">{category.name}</h3>
-          <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
-            {category.scenes.length} 个探索场景
+        {/* 标题和描述 */}
+        <h3 className="text-sm font-bold text-text mb-0.5">{category.name}</h3>
+        <p className="text-[11px] text-text-secondary line-clamp-2 leading-relaxed">
+          {category.scenes?.length ? `${category.scenes.length} 个探索场景` : '暂无场景'}
+        </p>
+        
+        {/* 预览场景名（如果有） */}
+        {previewScene && (
+          <p className="text-[10px] text-text-secondary/60 mt-auto truncate">
+            预览: {previewScene.title}
           </p>
-        </div>
+        )}
       </div>
 
       {/* 底部色条 */}
