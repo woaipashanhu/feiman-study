@@ -42,6 +42,64 @@
 
 ---
 
+### 2026-06-03 会话 #10 — 分类列表列表项 App Store Today 风格精修 + 部署
+
+#### 本次会话目标
+参照用户提供的 App Store Today 截图，对分类详情页列表项做风格精修，使其更贴近原版视觉。
+
+#### 完成的工作
+
+**1. 🎨 列表项重写：卡片背景 → 分隔线分隔（`src/boards/ScienceBoard/CategoryList.tsx`）**
+
+| 维度 | 之前 | 现在 |
+|------|------|------|
+| 背景 | `bg-surface border border-border` (卡片) | 无背景 + `border-b border-border/40` (分隔线) |
+| 圆角 | 列表项 `rounded-2xl` | 无圆角（跟 App Store 列表一致） |
+| 缩略图尺寸 | 80x80 (`w-20 h-20`) | 64x64 (`w-16 h-16`) |
+| 缩略图圆角 | `rounded-xl` (12px) | `rounded-[14px]` (iOS Squircle 风格) |
+| 缩略图 iframe 缩放 | `scale(0.22)` | `scale(0.18)` (适配 64px) |
+| 标题字号 | `text-sm` (14px) | `text-[17px]` (17pt) |
+| 描述字号 | `text-xs` (12px) | `text-[13px]` (13pt) |
+| 右侧操作 | Play 按钮（hover 才出现） | `CaretRight` 箭头（常驻显示） |
+| 行 padding | `p-3` (12px) | `py-3.5` (14px 上下，更舒展) |
+| 交互反馈 | `hover:scale + x:4` | `active:bg-gray-50` (轻量点击反馈) |
+| 列表区二级标题 | "场景列表" 大字 | "全部场景" 灰色大写小字 + tracking-wider |
+
+**2. 🪟 关闭按钮微调**
+- 背景：`bg-white/20` → `bg-white/25` (更明显的毛玻璃)
+- 新增 `border border-white/10` 精细边框（更精致）
+
+**3. 🚀 部署**
+- Vite 构建 2.08s
+- `./deploy.sh` 5 步全过
+- 服务器 JS bundle：`index-CF3H_utF.js` = 本地 dist hash
+- 线上 URL：`http://47.99.101.168:8890/science`
+
+#### 哪些保持不变（已对齐原版）
+- ✅ 首页大卡片纵向堆叠 + 28px 圆角
+- ✅ Banner 45vh + iframe 3D 预览
+- ✅ 标题区双层（灰色小标签 + 32px 白色大字）
+- ✅ 缩放展开/收起动画
+- ✅ 滚动位置记忆
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/boards/ScienceBoard/CategoryList.tsx` | 重写列表项 + 微调关闭按钮 | 完整 App Store 列表风格 |
+
+#### 验证结果
+
+```
+✅ TypeScript 零错误
+✅ Vite 构建 2.08s
+✅ 部署成功：5 步全过
+✅ 服务器 JS hash = 本地 dist hash
+⚠️ verify 脚本：仍报 8 个误报（关键词过期问题，非本次改动引起）
+```
+
+---
+
 ### 2026-06-03 会话 #9 — 部署到生产环境 + 修复 deploy.sh 静态目录同步漏洞
 
 #### 本次会话目标

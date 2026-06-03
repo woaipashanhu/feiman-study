@@ -10,7 +10,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
-import { X, Play } from 'phosphor-react'
+import { X, CaretRight } from 'phosphor-react'
 import type { ScienceData, ScienceScene } from '@/types/content'
 
 const containerVariants = {
@@ -124,7 +124,7 @@ export default function ScienceCategoryList() {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           onClick={handleClose}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center z-20"
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/10 flex items-center justify-center z-20"
         >
           <X size={18} weight="bold" className="text-white" />
         </motion.button>
@@ -143,11 +143,12 @@ export default function ScienceCategoryList() {
         </div>
       </div>
 
-      {/* 场景列表 */}
-      <div className="px-5 py-4">
-        <h2 className="text-xl font-bold text-text mb-4">场景列表</h2>
+      {/* 场景列表 — App Store Today 风格:1px 分隔线 + 简洁布局 */}
+      <div className="px-5 pt-2 pb-6">
+        <h2 className="text-[13px] text-text-tertiary font-medium uppercase tracking-wider mb-2 px-1">
+          全部场景
+        </h2>
         <motion.div
-          className="space-y-3"
           variants={containerVariants}
           initial="hidden"
           animate="show"
@@ -183,22 +184,21 @@ function SceneListItem({
   return (
     <motion.button
       variants={itemVariants}
-      whileHover={{ scale: 1.01, x: 4 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
-      className="w-full flex items-center gap-4 p-3 rounded-2xl bg-surface border border-border hover:shadow-md transition-all text-left group overflow-hidden"
+      className="w-full flex items-center gap-4 py-3.5 text-left active:bg-gray-50 transition-colors border-b border-border/40 last:border-b-0"
     >
-      {/* 3D场景预览 */}
-      <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 relative bg-gray-900">
+      {/* 3D场景预览 - 64x64 iOS Squircle */}
+      <div className="w-16 h-16 rounded-[14px] overflow-hidden shrink-0 relative bg-gray-900">
         {hasPreview ? (
           <iframe
             src={scene.src}
             className="absolute inset-0 border-0"
             style={{
-              transform: 'scale(0.22)',
+              transform: 'scale(0.18)',
               transformOrigin: 'top left',
-              width: '455%',
-              height: '455%',
+              width: '555%',
+              height: '555%',
               pointerEvents: 'none',
             }}
             loading="lazy"
@@ -220,37 +220,27 @@ function SceneListItem({
 
       {/* 信息 */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold text-text truncate">{scene.title}</h3>
-        <p className="text-xs text-text-secondary mt-0.5 line-clamp-2 leading-relaxed">
+        <h3 className="text-[17px] font-semibold text-text leading-tight truncate">
+          {scene.title}
+        </h3>
+        <p className="text-[13px] text-text-secondary mt-1 line-clamp-2 leading-relaxed">
           {scene.description}
         </p>
-        <div className="flex items-center gap-2 mt-1.5">
-          {scene.difficulty && (
-            <span
-              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
-              style={{
-                backgroundColor: categoryColor + '15',
-                color: categoryColor,
-              }}
-            >
-              {scene.difficulty}
-            </span>
-          )}
-          {scene.duration && (
-            <span className="text-[10px] text-text-secondary/60">
-              {scene.duration}
-            </span>
-          )}
-        </div>
+        {scene.difficulty && (
+          <span
+            className="inline-block mt-1.5 text-[10px] px-1.5 py-0.5 rounded-md font-medium"
+            style={{
+              backgroundColor: categoryColor + '15',
+              color: categoryColor,
+            }}
+          >
+            {scene.difficulty}
+          </span>
+        )}
       </div>
 
-      {/* 播放按钮 */}
-      <div
-        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ backgroundColor: categoryColor + '18' }}
-      >
-        <Play size={16} weight="fill" style={{ color: categoryColor }} />
-      </div>
+      {/* 右侧箭头(常驻显示,App Store 风格) */}
+      <CaretRight size={18} weight="bold" className="text-text-tertiary shrink-0" />
     </motion.button>
   )
 }
