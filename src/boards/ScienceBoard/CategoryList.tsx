@@ -1,9 +1,9 @@
 /**
  * ============================================================
- *  科学可视化 — 分类场景列表页
+ *  科学可视化 — 分类场景列表页（动态3D预览版）
  *
- *  从卡片主页进入，展示该分类下的所有场景
- *  点击场景进入3D播放页
+ *  每个场景卡片左侧嵌入 iframe 实时预览3D场景
+ *  点击场景进入全屏3D播放页
  * ============================================================
  */
 import { useParams, useNavigate } from 'react-router-dom'
@@ -49,7 +49,7 @@ export default function ScienceCategoryList() {
         </div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-24 bg-gray-100 rounded-xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -120,39 +120,72 @@ function SceneListItem({
   categoryColor: string
   onClick: () => void
 }) {
+  const hasPreview = scene.type === 'iframe' && scene.src
+
   return (
     <motion.button
       variants={itemVariants}
       whileHover={{ scale: 1.01, x: 4 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
-      className="w-full flex items-center gap-4 p-3 rounded-2xl bg-surface border border-border hover:shadow-md transition-all text-left group"
+      className="w-full flex items-center gap-4 p-3 rounded-2xl bg-surface border border-border hover:shadow-md transition-all text-left group overflow-hidden"
     >
-      {/* 序号/缩略图 */}
+      {/* 3D场景预览区（替代缩略图） */}
       <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 text-lg font-bold"
-        style={{
-          backgroundColor: categoryColor + '12',
-          color: categoryColor,
-        }}
+        className="w-24 h-20 rounded-xl overflow-hidden shrink-0 relative bg-gray-900"
       >
-        {scene.thumbnail ? (
-          <img
-            src={scene.thumbnail}
-            alt={scene.title}
-            className="w-full h-full rounded-xl object-cover"
+        {hasPreview ? (
+          <iframe
+            src={scene.src}
+            className="absolute inset-0 border-0"
+            style={{
+              transform: 'scale(0.25)',
+              transformOrigin: 'top left',
+              width: '400%',
+              height: '400%',
+              pointerEvents: 'none',
+            }}
+            loading="lazy"
+            title={scene.title}
           />
         ) : (
-          <span>{index + 1}</span>
+          <div
+            className="w-full h-full flex items-center justify-center"
+            style={{
+              background: `radial-gradient(circle at 50% 50%, ${categoryColor}30 0%, ${categoryColor}10 100%)`,
+            }}
+          >
+            <span className="text-lg font-bold" style={{ color: categoryColor }}>
+              {index + 1}
+            </span>
+          </div>
         )}
       </div>
 
       {/* 信息 */}
       <div className="flex-1 min-w-0">
         <h3 className="text-sm font-semibold text-text truncate">{scene.title}</h3>
-        <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">
+        <p className="text-xs text-text-secondary mt-0.5 line-clamp-2 leading-relaxed">
           {scene.description}
         </p>
+        <div className="flex items-center gap-2 mt-1.5">
+          {scene.difficulty && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium"
+              style={{
+                backgroundColor: categoryColor + '15',
+                color: categoryColor,
+              }}
+            >
+              {scene.difficulty}
+            </span>
+          )}
+          {scene.duration && (
+            <span className="text-[10px] text-text-secondary/60">
+              {scene.duration}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 播放按钮 */}
