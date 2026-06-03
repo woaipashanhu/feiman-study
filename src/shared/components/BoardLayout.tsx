@@ -66,13 +66,13 @@ export function BoardLayout({ children, extraButtons }: BoardLayoutProps) {
         <div className="flex-1 pointer-events-auto rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5">
           <TabBar onTabChange={handleTabChange} />
         </div>
-        {/* 刷新按钮 — 用于代码更新后手动刷新PWA,独立小圆按钮 */}
+        {/* 刷新按钮 — 仅测试用,后续会删除;缩小为 48x72 瘦矩形,跟 TabBar 等高但瘦一半 */}
         <button
           onClick={() => window.location.reload()}
-          className="pointer-events-auto shrink-0 w-[4.5rem] h-[4.5rem] rounded-2xl bg-white/72 backdrop-blur-xl shadow-2xl ring-1 ring-black/5 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white/90 transition-colors"
-          title="刷新页面"
+          className="pointer-events-auto shrink-0 w-12 h-[4.5rem] rounded-2xl bg-white/72 backdrop-blur-xl shadow-2xl ring-1 ring-black/5 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-white/90 transition-colors"
+          title="刷新页面（测试用）"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
             <path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
           </svg>

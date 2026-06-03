@@ -121,8 +121,8 @@ function CategoryCard({
       className="relative w-full text-left overflow-hidden block shadow-2xl ring-1 ring-black/5"
       style={{
         borderRadius: '24px',
-        height: isLast ? 'auto' : 'calc(100vh - 220px)',
-        minHeight: '420px',
+        height: isLast ? 'auto' : 'calc(100vh - 280px)',
+        minHeight: '380px',
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
