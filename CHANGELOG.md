@@ -42,6 +42,82 @@
 
 ---
 
+### 2026-06-03 会话 #7 — 科学板块 App Store Today 风格改造 + 死代码清理
+
+#### 本次会话目标
+参照 App Store Today 视觉风格，全面改造科学板块界面（毛玻璃 TabBar + 大卡片首页 + Banner 详情页 + 滚动记忆），并清理被废弃的旧组件。
+
+#### 完成的工作
+
+**1. 🪟 TabBar 毛玻璃化 (`src/shared/components/TabBar.tsx`)**
+- 背景由实心改为 `backdrop-blur(20px) saturate(180%)` 半透明毛玻璃
+- 增加文字标签（图标+文字组合），选中态用主题色填充，未选中灰色线框
+- 选中态图标用 `weight="fill"` 突出显示
+
+**2. 🏠 科学首页大卡片化 (`src/boards/ScienceBoard/Home.tsx`)**
+- 卡片布局从 2 列网格改为纵向堆叠（`space-y-5`），一屏一张
+- 卡片高度 `calc(100vh - 200px)`，`min-height: 420px`
+- 大圆角 `28px`，卡片上半部分嵌入 iframe 实时 3D 预览（`transform: scale(0.4)` 缩放适配）
+- 卡片下半部分白色大字标题（`text-[28px] font-bold`）+ 描述
+- 入场动画：stagger + spring，从 `y:40 scale:0.96` 展开
+- 引入 `useScrollMemory` hook，进入分类页前 `saveScroll()` 保存滚动位置
+
+**3. 🎬 分类列表页全屏化 (`src/boards/ScienceBoard/CategoryList.tsx`)**
+- 顶部大 Banner（`height: 45vh`, `minHeight: 320px`），嵌入 iframe 3D 场景（`transform: scale(0.5)`）
+- 关闭按钮改为右上角圆形叉号（`X` 图标，`bg-white/20 backdrop-blur-md`）
+- 入场/退场动画：缩放 0.95 ↔ 1，配合 framer-motion `spring`
+- Banner 下方为场景信息流列表（缩略图 + 标题 + 描述 + 难度标签）
+- 列表项悬停显示播放按钮
+
+**4. 🛣 路由调整 (`src/router/index.tsx`)**
+- `/science/category/:categoryId` 从 `BoardLayout` 包裹区内移到顶层路由
+- 配合 CategoryList 改造，分类页跳出 TabBar 布局，全屏沉浸式
+
+**5. 🧹 死代码清理**
+- 删除 `src/boards/ScienceBoard/List.tsx`（203 行）
+- 原因：上一轮改造后 `ScienceBoard/index.tsx` 只导出 `Home`，旧 2 列网格 List 组件已无引用（`grep` 全局确认无 import）
+- 删除前 `mavis-trash` 进入回收站，可恢复
+
+#### 对照原需求逐项核对
+
+| # | 需求项 | 状态 | 关键实现 |
+|---|--------|------|---------|
+| 1 | TabBar 毛玻璃 + 图标文字 | ✅ | `backdropFilter: 'blur(20px) saturate(180%)'` |
+| 2 | 首页：2列→纵向大卡片 + 28px 圆角 + iframe + 白色大字 | ✅ | `space-y-5` + `borderRadius: '28px'` |
+| 3 | 分类页：45% Banner + iframe + 右上角叉号 + 滚动记忆 + 缩放动画 + 列表 | ✅ | 5 项全部实现 |
+| 4 | 路由：分类页跳出 BoardLayout | ✅ | `router/index.tsx:75-84` 移到顶层路由区 |
+
+#### 关于「双层滚动嵌套」的核查结论
+初次审查时曾误判 `BoardLayout` 外层 `main` 与 `Home` 内层 `div` 同时设置 `overflow-y-auto` 会产生双滚。经过仔细核查：
+- 外层 main `flex-1 min-h-0 overflow-y-auto` → 高度为视口减 TabBar 的**计算后固定值**
+- 内层 div `h-full flex flex-col overflow-y-auto` → 高度被 `h-full` 锁死 = 外层 main 高度
+- 内层 div 永远不会"撑出"外层 main，**实际只有内层 div 在滚**
+- `useScrollMemory` 存的就是用户实际看到的那个 scrollTop，完全正确
+
+撤回原"双层滚动嵌套"瑕疵标记，**不修改 BoardLayout**。
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/boards/ScienceBoard/Home.tsx` | 重写 | 纵向大卡片 + 滚动记忆 + iframe 预览 |
+| `src/boards/ScienceBoard/CategoryList.tsx` | 重写 | 全屏 Banner 详情页 + 缩放动画 |
+| `src/boards/ScienceBoard/List.tsx` | **删除** | 旧 2 列网格死代码（203 行） |
+| `src/router/index.tsx` | 修改 | 分类页路由移出 BoardLayout |
+| `src/shared/components/TabBar.tsx` | 修改 | 毛玻璃 + 图标文字组合 |
+| `src/shared/hooks/useScrollMemory.ts` | **新建** | 滚动位置 Map 记忆 hook |
+| `src/shared/hooks/index.ts` | 修改 | 导出 `useScrollMemory` |
+
+#### 验证结果
+
+```
+✅ TypeScript: 零错误（改造前已通过，保持）
+✅ 全局 grep 确认 List.tsx 无引用后安全删除
+✅ 路由结构清晰：/science 有 TabBar，/science/category/* 全屏
+```
+
+---
+
 ### 2026-05-31 会话 #5 — 科学板块交互架构改造（原型）
 
 #### 本次会话目标
