@@ -36,11 +36,19 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
             <NavLink
               key={board.id}
               to={board.path}
-              className="flex flex-col items-center justify-center gap-0.5 w-16 h-full relative transition-colors"
+              className="flex flex-col items-center justify-center w-16 h-full relative transition-colors"
               end={false}
             >
               {({ isActive: navActive }) => (
                 <>
+                  {/* 选中态:深色背景块包裹整个按钮 (App Store Today 风格) */}
+                  {navActive && (
+                    <motion.div
+                      layoutId="tabbar-active-pill"
+                      className="absolute inset-1.5 rounded-xl bg-gray-900/85 -z-0"
+                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    />
+                  )}
                   <motion.div
                     className="relative z-10"
                     whileTap={{ scale: 0.9 }}
@@ -48,15 +56,14 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
                     <Icon
                       size={24}
                       weight={navActive ? 'fill' : 'regular'}
-                      style={{ color: navActive ? board.color : '#8E8E93' }}
+                      style={{ color: navActive ? '#fff' : '#8E8E93' }}
                       className="transition-colors duration-200"
                     />
                   </motion.div>
                   <span
-                    className={`text-[10px] font-medium relative z-10 transition-colors duration-200 leading-tight ${
-                      navActive ? 'font-semibold' : ''
+                    className={`text-[10px] relative z-10 transition-colors duration-200 leading-tight ${
+                      navActive ? 'font-semibold text-white' : 'font-medium text-[#8E8E93]'
                     }`}
-                    style={{ color: navActive ? board.color : '#8E8E93' }}
                   >
                     {board.name}
                   </span>

@@ -42,6 +42,63 @@
 
 ---
 
+### 2026-06-03 会话 #13 — App Store Today 设计规范对齐（参考 iOS HIG）
+
+#### 本次会话目标
+按用户提供的第 3 张 App Store Today 截图，对齐 iOS HIG 设计原则：Clarity（清晰）、Deference（顺从）、Depth（深度）。
+
+#### 完成的工作
+
+**1. 🪟 TabBar 选中态深色背景块（`src/shared/components/TabBar.tsx`）**
+
+| 维度 | 之前 | 现在 |
+|------|------|------|
+| 选中反馈 | 仅图标 + 文字变色 | **整个按钮被深色圆角块包裹** |
+| 选中态背景 | 无 | `bg-gray-900/85` + `rounded-xl` + `inset-1.5` |
+| 切换动画 | 无 | `layoutId="tabbar-active-pill"` 共享元素动画，切换时滑块滑动 |
+| 选中态颜色 | 主题色 (e.g. `#00C9A7` 绿) | 纯白 (`#fff`) — App Store 标准 |
+| 未选中态 | 灰色 `#8E8E93` | 不变 |
+
+**2. 🎴 首页卡片 iOS HIG 对齐（`src/boards/ScienceBoard/Home.tsx`）**
+
+| 维度 | 之前 | 现在 | 依据 |
+|------|------|------|------|
+| 容器左右 padding | 12px (`px-3`) | **16px (`px-4`)** | App Store 卡片边距 20px，向上靠近 |
+| 卡片间距 | 12px (`space-y-3`) | **16px (`space-y-4`)** | 更舒展 |
+| 卡片圆角 | 24px | **20px** | App Store 标准 |
+| 卡片阴影 | `shadow-2xl` (重) | **`shadow-lg` (轻)** | iOS Deference: 最小化边框/渐变/阴影 |
+| 卡片内容区高度 | 35% | **40%** | 给文字更多呼吸空间 |
+| 小标签字形 | 13px Medium, 小写 | **12px Semibold, UPPERCASE, tracking-wider** | App Store 编辑挚爱 APP 样式 |
+| 标题字距 | leading-tight | **leading-[1.1] + tracking-tight** | App Store 大字标题标准 |
+| 描述颜色 | `text-white/60` | **`text-white/70`** | 提高对比度可读性 |
+| 描述字重 | 默认 | **font-normal** | 显式声明，避免继承变化 |
+
+**3. 🚀 部署**
+- Vite 构建 + 5 步部署全过
+- 服务器 JS bundle: `index-BrEqFsJ6.js`
+
+#### iOS HIG 三大原则的应用
+- **Clarity（清晰）**: 文字层级清晰（小标签 12px + 标题 28px + 描述 15px），颜色对比明确
+- **Deference（顺从）**: 阴影从 `shadow-2xl` 减到 `shadow-lg`，让内容（3D 预览）更突出
+- **Depth（深度）**: TabBar 选中态 `layoutId` 共享元素动画，点击有滑块滑动效果
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/shared/components/TabBar.tsx` | 选中态重做 | 深色背景块 + layoutId 滑块动画 |
+| `src/boards/ScienceBoard/Home.tsx` | 卡片微调 | 容器 padding/间距/圆角/阴影/文字字形 |
+
+#### 验证结果
+
+```
+✅ Vite 构建成功
+✅ 5 步部署全过
+✅ 服务器 JS hash = 本地 dist hash
+```
+
+---
+
 ### 2026-06-03 会话 #12 — 刷新按钮缩小 + 首页卡片"没那么长"
 
 #### 本次会话目标

@@ -74,9 +74,9 @@ export default function ScienceHome() {
         </motion.button>
       </header>
 
-      {/* 大卡片列表 - App Store Today 风格:卡片悬浮(左右留白),1 屏露半张下一主题 */}
+      {/* 大卡片列表 - App Store Today 风格:卡片悬浮(左右 16px 留白),1 屏露半张下一主题 */}
       <motion.div
-        className="px-3 pb-32 space-y-3"
+        className="px-4 pb-32 space-y-4"
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -118,9 +118,9 @@ function CategoryCard({
       whileHover={{ scale: 1.005 }}
       whileTap={{ scale: 0.99 }}
       onClick={onNavigate}
-      className="relative w-full text-left overflow-hidden block shadow-2xl ring-1 ring-black/5"
+      className="relative w-full text-left overflow-hidden block shadow-lg ring-1 ring-black/5"
       style={{
-        borderRadius: '24px',
+        borderRadius: '20px',
         height: isLast ? 'auto' : 'calc(100vh - 280px)',
         minHeight: '380px',
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
@@ -160,20 +160,20 @@ function CategoryCard({
         </div>
       </div>
 
-      {/* 内容区（下半部分） */}
-      <div className="absolute inset-x-0 bottom-0 h-[35%] flex flex-col justify-end p-6">
-        {/* 分类标签 */}
-        <span className="text-[13px] text-white/50 font-medium mb-1">
+      {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述 */}
+      <div className="absolute inset-x-0 bottom-0 h-[40%] flex flex-col justify-end p-6">
+        {/* 小标签 - 灰色 12-13px Medium (App Store 标准) */}
+        <span className="text-[12px] text-white/55 font-semibold uppercase tracking-wider mb-1.5">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
         </span>
 
-        {/* 标题 */}
-        <h3 className="text-[28px] font-bold text-white leading-tight mb-2">
+        {/* 主标题 - 28px Bold 纯白 (App Store 标准) */}
+        <h3 className="text-[28px] font-bold text-white leading-[1.1] tracking-tight mb-2">
           {category.name}
         </h3>
 
-        {/* 描述 */}
-        <p className="text-[15px] text-white/60 leading-relaxed">
+        {/* 描述 - 15px Regular 灰白 (App Store 标准) */}
+        <p className="text-[15px] text-white/70 leading-relaxed font-normal">
           {category.scenes?.length ? `${category.scenes.length} 个探索场景等你发现` : '暂无场景'}
         </p>
 
