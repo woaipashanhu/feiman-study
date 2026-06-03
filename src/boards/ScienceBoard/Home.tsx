@@ -71,9 +71,9 @@ export default function ScienceHome() {
         </motion.button>
       </header>
 
-      {/* 大卡片列表 - App Store Today 风格:卡片悬浮(左右 16px 留白),1 屏露半张下一主题 */}
+      {/* 大卡片列表 - App Store Today 风格:卡片悬浮(左右 20px 留白,卡片变窄),1 屏露半张下一主题 */}
       <motion.div
-        className="px-4 pb-32 space-y-4"
+        className="px-5 pb-32 space-y-4"
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -118,13 +118,13 @@ function CategoryCard({
       className="relative w-full text-left overflow-hidden block shadow-lg ring-1 ring-black/5"
       style={{
         borderRadius: '20px',
-        height: isLast ? 'auto' : 'calc(100vh - 340px)',
-        minHeight: '360px',
+        height: isLast ? 'auto' : 'calc(100vh - 300px)',
+        minHeight: '400px',
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 3D场景预览区 — 60% 上半部,给底部文字留足空间 */}
-      <div className="absolute inset-x-0 top-0 h-[60%] overflow-hidden">
+      {/* 3D场景预览区 — 65% 上半部,封面占主导(用户反馈文字区太厚) */}
+      <div className="absolute inset-x-0 top-0 h-[65%] overflow-hidden">
         {hasPreview ? (
           <iframe
             src={previewScene.src}
@@ -157,20 +157,20 @@ function CategoryCard({
         </div>
       </div>
 
-      {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述 */}
-      <div className="absolute inset-x-0 bottom-0 h-[42%] flex flex-col justify-end p-6">
+      {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述(收紧到 35%) */}
+      <div className="absolute inset-x-0 bottom-0 h-[35%] flex flex-col justify-end p-6">
         {/* 小标签 - 灰色 12px Semibold UPPERCASE (App Store 标准) */}
-        <span className="text-[12px] text-white/55 font-semibold uppercase tracking-wider mb-1.5">
+        <span className="text-[12px] text-white/55 font-semibold uppercase tracking-wider mb-1">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
         </span>
 
-        {/* 主标题 - 28px Bold 纯白 (App Store 标准) */}
-        <h3 className="text-[28px] font-bold text-white leading-[1.1] tracking-tight mb-1.5">
+        {/* 主标题 - 26px Bold 纯白 (App Store 标准,微缩更紧凑) */}
+        <h3 className="text-[26px] font-bold text-white leading-[1.1] tracking-tight mb-1">
           {category.name}
         </h3>
 
-        {/* 描述 - 15px Regular 灰白 (App Store 标准) */}
-        <p className="text-[15px] text-white/70 leading-relaxed font-normal">
+        {/* 描述 - 14px Regular 灰白 (App Store 标准,微缩) */}
+        <p className="text-[14px] text-white/70 leading-relaxed font-normal">
           {category.scenes?.length ? `${category.scenes.length} 个探索场景等你发现` : '暂无场景'}
         </p>
 
