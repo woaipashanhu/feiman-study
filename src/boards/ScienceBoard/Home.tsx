@@ -57,12 +57,9 @@ export default function ScienceHome() {
 
   return (
     <div ref={containerRef} className="h-full flex flex-col overflow-y-auto">
-      {/* 顶部栏 */}
-      <header className="flex items-center justify-between px-5 pt-4 pb-3 shrink-0">
-        <div>
-          <h1 className="text-[28px] font-bold text-text font-display leading-tight">科学可视化</h1>
-          <p className="text-sm text-text-secondary mt-0.5">探索科学的奥秘</p>
-        </div>
+      {/* 顶部栏 - App Store Today 风格:大标题 34px + 无副标题(用户反馈"探索科学的奥秘"是冗余的) */}
+      <header className="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
+        <h1 className="text-[34px] font-bold text-text font-display leading-[1.1] tracking-tight">科学可视化</h1>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -121,13 +118,13 @@ function CategoryCard({
       className="relative w-full text-left overflow-hidden block shadow-lg ring-1 ring-black/5"
       style={{
         borderRadius: '20px',
-        height: isLast ? 'auto' : 'calc(100vh - 280px)',
-        minHeight: '380px',
+        height: isLast ? 'auto' : 'calc(100vh - 340px)',
+        minHeight: '360px',
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 3D场景预览区（上半部分，约占65%） */}
-      <div className="absolute inset-x-0 top-0 h-[65%] overflow-hidden">
+      {/* 3D场景预览区 — 60% 上半部,给底部文字留足空间 */}
+      <div className="absolute inset-x-0 top-0 h-[60%] overflow-hidden">
         {hasPreview ? (
           <iframe
             src={previewScene.src}
@@ -154,21 +151,21 @@ function CategoryCard({
         {/* 顶部渐变遮罩 */}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent" />
 
-        {/* 场景数量角标 */}
-        <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs text-white/90 font-medium">
+        {/* 场景数量角标 — 内敛样式:小号 + 半透明胶囊 */}
+        <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-[11px] text-white/85 font-medium tracking-wide">
           {category.scenes?.length || 0} 个场景
         </div>
       </div>
 
       {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述 */}
-      <div className="absolute inset-x-0 bottom-0 h-[40%] flex flex-col justify-end p-6">
-        {/* 小标签 - 灰色 12-13px Medium (App Store 标准) */}
+      <div className="absolute inset-x-0 bottom-0 h-[42%] flex flex-col justify-end p-6">
+        {/* 小标签 - 灰色 12px Semibold UPPERCASE (App Store 标准) */}
         <span className="text-[12px] text-white/55 font-semibold uppercase tracking-wider mb-1.5">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
         </span>
 
         {/* 主标题 - 28px Bold 纯白 (App Store 标准) */}
-        <h3 className="text-[28px] font-bold text-white leading-[1.1] tracking-tight mb-2">
+        <h3 className="text-[28px] font-bold text-white leading-[1.1] tracking-tight mb-1.5">
           {category.name}
         </h3>
 
