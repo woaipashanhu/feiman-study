@@ -1,5 +1,5 @@
 {
-  "version": "2026-06-03-v3",
+  "version": "2026-06-03-v4",
   "title": "科学可视化",
   "description": "3D互动探索科学世界，让抽象概念看得见、摸得着",
   "categories": [
@@ -41,6 +41,36 @@
           "order": 3,
           "type": "iframe",
           "src": "/science/seasons.html"
+        }
+      ]
+    },
+    {
+      "id": "light",
+      "name": "光与颜色",
+      "icon": "💡",
+      "color": "#A855F7",
+      "scenes": [
+        {
+          "id": "prism-dispersion",
+          "title": "三棱镜分光",
+          "description": "牛顿 1666 年实验 — 白光经过三棱镜被分解为 7 色光谱",
+          "thumbnail": "/images/science-thumbs/prism-dispersion.jpg",
+          "difficulty": "入门",
+          "duration": "互动体验",
+          "order": 1,
+          "type": "iframe",
+          "src": "/science/prism.html"
+        },
+        {
+          "id": "rainbow-formation",
+          "title": "彩虹形成",
+          "description": "阳光进入雨滴折射、内壁反射、再折射散开 — 切换 3 个视角观察",
+          "thumbnail": "/images/science-thumbs/rainbow-formation.jpg",
+          "difficulty": "入门",
+          "duration": "互动体验",
+          "order": 2,
+          "type": "iframe",
+          "src": "/science/rainbow.html"
         }
       ]
     }

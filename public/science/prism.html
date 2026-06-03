@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三棱镜分光 · 刘费曼的科学课</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: #0a0a12; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; color: #fff; user-select: none; }
+  #canvas-container { width: 100vw; height: 100vh; position: fixed; inset: 0; }
+  #panel {
+    position: fixed; top: 24px; left: 24px; z-index: 10;
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(14px);
+    padding: 14px 18px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    max-width: 320px;
+  }
+  #panel h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.5px; }
+  #panel .sub { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+  #legend {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 4px; z-index: 10; padding: 6px 10px;
+    background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
+    border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+  }
+  #legend .swatch {
+    width: 28px; height: 28px; border-radius: 6px; display: flex;
+    align-items: center; justify-content: center; font-size: 9px;
+    color: rgba(0,0,0,0.7); font-weight: 700; letter-spacing: 0.2px;
+  }
+  #hint {
+    position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%);
+    z-index: 5; font-size: 11px; color: rgba(255,255,255,0.15);
+    pointer-events: none; transition: opacity 2s ease;
+  }
+  @media (max-width: 768px) {
+    #panel { top: 16px; left: 16px; padding: 10px 14px; max-width: 240px; }
+    #panel h1 { font-size: 16px; }
+    #legend .swatch { width: 22px; height: 22px; font-size: 8px; }
+  }
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+
+<div id="panel">
+  <h1>🌈 三棱镜分光</h1>
+  <div class="sub">白光由 7 种色光组成。不同色光经过三棱镜时折射率不同,因此被"分散"开来,形成连续光谱。这是牛顿 1666 年的著名实验。</div>
+</div>
+
+<div id="legend">
+  <div class="swatch" style="background:#ff0000">R</div>
+  <div class="swatch" style="background:#ff7f00">O</div>
+  <div class="swatch" style="background:#ffff00;color:#333">Y</div>
+  <div class="swatch" style="background:#00ff00;color:#333">G</div>
+  <div class="swatch" style="background:#0000ff">B</div>
+  <div class="swatch" style="background:#4b0082">I</div>
+  <div class="swatch" style="background:#9400d3">V</div>
+</div>
+
+<div id="hint">🖱 拖拽旋转 · 滚轮缩放</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const container = document.getElementById('canvas-container');
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a0a12);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(8, 5, 10);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 5;
+controls.maxDistance = 30;
+
+/* ---- Lights ---- */
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const key = new THREE.DirectionalLight(0xffffff, 1.2);
+key.position.set(5, 10, 5);
+scene.add(key);
+const fill = new THREE.PointLight(0x6688ff, 0.6, 30);
+fill.position.set(-5, 3, -3);
+scene.add(fill);
+
+/* ============================================================
+   INCOMING WHITE LIGHT BEAM
+   ============================================================ */
+const beamLen = 8;
+const beamGeo = new THREE.CylinderGeometry(0.05, 0.05, beamLen, 16);
+const beamMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
+const whiteBeam = new THREE.Mesh(beamGeo, beamMat);
+whiteBeam.rotation.z = Math.PI / 2;
+whiteBeam.position.set(-beamLen / 2 - 1, 0, 0);
+scene.add(whiteBeam);
+
+const beamGlow = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.15, 0.15, beamLen, 16),
+  new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false })
+);
+beamGlow.rotation.z = Math.PI / 2;
+beamGlow.position.copy(whiteBeam.position);
+scene.add(beamGlow);
+
+/* ============================================================
+   GLASS PRISM
+   ============================================================ */
+const prismShape = new THREE.Shape();
+prismShape.moveTo(0, 1.2);
+prismShape.lineTo(-1.0, -1.0);
+prismShape.lineTo(1.0, -1.0);
+prismShape.closePath();
+
+const extrudeSettings = { depth: 2.4, bevelEnabled: false };
+const prismGeo = new THREE.ExtrudeGeometry(prismShape, extrudeSettings);
+prismGeo.translate(0, 0, -1.2);
+
+const prismMat = new THREE.MeshPhysicalMaterial({
+  color: 0xeaf6ff,
+  metalness: 0,
+  roughness: 0.05,
+  transmission: 0.92,
+  thickness: 1.2,
+  ior: 1.5,
+  clearcoat: 1.0,
+  clearcoatRoughness: 0.05,
+  transparent: true,
+  opacity: 0.6,
+  envMapIntensity: 1.0,
+});
+const prism = new THREE.Mesh(prismGeo, prismMat);
+prism.position.set(0, 0, 0);
+prism.rotation.y = Math.PI * 0.06;
+scene.add(prism);
+
+const edges = new THREE.EdgesGeometry(prismGeo);
+const edgeLines = new THREE.LineSegments(
+  edges,
+  new THREE.LineBasicMaterial({ color: 0x88ccff, transparent: true, opacity: 0.35 })
+);
+prism.add(edgeLines);
+
+/* ============================================================
+   DISPERSED SPECTRUM BEAMS (7 colors)
+   ============================================================ */
+const SPECTRUM = [
+  { name: 'Red',    color: 0xff0000, angle: -0.55 },
+  { name: 'Orange', color: 0xff7f00, angle: -0.36 },
+  { name: 'Yellow', color: 0xffff00, angle: -0.18 },
+  { name: 'Green',  color: 0x00ff00, angle:  0.00 },
+  { name: 'Blue',   color: 0x0000ff, angle:  0.18 },
+  { name: 'Indigo', color: 0x4b0082, angle:  0.36 },
+  { name: 'Violet', color: 0x9400d3, angle:  0.55 },
+];
+
+const beamExitLen = 10;
+const spectrumGroup = new THREE.Group();
+scene.add(spectrumGroup);
+
+SPECTRUM.forEach((spec) => {
+  const geo = new THREE.CylinderGeometry(0.04, 0.04, beamExitLen, 12);
+  const mat = new THREE.MeshBasicMaterial({ color: spec.color, transparent: true, opacity: 0.9 });
+  const beam = new THREE.Mesh(geo, mat);
+
+  const exitX = 1.05;
+  const exitY = 0;
+  const dirX = Math.cos(spec.angle);
+  const dirY = -Math.sin(spec.angle);
+  const midX = exitX + dirX * (beamExitLen / 2);
+  const midY = exitY + dirY * (beamExitLen / 2);
+
+  beam.position.set(midX, midY, 0);
+  beam.rotation.z = -spec.angle - Math.PI / 2;
+  spectrumGroup.add(beam);
+
+  const glow = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.12, 0.12, beamExitLen, 12),
+    new THREE.MeshBasicMaterial({
+      color: spec.color, transparent: true, opacity: 0.22,
+      blending: THREE.AdditiveBlending, depthWrite: false,
+    })
+  );
+  glow.position.copy(beam.position);
+  glow.rotation.z = beam.rotation.z;
+  spectrumGroup.add(glow);
+
+  const endPoint = new THREE.Mesh(
+    new THREE.SphereGeometry(0.08, 12, 12),
+    new THREE.MeshBasicMaterial({ color: spec.color, transparent: true, opacity: 0.95 })
+  );
+  endPoint.position.set(exitX + dirX * beamExitLen, exitY + dirY * beamExitLen, 0);
+  spectrumGroup.add(endPoint);
+});
+
+/* ============================================================
+   Ambient dust
+   ============================================================ */
+const DUST_COUNT = 200;
+const dustGeo = new THREE.BufferGeometry();
+const dustPos = new Float32Array(DUST_COUNT * 3);
+for (let i = 0; i < DUST_COUNT; i++) {
+  dustPos[i*3]     = (Math.random() - 0.5) * 20;
+  dustPos[i*3 + 1] = (Math.random() - 0.5) * 12;
+  dustPos[i*3 + 2] = (Math.random() - 0.5) * 12;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dustMat = new THREE.PointsMaterial({
+  color: 0xffffff, size: 0.03, transparent: true, opacity: 0.4,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const dust = new THREE.Points(dustGeo, dustMat);
+scene.add(dust);
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsed = clock.getElapsedTime();
+
+  prism.rotation.y = Math.PI * 0.06 + Math.sin(elapsed * 0.3) * 0.15;
+  beamMat.opacity = 0.75 + Math.sin(elapsed * 3) * 0.1;
+  beamGlow.material.opacity = 0.15 + Math.sin(elapsed * 3) * 0.05;
+
+  const pos = dust.geometry.attributes.position.array;
+  for (let i = 0; i < DUST_COUNT; i++) {
+    pos[i*3 + 1] += Math.sin(elapsed * 0.5 + i) * 0.001;
+  }
+  dust.geometry.attributes.position.needsUpdate = true;
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5000);
+
+animate();
+console.log('🌈 三棱镜分光 — 刘费曼的科学课');
+</script>
+</body>
+</html>

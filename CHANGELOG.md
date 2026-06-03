@@ -42,6 +42,56 @@
 
 ---
 
+### 2026-06-03 会话 #8 — 新增「光与颜色」主题(2 个 Three.js 场景)
+
+#### 本次会话目标
+为科学板块新增一个对比主题，让用户验证大卡片首页 + Banner 详情页在不同主题下的视觉效果。
+
+#### 完成的工作
+
+**1. 🎨 新分类「光与颜色」(`public/data/science.json`)**
+- 新增第 2 个分类 `id: "light"`,`color: "#A855F7"` 紫色,`icon: "💡"`
+- 挂载 2 个新场景（均用 `type: "iframe"` 加载独立 HTML + Three.js）
+- JSON version 升至 `2026-06-03-v4`
+
+**2. 🔺 场景 1：三棱镜分光 (`public/science/prism.html`)**
+- 左侧一道白色光束射向中央的玻璃三棱镜（`MeshPhysicalMaterial` + `transmission: 0.92` 物理玻璃材质）
+- 棱镜右侧 7 条不同角度的色光束（红橙黄绿蓝靛紫），分别用 `CylinderGeometry` + `MeshBasicMaterial` 渲染
+- 每条色光附带 additive blending 的辉光光晕
+- 棱镜带轻微正弦摆动（`rotation.y = Math.sin(elapsed * 0.3) * 0.15`）展示不同角度的折射效果
+- 200 颗环境粒子做尘埃感
+- 底部带 7 色色板图例（ROYGBIV）
+
+**3. 🌈 场景 2：彩虹形成 (`public/science/rainbow.html`)**
+- 3 个模式可切换（**水滴阵列** / **单滴放大** / **完整彩虹**）：
+  - **水滴阵列**：12×7 玻璃水滴网格，带上下浮动动画
+  - **单滴放大**：1 颗 3x 放大的水滴 + 入射白光 + 内部反射路径（黄色折线）+ 7 色出射光线
+  - **完整彩虹**：120 颗水滴沿 180° 圆弧排列，背后是 vertexColors 着色的七彩弧线（按 ROYGBIV 渐变）
+- 太阳（带光晕）从左上方照入
+- 物理玻璃材质 `ior: 1.33`（接近真实水的折射率）
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `public/data/science.json` | 修改 | 新增 `light` 分类 + 2 场景；version v3→v4 |
+| `public/science/prism.html` | **新建** | 三棱镜分光场景（~250 行） |
+| `public/science/rainbow.html` | **新建** | 彩虹形成场景（~280 行，3 模式） |
+
+#### 验证结果
+
+```
+✅ JSON 格式：node 解析通过
+✅ 预检脚本：20/20 项通过（含 science.json JSON 格式检查）
+✅ Vite 构建：成功（2.12s, 58 entries PWA precache）
+```
+
+#### 后续可选
+- 部署后访问 `http://47.99.101.168:8890/science`，查看新分类「光与颜色」的大卡片效果
+- 2 个场景的 thumbnail 暂用 `/images/science-thumbs/xxx.jpg` 占位路径，若加载失败会回退到渐变背景（已测试 OK）
+
+---
+
 ### 2026-06-03 会话 #7 — 科学板块 App Store Today 风格改造 + 死代码清理
 
 #### 本次会话目标
