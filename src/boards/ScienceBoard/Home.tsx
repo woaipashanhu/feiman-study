@@ -123,8 +123,8 @@ function CategoryCard({
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 3D场景预览区 — 65% 上半部,封面占主导(用户反馈文字区太厚) */}
-      <div className="absolute inset-x-0 top-0 h-[65%] overflow-hidden">
+      {/* 3D场景预览区 — 72% 上半部,封面占主导(用户反馈文字区"还是偏厚") */}
+      <div className="absolute inset-x-0 top-0 h-[72%] overflow-hidden">
         {hasPreview ? (
           <iframe
             src={previewScene.src}
@@ -157,20 +157,20 @@ function CategoryCard({
         </div>
       </div>
 
-      {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述(收紧到 35%) */}
-      <div className="absolute inset-x-0 bottom-0 h-[35%] flex flex-col justify-end p-6">
-        {/* 小标签 - 灰色 12px Semibold UPPERCASE (App Store 标准) */}
-        <span className="text-[12px] text-white/55 font-semibold uppercase tracking-wider mb-1">
+      {/* 内容区（下半部分） — App Store Today 风格:小标签 + 大标题 + 描述(进一步压缩到 28%) */}
+      <div className="absolute inset-x-0 bottom-0 h-[28%] flex flex-col justify-end p-5 pb-4">
+        {/* 小标签 - 灰色 11px Semibold UPPERCASE (App Store 标准) */}
+        <span className="text-[11px] text-white/55 font-semibold uppercase tracking-wider mb-0.5">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
         </span>
 
-        {/* 主标题 - 26px Bold 纯白 (App Store 标准,微缩更紧凑) */}
-        <h3 className="text-[26px] font-bold text-white leading-[1.1] tracking-tight mb-1">
+        {/* 主标题 - 24px Bold 纯白 (App Store 标准) */}
+        <h3 className="text-[24px] font-bold text-white leading-[1.15] tracking-tight mb-0.5">
           {category.name}
         </h3>
 
-        {/* 描述 - 14px Regular 灰白 (App Store 标准,微缩) */}
-        <p className="text-[14px] text-white/70 leading-relaxed font-normal">
+        {/* 描述 - 13px Regular 灰白 (App Store 标准) */}
+        <p className="text-[13px] text-white/70 leading-relaxed font-normal">
           {category.scenes?.length ? `${category.scenes.length} 个探索场景等你发现` : '暂无场景'}
         </p>
 
