@@ -42,6 +42,86 @@
 
 ---
 
+### 2026-06-03 会话 #11 — 悬浮 TabBar + 首页卡片更"悬浮"（App Store Today 完整复刻）
+
+#### 本次会话目标
+参照 App Store Today 首页真实设计：TabBar 悬浮、卡片不贴边、1 屏露半张下一主题。
+
+#### 完成的工作
+
+**1. 🪟 TabBar 悬浮胶囊化（`src/shared/components/BoardLayout.tsx`）**
+
+| 维度 | 之前 | 现在 |
+|------|------|------|
+| 位置 | `shrink-0` 贴底 | `absolute bottom-[safe+10px] left-3 right-3` 悬浮 |
+| 容器 | 无圆角直板 | `rounded-2xl overflow-hidden shadow-2xl ring-1 ring-black/5` 胶囊 |
+| 高度处理 | 父容器有 padding-bottom | 内容 main 加 `pb-24` 给悬浮 TabBar 让位 |
+| 刷新按钮 | 嵌在 TabBar 容器右上角 | 独立 `w-[4.5rem] h-[4.5rem]` 圆按钮，跟 TabBar 等高并排 |
+| 边框 | 内部 `borderTop: 0.5px` 顶边 | 去掉（外层圆角 ring 已经够） |
+
+**2. 🎴 首页卡片更"悬浮"（`src/boards/ScienceBoard/Home.tsx`）**
+
+| 维度 | 之前 | 现在 |
+|------|------|------|
+| 容器左右 padding | `px-5`（20px） | `px-3`（12px，缩小让卡片更大） |
+| 卡片间距 | `space-y-5`（20px） | `space-y-3`（12px，更紧凑） |
+| 底部留白 | `pb-8`（32px） | `pb-32`（128px，给悬浮 TabBar 让位 + 让最后一张露半张） |
+| 卡片圆角 | 28px | 24px（与悬浮 TabBar 圆角协调） |
+| 卡片阴影 | 无 | `shadow-2xl ring-1 ring-black/5`（突出"悬浮"感） |
+| 卡片背景 | 纯 `#1a1a2e` | `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`（主题色 + 深色融合） |
+| 卡片高度 | `calc(100vh - 200px)`, min 420px | `calc(100vh - 220px)`, min 420px（1 屏露半张下一主题） |
+| hover 缩放 | `scale: 1.01` | `scale: 1.005`（更克制，避免抖动） |
+
+**3. 🚀 部署**
+- Vite 构建 2.06s
+- 5 步部署全过
+- 服务器 JS bundle: `index-BpsJ4dQs.js` = 本地 dist hash
+- 线上 URL: `http://47.99.101.168:8890/science`
+
+#### 核心视觉效果（一屏 = 100vh）
+```
+┌─────────────────────────┐ ← 状态栏
+│ 顶部栏 (科学可视化 · 头像)  │ ← ~80px
+├─────────────────────────┤
+│                         │
+│   大卡片 #1 (~70vh)        │ ← 完整可见
+│   地球与宇宙               │
+│                         │
+│   ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔       │ ← 悬浮 TabBar 区域
+├─────────────────────────┤
+│  卡片 #2 (~30vh 露出)     │ ← 半张露出来
+│  光与颜色                  │
+└─────────────────────────┘
+   ┌───────────────────┐  ← 悬浮 TabBar
+   │ 🔢 🔬 📚 🖼️ ✨  ↻ │  胶囊
+   └───────────────────┘
+```
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/shared/components/BoardLayout.tsx` | 重构 | TabBar 改悬浮 + main 加 pb-24 + 刷新按钮独立 |
+| `src/shared/components/TabBar.tsx` | 微调 | 去掉内部 borderTop（外层 ring 替代） |
+| `src/boards/ScienceBoard/Home.tsx` | 重构 | 卡片容器/高度/阴影/背景/间距全面调整 |
+
+#### 验证结果
+
+```
+✅ Vite 构建 2.06s
+✅ 5 步部署全过
+✅ 服务器 JS hash = 本地 dist hash
+✅ HTTP 200 (所有 10 个路由)
+⚠️ verify 脚本：仍报 8 个误报（关键词过期，非本次改动引起）
+```
+
+#### 跨板块影响
+- BoardLayout 是共享布局，**所有 5 个板块**（数学/科学/社交/画廊/内功）都获得悬浮 TabBar
+- 刷新按钮统一处理，路径不变
+- 安全区适配：`env(safe-area-inset-bottom, 0px) + 10px`
+
+---
+
 ### 2026-06-03 会话 #10 — 分类列表列表项 App Store Today 风格精修 + 部署
 
 #### 本次会话目标

@@ -13,7 +13,6 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
         background: 'rgba(255, 255, 255, 0.72)',
         backdropFilter: 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        borderTop: '0.5px solid rgba(0, 0, 0, 0.06)',
       }}
     >
       <div className="flex items-center justify-around h-full max-w-lg mx-auto px-2">

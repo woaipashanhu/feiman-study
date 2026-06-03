@@ -74,9 +74,9 @@ export default function ScienceHome() {
         </motion.button>
       </header>
 
-      {/* 大卡片列表 */}
+      {/* 大卡片列表 - App Store Today 风格:卡片悬浮(左右留白),1 屏露半张下一主题 */}
       <motion.div
-        className="px-5 pb-8 space-y-5"
+        className="px-3 pb-32 space-y-3"
         variants={containerVariants}
         initial="hidden"
         animate="show"
@@ -115,15 +115,15 @@ function CategoryCard({
   return (
     <motion.button
       variants={cardVariants}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.005 }}
+      whileTap={{ scale: 0.99 }}
       onClick={onNavigate}
-      className="relative w-full text-left overflow-hidden block"
+      className="relative w-full text-left overflow-hidden block shadow-2xl ring-1 ring-black/5"
       style={{
-        borderRadius: '28px',
-        height: isLast ? 'auto' : 'calc(100vh - 200px)',
+        borderRadius: '24px',
+        height: isLast ? 'auto' : 'calc(100vh - 220px)',
         minHeight: '420px',
-        backgroundColor: '#1a1a2e',
+        background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
       {/* 3D场景预览区（上半部分，约占65%） */}
