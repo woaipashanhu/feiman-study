@@ -42,6 +42,38 @@
 
 ---
 
+### 2026-06-03 会话 #17 — 去掉 iframe→文字区渐变（卡片更扁平）
+
+#### 本次会话目标
+按用户对照 App Store Today 卡片（提高效率/你能专注多久）发现：原卡片没有从封面到文字的渐变过渡，去掉这个不必要的渐变让卡片更扁平、更接近 App Store Today。
+
+#### 完成的工作
+
+**1. 🪟 去掉 iframe→文字区渐变遮罩（`src/boards/ScienceBoard/Home.tsx`）**
+- 删除 `<div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent" />`
+- 原因：用户原话"它这个下面就没有这个渐变,我觉得这样可以,因为我们这个也不需要渐变了"
+- 效果：iframe 3D 预览区直接和文字区硬连接(因为两边都是深色,实际差异不明显,但更"扁平化"符合 App Store Today 风格)
+- 视觉上：去掉了一个 96px 高度的渐变层,卡片看起来更干净
+
+**2. 🚀 部署**
+- 服务器 JS bundle: `index-HtwoCzjL.js` = 本地 dist hash
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/boards/ScienceBoard/Home.tsx` | 删 1 行 | 去掉 iframe 底部 96px 渐变遮罩 |
+
+#### 验证结果
+
+```
+✅ Vite 构建成功
+✅ 5 步部署全过
+✅ 服务器 JS hash = 本地 dist hash
+```
+
+---
+
 ### 2026-06-03 会话 #16 — 文字区进一步压缩：35% → 28%
 
 #### 本次会话目标
