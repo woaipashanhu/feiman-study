@@ -36,6 +36,8 @@ export const ScienceSceneSchema = z.object({
   difficulty: z.string().optional(),
   duration: z.string().optional(),
   order: z.number().optional(),
+  type: z.string().optional(), // 'iframe' | 'r3f' | etc
+  src: z.string().optional(), // iframe src path
 })
 
 export const ScienceCategorySchema = z.object({

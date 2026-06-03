@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>天气 3D 探索 · 刘费曼的科学课</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: #0a0a12; font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; color: #fff; user-select: none; }
+  #canvas-container { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
+  #label-container { position: absolute; top: 0; left: 0; pointer-events: none; width: 100%; height: 100%; }
+
+  /* Info Panel */
+  #info-panel {
+    position: fixed; top: 28px; left: 32px; z-index: 10; pointer-events: none;
+  }
+  #info-panel .weather-icon { font-size: 26px; display: block; margin-bottom: 2px; }
+  #info-panel .weather-title {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+    background: rgba(255,255,255,0.07); backdrop-filter: blur(12px);
+    padding: 6px 18px; border-radius: 10px; display: inline-block;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  #info-panel .weather-desc {
+    font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px;
+    padding-left: 4px; font-weight: 400; max-width: 340px; line-height: 1.5;
+  }
+  #info-panel .weather-temp {
+    font-size: 13px; color: rgba(255,255,255,0.35); margin-top: 3px; padding-left: 4px;
+  }
+  #info-panel .weather-clock {
+    font-size: 15px; color: rgba(255,255,255,0.6); margin-top: 4px; padding-left: 4px;
+    font-weight: 500; letter-spacing: 0.5px;
+  }
+
+  /* Bottom Controls */
+  #controls {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 10;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 10px 16px 14px;
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
+    border-radius: 16px; border: 1px solid rgba(255,255,255,0.07);
+    min-width: 480px;
+  }
+  #controls .btn-row {
+    display: flex; gap: 6px;
+  }
+  #controls button {
+    padding: 8px 16px; border: none; border-radius: 8px;
+    background: transparent; color: rgba(255,255,255,0.45);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit; letter-spacing: 0.3px;
+  }
+  #controls button:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+  #controls button.active { color: #fff; background: rgba(255,255,255,0.12); box-shadow: 0 0 16px rgba(255,255,255,0.04); }
+  #controls button .label { font-size: 11px; opacity: 0.4; margin-left: 4px; font-weight: 400; }
+
+  /* Time Slider */
+  #time-control {
+    display: flex; align-items: center; gap: 12px; width: 100%; padding: 0 8px;
+  }
+  #time-control .time-label {
+    font-size: 12px; color: rgba(255,255,255,0.5); font-weight: 500; min-width: 44px; text-align: center;
+  }
+  #time-control input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; height: 4px; border-radius: 2px;
+    background: linear-gradient(to right, #1a1a3a, #ff6633 15%, #4a90d9 35%, #4a90d9 65%, #ff6633 85%, #1a1a3a);
+    outline: none; cursor: pointer;
+  }
+  #time-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, #ccc);
+    cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+  #time-control input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, #ccc);
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  /* Sun path markers */
+  #time-markers {
+    display: flex; justify-content: space-between; width: 100%; padding: 0 12px; margin-top: -4px;
+  }
+  #time-markers span {
+    font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 0.3px;
+  }
+
+  /* Hint */
+  #hint {
+    position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%);
+    z-index: 5; font-size: 11px; color: rgba(255,255,255,0.12);
+    pointer-events: none; transition: opacity 2s ease;
+  }
+
+  /* Loading */
+  #loading {
+    position: fixed; inset: 0; z-index: 999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #0a0a12; color: rgba(255,255,255,0.6); font-size: 14px;
+    transition: opacity 0.8s ease;
+  }
+  #loading.hidden { opacity: 0; pointer-events: none; }
+  #loading .spinner {
+    width: 32px; height: 32px; border: 2px solid rgba(255,255,255,0.08);
+    border-top-color: rgba(255,255,255,0.4); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    #info-panel { top: 16px; left: 16px; }
+    #info-panel .weather-title { font-size: 18px; padding: 4px 12px; }
+    #info-panel .weather-desc { font-size: 11px; max-width: 200px; }
+    #controls { bottom: 16px; min-width: unset; width: 94vw; padding: 8px 10px 12px; }
+    #controls button { padding: 6px 10px; font-size: 11px; }
+    #controls button .label { display: none; }
+    #time-control { gap: 6px; }
+    #time-control .time-label { font-size: 10px; min-width: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <span>加载天气场景...</span>
+</div>
+
+<div id="canvas-container"></div>
+<div id="label-container"></div>
+
+<div id="info-panel">
+  <span class="weather-icon" id="weatherIcon">☀️</span>
+  <div class="weather-title" id="weatherTitle">晴天 · 正午</div>
+  <div class="weather-clock" id="weatherClock">🕐 12:00</div>
+  <div class="weather-desc" id="weatherDesc">大气层薄，阳光直射地面，天空蔚蓝</div>
+  <div class="weather-temp" id="weatherTemp">地表温度 ≈ 25°C</div>
+</div>
+
+<div id="controls">
+  <div class="btn-row">
+    <button data-mode="sunny" class="active"><span>☀️</span>晴 <span class="label">Clear</span></button>
+    <button data-mode="cloudy"><span>☁️</span>阴 <span class="label">Cloudy</span></button>
+    <button data-mode="rainy"><span>🌧️</span>雨 <span class="label">Rain</span></button>
+    <button data-mode="sunrise"><span>🌅</span>日出 <span class="label">Sunrise</span></button>
+    <button data-mode="sunset"><span>🌇</span>日落 <span class="label">Sunset</span></button>
+  </div>
+  <div id="time-control">
+    <span class="time-label" id="timeLabel">06:00</span>
+    <input type="range" id="timeSlider" min="0" max="24" step="0.05" value="12">
+    <span class="time-label" id="timeLabelEnd">18:00</span>
+  </div>
+  <div id="time-markers">
+    <span>子夜</span><span>黎明</span><span>早晨</span><span>正午</span><span>午后</span><span>黄昏</span><span>夜晚</span>
+  </div>
+</div>
+
+<div id="hint">🖱 拖拽旋转 · 滚轮缩放 · 拖动时间轴控制太阳</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* ============================================================
+   SCENE SETUP
+   ============================================================ */
+const container = document.getElementById('canvas-container');
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ReinhardToneMapping;
+renderer.toneMappingExposure = 1.2;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x4A90D9);
+scene.fog = new THREE.Fog(0x4A90D9, 60, 140);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 300);
+camera.position.set(16, 10, 20);
+camera.lookAt(0, 0, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.minDistance = 6;
+controls.maxDistance = 50;
+controls.target.set(0, 1, 0);
+
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.getElementById('label-container').appendChild(labelRenderer.domElement);
+
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight), 0.6, 0.4, 0.85
+);
+composer.addPass(bloomPass);
+
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
+
+/* ---- Lights ---- */
+const ambientLight = new THREE.AmbientLight(0x8899bb, 0.35);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xffeedd, 2.0);
+sunLight.position.set(30, 40, 20);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 1024;
+sunLight.shadow.mapSize.height = 1024;
+scene.add(sunLight);
+
+const fillLight = new THREE.DirectionalLight(0x4488ff, 0.3);
+fillLight.position.set(-20, 10, -20);
+scene.add(fillLight);
+
+const hemiLight = new THREE.HemisphereLight(0x88ccff, 0x445533, 0.4);
+scene.add(hemiLight);
+
+/* ============================================================
+   TERRAIN
+   ============================================================ */
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x1a1a28, roughness: 0.8, metalness: 0.2, side: THREE.DoubleSide,
+});
+const ground = new THREE.Mesh(new THREE.CircleGeometry(50, 64), groundMat);
+ground.rotation.x = -Math.PI / 2;
+ground.position.y = -0.1;
+ground.receiveShadow = true;
+scene.add(ground);
+
+const gridHelper = new THREE.GridHelper(80, 40, 0x334466, 0x223355);
+gridHelper.position.y = 0;
+gridHelper.material.transparent = true;
+gridHelper.material.opacity = 0.25;
+scene.add(gridHelper);
+
+const ringMat = new THREE.MeshBasicMaterial({
+  color: 0x334466, transparent: true, opacity: 0.12, side: THREE.DoubleSide,
+});
+for (let r = 5; r <= 40; r += 5) {
+  const ring = new THREE.Mesh(new THREE.RingGeometry(r - 0.04, r + 0.04, 48), ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.01;
+  scene.add(ring);
+}
+
+/* ---- Abstract instruments ---- */
+function createLandmark(x, z, h, color) {
+  const mesh = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.25, 0.45, h, 6),
+    new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.3, transparent: true, opacity: 0.6 })
+  );
+  mesh.position.set(x, h / 2, z);
+  mesh.castShadow = true;
+  scene.add(mesh);
+  const cap = new THREE.Mesh(
+    new THREE.SphereGeometry(0.3, 6, 6),
+    new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.1, transparent: true, opacity: 0.5 })
+  );
+  cap.position.set(x, h + 0.1, z);
+  scene.add(cap);
+}
+const pts = [[-6,-4],[-4,6],[5,-5],[7,3],[-7,2],[3,-7],[-3,8],[8,-3]];
+const clrs = [0x4488cc,0x66aadd,0x5588bb,0x77aadd,0x4477bb];
+pts.forEach(([x,z],i) => createLandmark(x,z,0.5+Math.random()*0.8,clrs[i%clrs.length]));
+
+/* ============================================================
+   SUN
+   ============================================================ */
+const sunGroup = new THREE.Group();
+scene.add(sunGroup);
+
+const sunMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(1.8, 32, 32),
+  new THREE.MeshBasicMaterial({ color: 0xffdd44 })
+);
+sunGroup.add(sunMesh);
+
+for (let i = 0; i < 3; i++) {
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(2.2 + i * 0.8, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0.08 - i * 0.02, side: THREE.BackSide })
+  );
+  sunGroup.add(glow);
+}
+
+const rayMat = new THREE.LineBasicMaterial({ color: 0xffaa44, transparent: true, opacity: 0.15 });
+for (let i = 0; i < 24; i++) {
+  const theta = (i / 24) * Math.PI * 2;
+  const len = 2.5 + Math.random() * 1.5;
+  const points = [
+    new THREE.Vector3(Math.cos(theta) * 2.0, Math.sin(theta) * 2.0, 0),
+    new THREE.Vector3(Math.cos(theta) * (2.0 + len), Math.sin(theta) * (2.0 + len), 0),
+  ];
+  sunGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), rayMat));
+}
+
+sunGroup.position.set(12, 18, -8);
+
+const sunLabelDiv = document.createElement('div');
+sunLabelDiv.textContent = '☀ 太阳';
+sunLabelDiv.style.cssText = 'color: rgba(255,200,100,0.85); font-size: 13px; font-weight: 600; letter-spacing: 1px; text-shadow: 0 0 20px rgba(255,200,100,0.3);';
+const sunLabel = new CSS2DObject(sunLabelDiv);
+scene.add(sunLabel);
+
+/* ---- Sun Path Arc (visual indicator) ---- */
+const arcPoints = [];
+const ARC_RADIUS = 28;
+for (let i = 0; i <= 40; i++) {
+  const t = (i / 40) * Math.PI;
+  const x = Math.cos(t) * ARC_RADIUS;
+  const y = Math.max(Math.sin(t) * ARC_RADIUS, -2);
+  arcPoints.push(new THREE.Vector3(x, y, 0));
+}
+const arcGeo = new THREE.BufferGeometry().setFromPoints(arcPoints);
+const arcMat = new THREE.LineDashedMaterial({
+  color: 0x446688, dashSize: 0.4, gapSize: 0.3, transparent: true, opacity: 0.15
+});
+const arcLine = new THREE.Line(arcGeo, arcMat);
+arcLine.computeLineDistances();
+scene.add(arcLine);
+
+/* ============================================================
+   CLOUDS
+   ============================================================ */
+const cloudGroup = new THREE.Group();
+scene.add(cloudGroup);
+
+function createCloud(x, y, z, scale, opacity) {
+  const group = new THREE.Group();
+  const puffs = [
+    [0,0,0,1],[0.8,0.2,0.3,0.7],[-0.7,0.1,-0.2,0.75],[0.3,0.4,-0.5,0.6],
+    [-0.3,0.3,0.6,0.65],[0.6,-0.1,-0.6,0.5],[-0.5,-0.1,0.5,0.55],
+  ];
+  puffs.forEach(([px,py,pz,s]) => {
+    const puff = new THREE.Mesh(
+      new THREE.SphereGeometry(s * scale, 10, 10),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeff, roughness: 0.4, metalness: 0, transparent: true, opacity: opacity || 0.7 })
+    );
+    puff.position.set(px * scale, py * scale * 0.6, pz * scale);
+    group.add(puff);
+  });
+  group.position.set(x, y, z);
+  const s = 0.7 + Math.random() * 0.6;
+  group.scale.set(s, s, s);
+  return group;
+}
+
+const cloudPos = [
+  [-10,10,-5],[0,11,-12],[12,9,-6],[-15,12,2],[5,10,10],[-5,11,8],
+  [18,8,5],[-18,10,-8],[8,9,-14],[-12,13,-10],[15,10,-10],[-8,9,12],
+  [0,8,15],[20,10,0],[-20,11,0],[-6,12,14],[14,8,12],[-14,9,14],
+];
+const clouds = [];
+cloudPos.forEach(([x,y,z]) => {
+  const c = createCloud(x, y, z, 1.0, 0.5 + Math.random() * 0.3);
+  cloudGroup.add(c);
+  clouds.push(c);
+});
+
+const cloudLabelDiv = document.createElement('div');
+cloudLabelDiv.textContent = '☁ 云层';
+cloudLabelDiv.style.cssText = 'color: rgba(200,210,255,0.6); font-size: 12px; font-weight: 500; letter-spacing: 1px;';
+const cloudLabel = new CSS2DObject(cloudLabelDiv);
+cloudLabel.position.set(0, 14, -8);
+scene.add(cloudLabel);
+
+/* ============================================================
+   RAIN
+   ============================================================ */
+const RAIN_COUNT = 6000;
+const rainGeo = new THREE.BufferGeometry();
+const rainPos = new Float32Array(RAIN_COUNT * 3);
+const rainVel = new Float32Array(RAIN_COUNT);
+const rainArea = 50;
+for (let i = 0; i < RAIN_COUNT; i++) {
+  rainPos[i*3] = (Math.random()-0.5)*rainArea;
+  rainPos[i*3+1] = Math.random()*25;
+  rainPos[i*3+2] = (Math.random()-0.5)*rainArea;
+  rainVel[i] = 0.08+Math.random()*0.12;
+}
+rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rainMat = new THREE.PointsMaterial({
+  color: 0xaabbff, size: 0.12, transparent: true, opacity: 0,
+  blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+});
+const rainSystem = new THREE.Points(rainGeo, rainMat);
+scene.add(rainSystem);
+
+/* ============================================================
+   SUN & SKY COMPUTATION
+   ============================================================ */
+const SUN_DIST = 28;
+const SUN_RADIUS = 1.8;
+
+function computeSunPosition(hour) {
+  // hour: 0-24, maps to a semicircular arc east->zenith->west
+  const angle = ((hour - 6) / 12) * Math.PI; // 0 at 6:00, π at 18:00
+  const elev = Math.sin(angle); // -1 .. 1
+  const az = Math.cos(angle);   // 1 .. -1
+  const x = az * SUN_DIST;
+  const y = elev * SUN_DIST;
+  const z = 0;
+  return { x, y, z, elevation: elev, angle };
+}
+
+function getSkyColorAtElevation(elev) {
+  // elev: -1 (below horizon) to 1 (zenith)
+  const c = new THREE.Color();
+  if (elev < -0.15) {
+    // Night: deep dark blue
+    c.setHex(0x0a0a1a);
+  } else if (elev < 0.0) {
+    // Twilight: dark purple-blue
+    const t = (elev + 0.15) / 0.15;
+    c.lerpColors(new THREE.Color(0x0a0a1a), new THREE.Color(0x2a1a3a), t);
+  } else if (elev < 0.08) {
+    // Sunrise/sunset core: orange-red
+    const t = elev / 0.08;
+    c.lerpColors(new THREE.Color(0x2a1a3a), new THREE.Color(0xff6633), t);
+  } else if (elev < 0.18) {
+    // Golden hour
+    const t = (elev - 0.08) / 0.1;
+    c.lerpColors(new THREE.Color(0xff6633), new THREE.Color(0xff9933), t);
+  } else if (elev < 0.3) {
+    // Warm blue
+    const t = (elev - 0.18) / 0.12;
+    c.lerpColors(new THREE.Color(0xff9933), new THREE.Color(0x88aadd), t);
+  } else if (elev < 0.5) {
+    // Blue sky
+    const t = (elev - 0.3) / 0.2;
+    c.lerpColors(new THREE.Color(0x88aadd), new THREE.Color(0x4a90d9), t);
+  } else {
+    // Deep blue at zenith
+    const t = Math.min(1, (elev - 0.5) / 0.5);
+    c.lerpColors(new THREE.Color(0x4a90d9), new THREE.Color(0x3377cc), t);
+  }
+  return c;
+}
+
+function getFogColorFromSky(skyColor) {
+  const fog = skyColor.clone();
+  fog.multiplyScalar(0.85);
+  fog.r = Math.max(0, fog.r);
+  fog.g = Math.max(0, fog.g);
+  fog.b = Math.max(0, fog.b);
+  return fog;
+}
+
+function getSunColorAtElevation(elev) {
+  const c = new THREE.Color();
+  if (elev < 0) {
+    c.setHex(0x444466);
+  } else if (elev < 0.08) {
+    const t = elev / 0.08;
+    c.lerpColors(new THREE.Color(0x444466), new THREE.Color(0xff4422), t);
+  } else if (elev < 0.15) {
+    const t = (elev - 0.08) / 0.07;
+    c.lerpColors(new THREE.Color(0xff4422), new THREE.Color(0xff8833), t);
+  } else if (elev < 0.3) {
+    const t = (elev - 0.15) / 0.15;
+    c.lerpColors(new THREE.Color(0xff8833), new THREE.Color(0xffcc44), t);
+  } else {
+    c.lerpColors(new THREE.Color(0xffcc44), new THREE.Color(0xffdd66), Math.min(1, (elev - 0.3) / 0.7));
+  }
+  return c;
+}
+
+function getLightIntensity(elev) {
+  if (elev < 0) return 0.05;
+  if (elev < 0.1) return 0.1 + elev / 0.1 * 0.9;
+  if (elev < 0.3) return 1.0 + (elev - 0.1) / 0.2 * 0.8;
+  return 1.8 + (elev - 0.3) / 0.7 * 0.7;
+}
+
+function getAmbientIntensity(elev) {
+  if (elev < 0) return 0.08;
+  if (elev < 0.1) return 0.08 + elev / 0.1 * 0.27;
+  if (elev < 0.3) return 0.35 + (elev - 0.1) / 0.2 * 0.15;
+  return 0.5;
+}
+
+function getBloomStrength(elev) {
+  if (elev < 0) return 0.05;
+  if (elev < 0.1) return 0.05 + elev / 0.1 * 0.85;
+  if (elev < 0.2) return 0.9 - (elev - 0.1) / 0.1 * 0.4;
+  return 0.5;
+}
+
+function getSunScale(elev) {
+  if (elev < 0) return 0.3;
+  if (elev < 0.1) return 0.3 + elev / 0.1 * 0.7;
+  return 1.0;
+}
+
+function getSunGlowOpacity(elev, layer) {
+  if (elev < 0) return 0;
+  if (elev < 0.15) return (elev / 0.15) * (0.08 - layer * 0.02) * 2;
+  return (0.08 - layer * 0.02) * (1 + Math.max(0, 1 - Math.abs(elev - 0.08) * 5) * 2);
+}
+
+function getTimeLabel(hour) {
+  const h = Math.floor(hour);
+  const m = Math.floor((hour - h) * 60);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function getPeriodName(hour) {
+  if (hour < 5) return '深夜';
+  if (hour < 6.5) return '黎明';
+  if (hour < 8) return '日出';
+  if (hour < 11) return '上午';
+  if (hour < 13) return '正午';
+  if (hour < 16) return '下午';
+  if (hour < 18) return '傍晚';
+  if (hour < 19.5) return '日落';
+  if (hour < 21) return '黄昏';
+  return '夜晚';
+}
+
+/* ============================================================
+   WEATHER MODE DEFINITIONS
+   ============================================================ */
+const WEATHER_MODES = {
+  sunny: {
+    title: '晴天', icon: '☀️', desc: '大气层薄，阳光直射地面，天空蔚蓝',
+    temp: '地表温度 ≈ 25°C', time: 12,
+    cloudOpacity: 0.2, rainOpacity: 0,
+  },
+  cloudy: {
+    title: '阴天', icon: '☁️', desc: '云层覆盖整个天空，散射光使天空均匀灰白',
+    temp: '地表温度 ≈ 15°C', time: 12,
+    cloudOpacity: 0.85, rainOpacity: 0,
+  },
+  rainy: {
+    title: '雨天', icon: '🌧️', desc: '云层厚重，水汽凝结成雨滴落下',
+    temp: '地表温度 ≈ 12°C', time: 12,
+    cloudOpacity: 0.9, rainOpacity: 0.7,
+  },
+  sunrise: {
+    title: '日出', icon: '🌅', desc: '太阳从地平线升起，瑞利散射留下红橙色调',
+    temp: '地表温度 ≈ 8°C → 18°C', time: 6,
+    cloudOpacity: 0.3, rainOpacity: 0,
+  },
+  sunset: {
+    title: '日落', icon: '🌇', desc: '太阳沉入地平线，天空呈现紫橙渐变 — 魔幻时刻',
+    temp: '地表温度 ≈ 22°C → 12°C', time: 18,
+    cloudOpacity: 0.35, rainOpacity: 0,
+  },
+};
+
+let currentMode = 'sunny';
+let targetCloudOpacity = 0.2;
+let targetRainOpacity = 0;
+let currentCloudOpacity = 0.2;
+let currentRainOpacity = 0;
+let currentHour = 12;
+
+/* ============================================================
+   MODE SWITCHING
+   ============================================================ */
+function switchMode(mode) {
+  currentMode = mode;
+  const m = WEATHER_MODES[mode];
+  targetCloudOpacity = m.cloudOpacity;
+  targetRainOpacity = m.rainOpacity;
+  
+  // Set the time slider
+  document.getElementById('timeSlider').value = m.time;
+  currentHour = m.time;
+  
+  // Update UI
+  document.querySelectorAll('#controls button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  document.getElementById('weatherIcon').textContent = m.icon;
+  document.getElementById('weatherTitle').textContent = m.title;
+  document.getElementById('weatherDesc').textContent = m.desc;
+  document.getElementById('weatherTemp').textContent = m.temp;
+}
+
+/* ---- UI Events ---- */
+document.querySelectorAll('#controls button').forEach(btn => {
+  btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+});
+
+const timeSlider = document.getElementById('timeSlider');
+const timeLabel = document.getElementById('timeLabel');
+const timeLabelEnd = document.getElementById('timeLabelEnd');
+const weatherClock = document.getElementById('weatherClock');
+
+timeSlider.addEventListener('input', () => {
+  const hour = parseFloat(timeSlider.value);
+  currentHour = hour;
+  
+  // Update time display
+  const timeStr = getTimeLabel(hour);
+  const period = getPeriodName(hour);
+  weatherClock.textContent = `🕐 ${timeStr} · ${period}`;
+  
+  // Update slider labels
+  timeLabel.textContent = getTimeLabel(hour);
+  
+  // Deselect weather mode buttons when manually adjusting time
+  document.querySelectorAll('#controls button').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Update info title
+  document.getElementById('weatherTitle').textContent = `${period}`;
+  document.getElementById('weatherDesc').textContent = getDescriptionForHour(hour);
+  document.getElementById('weatherTemp').textContent = getTempForHour(hour);
+});
+
+function getDescriptionForHour(hour) {
+  if (hour < 5) return '太阳在地平线以下，天空黑暗，只有微弱的星光';
+  if (hour < 6.5) return '地平线泛起鱼肚白，天空从深蓝渐变为紫红';
+  if (hour < 8) return '太阳刚刚升起，光线穿过厚厚的大气层，呈现温暖的红橙色';
+  if (hour < 11) return '太阳升高，光线渐强，天空呈现清澈的蓝色';
+  if (hour < 13) return '太阳高悬天顶，阳光最为强烈，天空湛蓝';
+  if (hour < 16) return '太阳西斜，光线依然充足，天空蔚蓝';
+  if (hour < 18) return '太阳逐渐靠近地平线，光线变得柔和温暖';
+  if (hour < 19.5) return '太阳沉入地平线，天空被染成绚丽的橙红色';
+  if (hour < 21) return '暮色渐浓，天空从橙红过渡到深紫蓝';
+  return '夜晚降临，天空呈现深邃的蓝黑色';
+}
+
+function getTempForHour(hour) {
+  if (hour < 5) return '地表温度 ≈ 8°C';
+  if (hour < 8) return '地表温度 ≈ 8°C → 15°C';
+  if (hour < 12) return '地表温度 ≈ 15°C → 22°C';
+  if (hour < 14) return '地表温度 ≈ 25°C（日最高温）';
+  if (hour < 18) return '地表温度 ≈ 22°C → 18°C';
+  if (hour < 21) return '地表温度 ≈ 18°C → 12°C';
+  return '地表温度 ≈ 12°C → 8°C';
+}
+
+/* ============================================================
+   ANIMATION
+   ============================================================ */
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  const elapsed = clock.getElapsedTime();
+
+  // ---- Sun Position ----
+  const sunPos = computeSunPosition(currentHour);
+  const elev = sunPos.elevation;
+  
+  // Smooth cloud/rain transitions
+  currentCloudOpacity += (targetCloudOpacity - currentCloudOpacity) * delta * 1.5;
+  currentRainOpacity += (targetRainOpacity - currentRainOpacity) * delta * 1.5;
+
+  // ---- Compute colors from sun elevation ----
+  const skyColor = getSkyColorAtElevation(elev);
+  const fogColor = getFogColorFromSky(skyColor);
+  const sunColor = getSunColorAtElevation(elev);
+  const lightIntensity = getLightIntensity(elev);
+  const ambientIntensity = getAmbientIntensity(elev);
+  const bloomStrength = getBloomStrength(elev);
+  const sunScale = getSunScale(elev);
+
+  // ---- Apply to scene ----
+  scene.background.copy(skyColor);
+  scene.fog.color.copy(fogColor);
+
+  // Sun position
+  sunGroup.position.set(sunPos.x, sunPos.y, sunPos.z);
+  sunGroup.scale.setScalar(sunScale);
+  sunMesh.material.color.copy(sunColor);
+  
+  // Sun glow
+  sunGroup.children.forEach((child, i) => {
+    if (child.isMesh && child !== sunMesh && child.material.transparent) {
+      child.material.opacity = getSunGlowOpacity(elev, i - 1);
+    }
+    if (child.isLine) {
+      child.material.opacity = 0.15 * Math.max(0, elev);
+      child.material.color.copy(sunColor);
+    }
+  });
+
+  // Lights
+  sunLight.position.set(sunPos.x, sunPos.y, sunPos.z);
+  sunLight.intensity = lightIntensity;
+  sunLight.color.copy(sunColor);
+  ambientLight.intensity = ambientIntensity;
+
+  // Fill light shifts color with sun
+  fillLight.intensity = 0.1 + ambientIntensity * 0.4;
+
+  // Clouds
+  clouds.forEach(cloud => {
+    cloud.children.forEach(puff => {
+      puff.material.opacity = currentCloudOpacity;
+    });
+  });
+
+  // Rain
+  rainMat.opacity = currentRainOpacity;
+
+  // Bloom
+  bloomPass.strength = bloomStrength;
+
+  // ---- Cloud Drift ----
+  clouds.forEach((cloud, i) => {
+    cloud.position.x += Math.sin(elapsed * 0.02 + i * 1.7) * 0.002;
+    cloud.position.z += Math.cos(elapsed * 0.015 + i * 2.3) * 0.002;
+  });
+
+  // ---- Rain Animation ----
+  const positions = rainSystem.geometry.attributes.position.array;
+  for (let i = 0; i < RAIN_COUNT; i++) {
+    positions[i*3+1] -= rainVel[i] * delta * 60;
+    positions[i*3] += Math.sin(elapsed + i) * 0.002;
+    positions[i*3+2] += Math.cos(elapsed * 0.5 + i) * 0.002;
+    if (positions[i*3+1] < -1) {
+      positions[i*3+1] = 24 + Math.random() * 2;
+      positions[i*3] = (Math.random() - 0.5) * rainArea;
+      positions[i*3+2] = (Math.random() - 0.5) * rainArea;
+    }
+  }
+  rainSystem.geometry.attributes.position.needsUpdate = true;
+
+  // ---- Sun Label ----
+  sunLabel.position.set(sunPos.x, sunPos.y + 3.5, sunPos.z);
+  sunLabelDiv.style.opacity = elev > -0.1 ? '1' : '0';
+
+  // ---- Controls ----
+  controls.update();
+
+  // ---- Render ----
+  composer.render();
+  labelRenderer.render(scene, camera);
+}
+
+/* ============================================================
+   RESIZE
+   ============================================================ */
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  labelRenderer.setSize(w, h);
+  composer.setSize(w, h);
+});
+
+/* ============================================================
+   START
+   ============================================================ */
+document.getElementById('loading').classList.add('hidden');
+setTimeout(() => {
+  document.getElementById('hint').style.opacity = '0';
+}, 6000);
+
+animate();
+
+console.log('🌤 天气3D探索 v2 — 刘费曼的科学课 | 拖动时间轴控制太阳');
+</script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水循环之旅 · 刘费曼的科学课</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { overflow: hidden; background: #0a1628; font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; color: #fff; user-select: none; }
+  #canvas-container { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
+
+  #info-panel {
+    position: fixed; top: 28px; left: 32px; z-index: 10; pointer-events: none;
+  }
+  #info-panel .title {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.5px;
+    background: rgba(255,255,255,0.07); backdrop-filter: blur(12px);
+    padding: 6px 18px; border-radius: 10px; display: inline-block;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  #info-panel .desc {
+    font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 6px;
+    padding-left: 4px; font-weight: 400; max-width: 360px; line-height: 1.5;
+  }
+  #info-panel .stage {
+    font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 6px; padding-left: 4px;
+    font-weight: 500;
+  }
+
+  #controls {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 10;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 12px 20px 16px;
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(20px);
+    border-radius: 16px; border: 1px solid rgba(255,255,255,0.07);
+    min-width: 420px;
+  }
+  #controls .btn-row { display: flex; gap: 6px; }
+  #controls button {
+    padding: 8px 16px; border: none; border-radius: 8px;
+    background: transparent; color: rgba(255,255,255,0.45);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    font-family: inherit;
+  }
+  #controls button:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+  #controls button.active { color: #fff; background: rgba(255,255,255,0.12); }
+
+  #progress-bar {
+    width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
+  }
+  #progress-fill {
+    height: 100%; background: linear-gradient(90deg, #06B6D4, #22D3EE); border-radius: 2px;
+    transition: width 0.3s ease; width: 0%;
+  }
+
+  #hint {
+    position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%);
+    z-index: 5; font-size: 11px; color: rgba(255,255,255,0.12); pointer-events: none;
+    transition: opacity 2s ease;
+  }
+
+  #loading {
+    position: fixed; inset: 0; z-index: 999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #0a1628; color: rgba(255,255,255,0.6); font-size: 14px;
+    transition: opacity 0.8s ease;
+  }
+  #loading.hidden { opacity: 0; pointer-events: none; }
+  #loading .spinner {
+    width: 32px; height: 32px; border: 2px solid rgba(255,255,255,0.08);
+    border-top-color: rgba(255,255,255,0.4); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin-bottom: 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 768px) {
+    #info-panel { top: 16px; left: 16px; }
+    #info-panel .title { font-size: 18px; padding: 4px 12px; }
+    #info-panel .desc { font-size: 11px; max-width: 200px; }
+    #controls { bottom: 16px; min-width: unset; width: 94vw; padding: 8px 10px 12px; }
+    #controls button { padding: 6px 10px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <span>加载水循环场景...</span>
+</div>
+
+<div id="canvas-container"></div>
+
+<div id="info-panel">
+  <div class="title" id="stageTitle">💧 水循环之旅</div>
+  <div class="stage" id="stageName">蒸发阶段</div>
+  <div class="desc" id="stageDesc">太阳加热地表水，水分子获得能量变成水蒸气上升</div>
+</div>
+
+<div id="controls">
+  <div class="btn-row">
+    <button data-stage="0" class="active">💨 蒸发</button>
+    <button data-stage="1">☁️ 凝结</button>
+    <button data-stage="2">🌧️ 降水</button>
+    <button data-stage="3">🌊 径流</button>
+    <button data-stage="play">▶️ 自动播放</button>
+  </div>
+  <div id="progress-bar"><div id="progress-fill"></div></div>
+</div>
+
+<div id="hint">🖱 拖拽旋转 · 滚轮缩放 · 点击阶段按钮切换</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ========== SCENE SETUP ========== */
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+container.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0a1628);
+scene.fog = new THREE.Fog(0x0a1628, 40, 120);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 300);
+camera.position.set(0, 15, 35);
+camera.lookAt(0, 2, 0);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxPolarAngle = Math.PI / 2.1;
+controls.minDistance = 10;
+controls.maxDistance = 60;
+controls.target.set(0, 2, 0);
+
+/* ========== LIGHTS ========== */
+const ambientLight = new THREE.AmbientLight(0x446688, 0.4);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xffeedd, 1.5);
+sunLight.position.set(20, 30, 10);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 1024;
+sunLight.shadow.mapSize.height = 1024;
+scene.add(sunLight);
+
+/* ========== TERRAIN ========== */
+// 海洋
+const oceanGeo = new THREE.PlaneGeometry(80, 40, 32, 16);
+const oceanMat = new THREE.MeshStandardMaterial({
+  color: 0x0e7490, roughness: 0.3, metalness: 0.4, transparent: true, opacity: 0.85,
+});
+const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+ocean.rotation.x = -Math.PI / 2;
+ocean.position.y = -0.5;
+ocean.receiveShadow = true;
+scene.add(ocean);
+
+// 陆地（左侧）
+const landGeo = new THREE.PlaneGeometry(30, 25, 16, 12);
+const landPos = landGeo.attributes.position;
+for (let i = 0; i < landPos.count; i++) {
+  const x = landPos.getX(i);
+  const z = landPos.getY(i);
+  const h = Math.sin(x * 0.15) * Math.cos(z * 0.12) * 1.5 + Math.random() * 0.3;
+  landPos.setZ(i, h);
+}
+landGeo.computeVertexNormals();
+const landMat = new THREE.MeshStandardMaterial({ color: 0x2d5016, roughness: 0.9 });
+const land = new THREE.Mesh(landGeo, landMat);
+land.rotation.x = -Math.PI / 2;
+land.position.set(-22, 0, 0);
+land.receiveShadow = true;
+scene.add(land);
+
+// 山脉
+for (let i = 0; i < 5; i++) {
+  const mh = 2 + Math.random() * 3;
+  const mGeo = new THREE.ConeGeometry(1.5 + Math.random(), mh, 6);
+  const mMat = new THREE.MeshStandardMaterial({ color: 0x4a3728, roughness: 0.9 });
+  const m = new THREE.Mesh(mGeo, mMat);
+  m.position.set(-25 + Math.random() * 10, mh / 2, -8 + Math.random() * 16);
+  m.castShadow = true;
+  scene.add(m);
+}
+
+// 树木
+for (let i = 0; i < 12; i++) {
+  const trunk = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.15, 0.8, 6),
+    new THREE.MeshStandardMaterial({ color: 0x5c3a1e })
+  );
+  const crown = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5 + Math.random() * 0.3, 8, 8),
+    new THREE.MeshStandardMaterial({ color: 0x166534 })
+  );
+  const tx = -28 + Math.random() * 14;
+  const tz = -10 + Math.random() * 20;
+  trunk.position.set(tx, 0.4, tz);
+  crown.position.set(tx, 1.0, tz);
+  scene.add(trunk);
+  scene.add(crown);
+}
+
+/* ========== SUN ========== */
+const sunGroup = new THREE.Group();
+scene.add(sunGroup);
+const sunMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(2, 32, 32),
+  new THREE.MeshBasicMaterial({ color: 0xffdd44 })
+);
+sunGroup.add(sunMesh);
+for (let i = 0; i < 3; i++) {
+  const glow = new THREE.Mesh(
+    new THREE.SphereGeometry(2.5 + i * 0.8, 24, 24),
+    new THREE.MeshBasicMaterial({ color: 0xffaa33, transparent: true, opacity: 0.06 - i * 0.015, side: THREE.BackSide })
+  );
+  sunGroup.add(glow);
+}
+sunGroup.position.set(25, 20, -10);
+
+/* ========== CLOUDS ========== */
+const cloudGroup = new THREE.Group();
+scene.add(cloudGroup);
+
+function createCloud(x, y, z, scale) {
+  const group = new THREE.Group();
+  const puffs = [[0,0,0,1],[0.8,0.2,0.3,0.7],[-0.7,0.1,-0.2,0.75],[0.3,0.4,-0.5,0.6]];
+  puffs.forEach(([px,py,pz,s]) => {
+    const puff = new THREE.Mesh(
+      new THREE.SphereGeometry(s * scale, 10, 10),
+      new THREE.MeshStandardMaterial({ color: 0xeeeeff, roughness: 0.4, transparent: true, opacity: 0.6 })
+    );
+    puff.position.set(px * scale, py * scale * 0.6, pz * scale);
+    group.add(puff);
+  });
+  group.position.set(x, y, z);
+  return group;
+}
+
+const clouds = [];
+[[-5,12,-5],[5,14,-8],[0,11,5],[-10,13,2],[8,10,-2],[12,12,6],[-8,10,8]].forEach(([x,y,z]) => {
+  const c = createCloud(x, y, z, 1.2);
+  cloudGroup.add(c);
+  clouds.push(c);
+});
+
+/* ========== WATER VAPOR PARTICLES ========== */
+const VAPOR_COUNT = 300;
+const vaporGeo = new THREE.BufferGeometry();
+const vaporPos = new Float32Array(VAPOR_COUNT * 3);
+const vaporVel = new Float32Array(VAPOR_COUNT);
+for (let i = 0; i < VAPOR_COUNT; i++) {
+  vaporPos[i*3] = -30 + Math.random() * 20;
+  vaporPos[i*3+1] = Math.random() * 15;
+  vaporPos[i*3+2] = -10 + Math.random() * 20;
+  vaporVel[i] = 0.02 + Math.random() * 0.04;
+}
+vaporGeo.setAttribute('position', new THREE.BufferAttribute(vaporPos, 3));
+const vaporMat = new THREE.PointsMaterial({
+  color: 0x88ccff, size: 0.15, transparent: true, opacity: 0,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const vaporSystem = new THREE.Points(vaporGeo, vaporMat);
+scene.add(vaporSystem);
+
+/* ========== RAIN PARTICLES ========== */
+const RAIN_COUNT = 2000;
+const rainGeo = new THREE.BufferGeometry();
+const rainPos = new Float32Array(RAIN_COUNT * 3);
+for (let i = 0; i < RAIN_COUNT; i++) {
+  rainPos[i*3] = -15 + Math.random() * 30;
+  rainPos[i*3+1] = Math.random() * 20;
+  rainPos[i*3+2] = -15 + Math.random() * 30;
+}
+rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rainMat = new THREE.PointsMaterial({
+  color: 0x67e8f9, size: 0.1, transparent: true, opacity: 0,
+  blending: THREE.AdditiveBlending, depthWrite: false,
+});
+const rainSystem = new THREE.Points(rainGeo, rainMat);
+scene.add(rainSystem);
+
+/* ========== RIVERS ========== */
+const riverCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-5, 0.2, -5),
+  new THREE.Vector3(-8, 0.1, 0),
+  new THREE.Vector3(-12, 0.1, 5),
+  new THREE.Vector3(-18, -0.3, 8),
+  new THREE.Vector3(-25, -0.5, 5),
+]);
+const riverGeo = new THREE.TubeGeometry(riverCurve, 32, 0.4, 8, false);
+const riverMat = new THREE.MeshStandardMaterial({ color: 0x0891b2, transparent: true, opacity: 0.6, roughness: 0.2 });
+const river = new THREE.Mesh(riverGeo, riverMat);
+scene.add(river);
+
+/* ========== STAGE DEFINITIONS ========== */
+const STAGES = [
+  {
+    name: '蒸发阶段',
+    desc: '太阳加热地表水，水分子获得能量变成水蒸气上升',
+    cameraPos: [5, 8, 25],
+    vaporOpacity: 0.7, rainOpacity: 0, cloudOpacity: 0.3,
+    sunIntensity: 1.8, skyColor: 0x1a3a5c,
+  },
+  {
+    name: '凝结阶段',
+    desc: '水蒸气上升到高空遇冷，凝结成微小的水滴，聚集成云',
+    cameraPos: [0, 18, 20],
+    vaporOpacity: 0.2, rainOpacity: 0, cloudOpacity: 0.85,
+    sunIntensity: 1.2, skyColor: 0x1e2d4a,
+  },
+  {
+    name: '降水阶段',
+    desc: '云中的水滴越聚越大，最终变成雨滴落回地面',
+    cameraPos: [-5, 10, 22],
+    vaporOpacity: 0, rainOpacity: 0.7, cloudOpacity: 0.9,
+    sunIntensity: 0.6, skyColor: 0x162238,
+  },
+  {
+    name: '径流阶段',
+    desc: '雨水汇聚成溪流，流入江河，最终回归大海，完成循环',
+    cameraPos: [-15, 5, 20],
+    vaporOpacity: 0, rainOpacity: 0, cloudOpacity: 0.4,
+    sunIntensity: 1.4, skyColor: 0x1a3a5c,
+  },
+];
+
+let currentStage = 0;
+let targetVaporOpacity = 0.7;
+let targetRainOpacity = 0;
+let targetCloudOpacity = 0.3;
+let currentVaporOpacity = 0.7;
+let currentRainOpacity = 0;
+let currentCloudOpacity = 0.3;
+let autoPlay = false;
+let lastStageChange = 0;
+
+function setStage(idx) {
+  currentStage = idx;
+  const s = STAGES[idx];
+  targetVaporOpacity = s.vaporOpacity;
+  targetRainOpacity = s.rainOpacity;
+  targetCloudOpacity = s.cloudOpacity;
+  document.getElementById('stageName').textContent = s.name;
+  document.getElementById('stageDesc').textContent = s.desc;
+  document.getElementById('progress-fill').style.width = ((idx + 1) / 4 * 100) + '%';
+  document.querySelectorAll('#controls button').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.stage) === idx);
+  });
+  lastStageChange = Date.now();
+}
+
+document.querySelectorAll('#controls button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const s = btn.dataset.stage;
+    if (s === 'play') {
+      autoPlay = !autoPlay;
+      btn.textContent = autoPlay ? '⏸️ 暂停' : '▶️ 自动播放';
+      return;
+    }
+    autoPlay = false;
+    document.querySelector('button[data-stage="play"]').textContent = '▶️ 自动播放';
+    setStage(parseInt(s));
+  });
+});
+
+/* ========== ANIMATION ========== */
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const delta = clock.getDelta();
+  const elapsed = clock.getElapsedTime();
+
+  // Auto-play
+  if (autoPlay && Date.now() - lastStageChange > 4000) {
+    setStage((currentStage + 1) % 4);
+  }
+
+  // Smooth transitions
+  currentVaporOpacity += (targetVaporOpacity - currentVaporOpacity) * delta * 2;
+  currentRainOpacity += (targetRainOpacity - currentRainOpacity) * delta * 2;
+  currentCloudOpacity += (targetCloudOpacity - currentCloudOpacity) * delta * 2;
+
+  vaporMat.opacity = currentVaporOpacity;
+  rainMat.opacity = currentRainOpacity;
+
+  // Cloud opacity
+  clouds.forEach(cloud => {
+    cloud.children.forEach(puff => {
+      puff.material.opacity = currentCloudOpacity;
+    });
+  });
+
+  // Sky color transition
+  const targetSky = new THREE.Color(STAGES[currentStage].skyColor);
+  scene.background.lerp(targetSky, delta * 1.5);
+  scene.fog.color.lerp(targetSky, delta * 1.5);
+
+  // Sun intensity
+  const targetIntensity = STAGES[currentStage].sunIntensity;
+  sunLight.intensity += (targetIntensity - sunLight.intensity) * delta * 2;
+
+  // Cloud drift
+  clouds.forEach((cloud, i) => {
+    cloud.position.x += Math.sin(elapsed * 0.02 + i * 1.7) * 0.003;
+    cloud.position.z += Math.cos(elapsed * 0.015 + i * 2.3) * 0.003;
+  });
+
+  // Vapor animation (evaporation: rise from ocean)
+  if (currentVaporOpacity > 0.05) {
+    const vPos = vaporSystem.geometry.attributes.position.array;
+    for (let i = 0; i < VAPOR_COUNT; i++) {
+      vPos[i*3+1] += vaporVel[i] * delta * 30;
+      vPos[i*3] += Math.sin(elapsed + i * 0.5) * 0.003;
+      if (vPos[i*3+1] > 18) {
+        vPos[i*3+1] = 0.5;
+        vPos[i*3] = -30 + Math.random() * 20;
+        vPos[i*3+2] = -10 + Math.random() * 20;
+      }
+    }
+    vaporSystem.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // Rain animation
+  if (currentRainOpacity > 0.05) {
+    const rPos = rainSystem.geometry.attributes.position.array;
+    for (let i = 0; i < RAIN_COUNT; i++) {
+      rPos[i*3+1] -= 0.15 * delta * 60;
+      if (rPos[i*3+1] < -1) {
+        rPos[i*3+1] = 18 + Math.random() * 4;
+        rPos[i*3] = -15 + Math.random() * 30;
+        rPos[i*3+2] = -15 + Math.random() * 30;
+      }
+    }
+    rainSystem.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // Ocean wave
+  const oceanPositions = oceanGeo.attributes.position.array;
+  for (let i = 0; i < oceanPositions.length; i += 3) {
+    const x = oceanPositions[i];
+    const z = oceanPositions[i + 1];
+    oceanPositions[i + 2] = Math.sin(x * 0.3 + elapsed) * 0.15 + Math.cos(z * 0.2 + elapsed * 0.7) * 0.1;
+  }
+  oceanGeo.attributes.position.needsUpdate = true;
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+});
+
+document.getElementById('loading').classList.add('hidden');
+setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 6000);
+
+animate();
+console.log('💧 水循环之旅 v1 — 刘费曼的科学课 | 点击阶段按钮探索水循环');
+</script>
+</body>
+</html>
