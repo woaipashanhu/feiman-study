@@ -73,6 +73,16 @@ export function AppRouter() {
         }
       />
       <Route
+        path="/science/category/:categoryId"
+        element={
+          <PageTransition>
+            <SafeLazy location="ScienceCategoryList">
+              <ScienceCategoryList />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
         path="/math/lesson/:lessonId"
         element={
           <PageTransition>
@@ -139,14 +149,7 @@ export function AppRouter() {
             </SafeLazy>
           }
         />
-        <Route
-          path="/science/category/:categoryId"
-          element={
-            <SafeLazy location="ScienceCategoryList">
-              <ScienceCategoryList />
-            </SafeLazy>
-          }
-        />
+
         <Route
           path="/social"
           element={

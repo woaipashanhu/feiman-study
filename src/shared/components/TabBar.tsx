@@ -7,19 +7,25 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
   const { boards } = useBoardStore()
 
   return (
-    <nav className="shrink-0 h-16 bg-surface border-t border-border relative">
+    <nav
+      className="shrink-0 h-[4.5rem] relative"
+      style={{
+        background: 'rgba(255, 255, 255, 0.72)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+        borderTop: '0.5px solid rgba(0, 0, 0, 0.06)',
+      }}
+    >
       <div className="flex items-center justify-around h-full max-w-lg mx-auto px-2">
         {boards.map((board) => {
           const Icon = getIcon(board.icon)
 
-          // 安全防护：图标名无效时显示默认占位符而不是渲染 undefined
           if (!Icon) {
             console.warn(`[TabBar] 板块 "${board.name}" 使用了无效的图标名: "${board.icon}"`)
             return (
               <div
                 key={board.id}
-                className="flex flex-col items-center justify-center gap-1 w-16 h-full relative"
-                title={`${board.name}（图标配置错误: ${board.icon}）`}
+                className="flex flex-col items-center justify-center gap-0.5 w-16 h-full relative"
               >
                 <span className="text-lg">❓</span>
                 <span className="text-[10px] text-red-400">{board.name}</span>
@@ -31,40 +37,27 @@ export function TabBar({ onTabChange: _onTabChange }: { onTabChange?: (path: str
             <NavLink
               key={board.id}
               to={board.path}
-              className="flex flex-col items-center justify-center gap-1 w-16 h-full relative transition-colors"
+              className="flex flex-col items-center justify-center gap-0.5 w-16 h-full relative transition-colors"
               end={false}
             >
               {({ isActive: navActive }) => (
                 <>
-                  {/* 激活背景 */}
-                  {navActive && (
-                    <motion.div
-                      layoutId="tabbar-active-bg"
-                      className="absolute inset-x-1 inset-y-1 rounded-xl"
-                      style={{ backgroundColor: board.color + '12' }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  <motion.div
+                    className="relative z-10"
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Icon
+                      size={24}
+                      weight={navActive ? 'fill' : 'regular'}
+                      style={{ color: navActive ? board.color : '#8E8E93' }}
+                      className="transition-colors duration-200"
                     />
-                  )}
-                  {/* 顶部指示条 */}
-                  {navActive && (
-                    <motion.div
-                      layoutId="tabbar-indicator"
-                      className="absolute -top-px left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full"
-                      style={{ backgroundColor: board.color }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <Icon
-                    size={22}
-                    weight={navActive ? 'fill' : 'regular'}
-                    style={{ color: navActive ? board.color : '#9AA0B8' }}
-                    className="relative z-10 transition-colors duration-200"
-                  />
+                  </motion.div>
                   <span
-                    className={`text-sm font-medium relative z-10 transition-colors duration-200 leading-tight ${
+                    className={`text-[10px] font-medium relative z-10 transition-colors duration-200 leading-tight ${
                       navActive ? 'font-semibold' : ''
                     }`}
-                    style={{ color: navActive ? board.color : '#9AA0B8' }}
+                    style={{ color: navActive ? board.color : '#8E8E93' }}
                   >
                     {board.name}
                   </span>
