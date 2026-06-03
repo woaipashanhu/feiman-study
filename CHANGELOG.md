@@ -42,6 +42,40 @@
 
 ---
 
+### 2026-06-03 会话 #18 — Revert 渐变去掉改动（恢复 #17 之前的状态）
+
+#### 本次会话目标
+按用户反馈"改回原来的样子"，撤销 commit 4d541a9（去掉 iframe→文字区渐变遮罩），把渐变加回来。
+
+#### 完成的工作
+
+**1. ⏪ git revert 4d541a9**
+- 新 commit: `15f5e26` "Revert \"去掉 iframe→文字区渐变遮罩...\""
+- 恢复: `<div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent" />`
+- 文件回到 1d1b6b9 状态（文字区 28%,有渐变）
+- 副作用：4d541a9 commit 中追加的"会话 #17"CHANGELOG 章节也被一并 revert（这是 git revert 的特点，精确撤销 commit 涉及的所有文件变更）
+
+**2. 🚀 部署**
+- 服务器 JS bundle: `index-_nL-IbnU.js`（跟 1d1b6b9 部署的 hash 一致,确认是恢复状态）
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/boards/ScienceBoard/Home.tsx` | Revert | 加回 iframe 底部 96px 渐变遮罩 |
+| `CHANGELOG.md` | 新增会话 #18 记录 |
+
+#### 验证结果
+
+```
+✅ git revert 成功
+✅ Vite 构建成功
+✅ 5 步部署全过
+✅ 服务器 JS hash = 1d1b6b9 部署的 hash
+```
+
+---
+
 ### 2026-06-03 会话 #16 — 文字区进一步压缩：35% → 28%
 
 #### 本次会话目标
