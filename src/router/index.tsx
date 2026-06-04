@@ -83,6 +83,36 @@ export function AppRouter() {
         }
       />
       <Route
+        path="/social/category/:categoryId"
+        element={
+          <PageTransition>
+            <SafeLazy location="SocialCategoryList">
+              <SocialCategoryList />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/math/section/:sectionId"
+        element={
+          <PageTransition>
+            <SafeLazy location="MathChapterList">
+              <MathChapterList />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/neimen/category/:categoryId"
+        element={
+          <PageTransition>
+            <SafeLazy location="NeimenCategoryList">
+              <NeimenCategoryList />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
         path="/math/lesson/:lessonId"
         element={
           <PageTransition>
@@ -144,14 +174,6 @@ export function AppRouter() {
           }
         />
         <Route
-          path="/math/section/:sectionId"
-          element={
-            <SafeLazy location="MathChapterList">
-              <MathChapterList />
-            </SafeLazy>
-          }
-        />
-        <Route
           path="/science"
           element={
             <SafeLazy location="ScienceBoard">
@@ -169,14 +191,6 @@ export function AppRouter() {
           }
         />
         <Route
-          path="/social/category/:categoryId"
-          element={
-            <SafeLazy location="SocialCategoryList">
-              <SocialCategoryList />
-            </SafeLazy>
-          }
-        />
-        <Route
           path="/gallery"
           element={
             <SafeLazy location="GalleryBoard">
@@ -189,14 +203,6 @@ export function AppRouter() {
           element={
             <SafeLazy location="NeimenBoard">
               <NeimenBoard />
-            </SafeLazy>
-          }
-        />
-        <Route
-          path="/neimen/category/:categoryId"
-          element={
-            <SafeLazy location="NeimenCategoryList">
-              <NeimenCategoryList />
             </SafeLazy>
           }
         />
