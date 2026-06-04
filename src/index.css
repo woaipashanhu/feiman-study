@@ -282,3 +282,21 @@ img, video {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+/* ===== Marquee 横滚条动画（Gallery Banner 用） ===== */
+@keyframes marqueeLeft {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marqueeRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+.animate-marquee-left {
+  animation: marqueeLeft linear infinite;
+  will-change: transform;
+}
+.animate-marquee-right {
+  animation: marqueeRight linear infinite;
+  will-change: transform;
+}

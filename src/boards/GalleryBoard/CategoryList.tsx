@@ -161,7 +161,7 @@ export default function GalleryCategoryList() {
 }
 
 /**
- * MarqueeRow — 单行画作横向无限滚动
+ * MarqueeRow — 单行画作横向无限滚动（CSS 动画实现,更稳定）
  * reverse=true 时滚动方向相反
  */
 function MarqueeRow({
@@ -181,14 +181,15 @@ function MarqueeRow({
         WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
       }}
     >
-      <motion.div
-        className="flex gap-3 px-3"
-        animate={{ x: reverse ? ['-50%', '0%'] : ['0%', '-50%'] }}
-        transition={{
-          x: { repeat: Infinity, duration, ease: 'linear' },
+      {/* 重复 2 份:列表 + 列表,transform -50% 一循环,实现无缝 marquee */}
+      {/* 用 CSS keyframes（不依赖 framer-motion），兼容性更好 */}
+      <div
+        className={`flex gap-3 px-3 ${reverse ? 'animate-marquee-right' : 'animate-marquee-left'}`}
+        style={{
+          width: 'fit-content',
+          animationDuration: `${duration}s`,
         }}
       >
-        {/* 重复 2 份实现无缝循环 */}
         {[...artworks, ...artworks].map((art, i) => (
           <div
             key={`${art.id}-${i}`}
@@ -206,7 +207,7 @@ function MarqueeRow({
             )}
           </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   )
 }

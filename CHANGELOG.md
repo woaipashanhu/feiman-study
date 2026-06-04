@@ -42,6 +42,50 @@
 
 ---
 
+### 2026-06-04 会话 #21 — 画廊 marquee 从 framer-motion 改纯 CSS keyframes（修复不滚动 bug）
+
+#### 本次会话目标
+按用户反馈，画廊分类页 Banner 里的画作缩略图 marquee 没有滚动动画。诊断是 framer-motion 的 `animate={{ x: ['0%', '-50%'] }}` 在某些情况下不触发（可能因版本/容器宽度/百分比基准问题）。改用纯 CSS `@keyframes` 实现，兼容性更好。
+
+#### 完成的工作
+
+**1. 🎨 全局 CSS 添加 marquee keyframes（`src/index.css`）**
+- 新增 `@keyframes marqueeLeft`: 0% translateX(0%) → 100% translateX(-50%)
+- 新增 `@keyframes marqueeRight`: 0% translateX(-50%) → 100% translateX(0%)
+- 新增 utility class: `.animate-marquee-left` / `.animate-marquee-right`
+- 加 `will-change: transform` 优化性能
+
+**2. 🔄 MarqueeRow 改用 CSS 动画（`src/boards/GalleryBoard/CategoryList.tsx`）**
+- 移除 `motion.div` 包裹
+- 改用 `<div className="animate-marquee-left/right">`
+- 加 `width: 'fit-content'` 确保百分比有基准
+- `animationDuration` 动态设置（45s / 55s）
+
+**3. 🚀 部署**
+- 服务器 JS bundle: `index-CIOQhLkn.js` = 本地 dist hash
+
+#### 为什么用 CSS 不用 framer-motion
+- **兼容性更好**: CSS animation 是浏览器原生支持,不会因为 React 状态/版本问题失效
+- **性能更稳定**: `will-change: transform` 提示浏览器开启 GPU 加速
+- **更可控**: 不依赖父容器宽度,只要 `width: fit-content` 自己有宽度基准
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/index.css` | 新增 marquee keyframes + utility classes |  |
+| `src/boards/GalleryBoard/CategoryList.tsx` | MarqueeRow: framer-motion → CSS animation | 修复不滚动 bug |
+
+#### 验证结果
+
+```
+✅ Vite 构建成功
+✅ 5 步部署全过
+✅ 服务器 JS hash = 本地 dist hash
+```
+
+---
+
 ### 2026-06-04 会话 #20 — 画廊板块全面参照科学板块改造
 
 #### 本次会话目标
