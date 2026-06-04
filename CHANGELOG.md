@@ -42,6 +42,60 @@
 
 ---
 
+### 2026-06-04 会话 #24 — 设计语言统一后的"小修小补":Banner 渐变切字 / 首页去噪 / emoji 优化
+
+#### 本次会话目标
+会话 #23 完成后通过 Puppeteer 截取了 5 个板块的 9 张关键页面，发现 3 类问题需要小修：
+1. 分类页 Banner 描述文字被列表底色"切割"显示
+2. 首页大图标右下角的孤立小图标分散注意力
+3. 部分 emoji 渲染效果不理想（🌬️ → 女孩头像）
+
+#### 改动列表（4 个 commit + 1 个 CHANGELOG + 1 个工具脚本）
+
+**1. fix(category-pages): Banner 底部渐变 h-32→h-48**
+- 4 个分类页（科学/社交/数学/内功）的 Banner 底部渐变从 h-32(128px) 增加到 h-48(192px)
+- 顶部黑色渐变同步加 `pointer-events-none`
+- 效果：描述文字完全落在渐变实色区，不再被浅灰底色"切割"
+- 画廊 Banner 结构不同（双行 marquee），不受此问题影响
+
+**2. refactor(home-cards): 去掉首页右下角孤立小图标**
+- 删除 3 个 Home（数学/社交/内功）大图标区右下角的 w-16 h-16 小图标（书/书/心）
+- 主 emoji 字号 120→160px，光晕 w-64→w-72
+- 数学卡片原本最空旷，现在三角尺居中突出，空间充实
+- 清理：删除 SocialBoard Home 的 icon 字段，改用 iconEmoji 单一主题
+- 同步删除 MathBoard/NeimenBoard 不再使用的 BookOpen/Heart import
+
+**3. emoji 主题优化（混入前 2 个 commit）**
+- 社交板块：
+  - 卡耐基: 🤝（握手）→ 👥（人群），更直接表达"社交网络"
+  - 社交故事: 📖（书）→ 🎭（戏剧面具），比"打开的书"更"故事感"
+- 内功板块：
+  - 呼吸: 🌬️（风吹脸）→ 💨（风+云朵），原版在 iOS 渲染为"女孩吹气"头像，新版清晰可识别
+- 冥想 🧘 / 体态 💺 保持不变
+
+**4. chore(scripts): 添加 Puppeteer 截图脚本**
+- 文件: `scripts/screenshot-boards.mjs`
+- iPhone 12 viewport (390x844) 批量截取 10 个关键页面
+- 选择 Puppeteer 而非 Playwright/Mavis 浏览器的原因：
+  - Playwright MCP 找不到 chrome 安装路径
+  - mavis browser tool native host offline
+  - Puppeteer 已在 devDependencies（^25.1.0），零成本启用
+
+#### 部署
+- hash: `index-D__NcCRb.js`
+- 服务器: 47.99.101.168:8890，9/10 截图捕获成功（02-math-section 偶发超时）
+
+#### 已知问题（未修，等用户决定）
+- 🟠 科学 3D 场景 iframe 自己的 UI 控件（晴/Cloudy/Rain 按钮栏）占据 Banner 中下区域，跟卡片 UI 打架
+  - 长期方案：首页用静态截图代替 iframe
+- 🟠 画廊数量角标"9 幅作品"被画作部分遮挡，可读性弱
+- 🟡 数量角标"X 节课/X 幅作品" 整体视觉重量轻，可加主题色背景
+
+#### 截图对比位置
+- `/tmp/feiman-screenshots/01-10-*.png`（10 张 PNG）
+
+---
+
 ### 2026-06-04 会话 #23 — SocialBoard + MathBoard + NeimenBoard 全面参照科学改造
 
 #### 本次会话目标
