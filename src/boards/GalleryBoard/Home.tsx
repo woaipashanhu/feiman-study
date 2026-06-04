@@ -116,8 +116,8 @@ function SeriesCard({
         background: `linear-gradient(160deg, ${category.color || '#8B5CF6'}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 画作缩略图网格区 - 2x2 预览(占 65% 上半部) */}
-      <div className="absolute inset-x-0 top-0 h-[65%] p-5 grid grid-cols-2 grid-rows-2 gap-2">
+      {/* 画作缩略图网格区 - 2x2 预览(占 70% 上半部,文字区更紧凑) */}
+      <div className="absolute inset-x-0 top-0 h-[70%] p-5 grid grid-cols-2 grid-rows-2 gap-2">
         {previewArtworks.map((art) => (
           <div
             key={art.id}
@@ -160,7 +160,7 @@ function SeriesCard({
       </div>
 
       {/* 内容区（下半部分） - App Store Today 风格 */}
-      <div className="absolute inset-x-0 bottom-0 h-[35%] flex flex-col justify-end p-5 pb-4">
+      <div className="absolute inset-x-0 bottom-0 h-[30%] flex flex-col justify-end p-5 pb-4">
         {/* 小标签 */}
         <span className="text-[11px] text-white/55 font-semibold uppercase tracking-wider mb-0.5">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}

@@ -97,9 +97,9 @@ export default function GalleryCategoryList() {
           {artworks.length > 0 && (
             <div className="absolute inset-0 flex flex-col gap-3 justify-center py-4 overflow-hidden">
               {/* 第 1 排 */}
-              <MarqueeRow artworks={artworks} duration={45} reverse={false} />
+              <MarqueeRow artworks={artworks} duration={90} reverse={false} />
               {/* 第 2 排 — 反向滚动,更"流动" */}
-              <MarqueeRow artworks={artworks} duration={55} reverse={true} />
+              <MarqueeRow artworks={artworks} duration={110} reverse={true} />
             </div>
           )}
 
