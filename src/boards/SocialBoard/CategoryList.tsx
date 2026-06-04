@@ -96,7 +96,7 @@ export default function SocialCategoryList() {
           </div>
 
           {/* 顶部 + 底部渐变 */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
           <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
         </div>
 

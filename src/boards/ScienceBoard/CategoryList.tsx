@@ -111,9 +111,9 @@ export default function ScienceCategoryList() {
             />
           )}
 
-          {/* 渐变遮罩 */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent" />
+          {/* 渐变遮罩(加高到 48px,让 Banner 文字完全在渐变区内,不被列表底色"切割") */}
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
         </div>
 
         {/* 关闭按钮 - 右上角圆形叉号 */}
