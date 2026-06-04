@@ -103,6 +103,16 @@ export function AppRouter() {
         }
       />
       <Route
+        path="/gallery/category/:categoryId"
+        element={
+          <PageTransition>
+            <SafeLazy location="GalleryCategoryList">
+              <GalleryCategoryList />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
         path="/neimen/:id"
         element={
           <PageTransition>
@@ -171,14 +181,6 @@ export function AppRouter() {
           element={
             <SafeLazy location="GalleryBoard">
               <GalleryBoard />
-            </SafeLazy>
-          }
-        />
-        <Route
-          path="/gallery/category/:categoryId"
-          element={
-            <SafeLazy location="GalleryCategoryList">
-              <GalleryCategoryList />
             </SafeLazy>
           }
         />
