@@ -1,15 +1,16 @@
 /**
  * ============================================================
- *  社交绘本 — 分类场景列表页
+ *  社交绘本 — 分类场景列表页（App Store Today 风格）
  *
- *  从卡片主页进入，展示该分类下的所有绘本
- *  点击绘本进入播放器
+ *  顶部 45vh Banner + 标题区 + App Store 风格分隔线列表
+ *  关闭按钮在右上角（圆形叉号）
+ *  缩放展开/收起动画
  * ============================================================
  */
 import { useParams, useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Play } from 'phosphor-react'
+import { X, CaretRight } from 'phosphor-react'
 import type { SocialData } from '@/types/content'
 import type { SceneCatalogEntry } from './types'
 
@@ -22,10 +23,10 @@ const containerVariants = {
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, x: -20 },
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
-    x: 0,
+    y: 0,
     transition: { type: 'spring' as const, stiffness: 300, damping: 25 },
   },
 }
@@ -45,17 +46,22 @@ export default function SocialCategoryList() {
 
   const categoryColor = isCarnegie ? '#FF9F43' : '#A55EEA'
   const categoryName = isCarnegie ? '卡耐基社交智慧' : '社交故事'
+  const categoryDescription = isCarnegie
+    ? '人际关系的黄金法则,让孩子学会真诚沟通'
+    : '用生活化的小故事,引导孩子在场景中学会社交'
+  const categoryEmoji = isCarnegie ? '🤝' : '📖'
+
+  const handleClose = () => {
+    navigate('/social')
+  }
 
   if (loading) {
     return (
-      <div className="h-full flex flex-col px-5 pt-4 pb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse" />
-          <div className="h-8 w-32 bg-gray-200 rounded-lg animate-pulse" />
-        </div>
-        <div className="space-y-3">
+      <div className="h-full flex flex-col bg-bg">
+        <div className="h-[45vh] bg-gray-100 animate-pulse" />
+        <div className="px-5 py-4 space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -63,38 +69,82 @@ export default function SocialCategoryList() {
   }
 
   return (
-    <div className="h-full flex flex-col px-5 pt-4 pb-6 overflow-y-auto">
-      {/* 顶部栏 */}
-      <header className="flex items-center gap-3 mb-6">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate('/social')}
-          className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center shadow-sm"
+    <motion.div
+      className="h-full flex flex-col overflow-y-auto bg-bg"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+    >
+      {/* 顶部 Banner - 45vh, 大 emoji + 渐变 */}
+      <div className="relative shrink-0" style={{ height: '45vh', minHeight: '320px' }}>
+        {/* Banner 背景 - 主题色渐变 + 装饰光晕 */}
+        <div
+          className="absolute inset-0 overflow-hidden"
+          style={{
+            background: `linear-gradient(160deg, ${categoryColor}60 0%, #1a1a2e 80%)`,
+          }}
         >
-          <ArrowLeft size={18} weight="regular" className="text-text" />
-        </motion.button>
-        <h1 className="text-xl font-bold text-text font-display">{categoryName}</h1>
-      </header>
-
-      {/* 绘本列表 */}
-      <motion.div
-        className="space-y-3"
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-      >
-        {scenes.map((scene, index) => (
-          <SceneListItem
-            key={scene.id}
-            scene={scene}
-            index={index}
-            categoryColor={categoryColor}
-            onClick={() => navigate(`/social/scene/${scene.id}`)}
+          {/* 装饰光晕 */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-30"
+            style={{ backgroundColor: categoryColor }}
           />
-        ))}
-      </motion.div>
-    </div>
+          {/* 大 emoji */}
+          <div className="absolute inset-0 flex items-center justify-center text-[140px] drop-shadow-2xl">
+            {categoryEmoji}
+          </div>
+
+          {/* 顶部 + 底部渐变 */}
+          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
+        </div>
+
+        {/* 关闭按钮 */}
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={handleClose}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/10 flex items-center justify-center z-20"
+        >
+          <X size={18} weight="bold" className="text-white" />
+        </motion.button>
+
+        {/* Banner 文字内容 */}
+        <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
+          <span className="text-[13px] text-white/50 font-medium">
+            {scenes.length} 个场景
+          </span>
+          <h1 className="text-[32px] font-bold text-white leading-tight mt-1">
+            {categoryName}
+          </h1>
+          <p className="text-[15px] text-white/60 mt-2 leading-relaxed">
+            {categoryDescription}
+          </p>
+        </div>
+      </div>
+
+      {/* 场景列表 - App Store Today 风格 */}
+      <div className="px-5 pt-2 pb-6">
+        <h2 className="text-[13px] text-text-tertiary font-medium uppercase tracking-wider mb-2 px-1">
+          全部场景
+        </h2>
+        <motion.div variants={containerVariants} initial="hidden" animate="show">
+          {scenes.map((scene, index) => (
+            <SceneListItem
+              key={scene.id}
+              scene={scene}
+              index={index}
+              categoryColor={categoryColor}
+              onClick={() => navigate(`/social/scene/${scene.id}`)}
+            />
+          ))}
+        </motion.div>
+      </div>
+    </motion.div>
   )
 }
 
@@ -112,45 +162,48 @@ function SceneListItem({
   return (
     <motion.button
       variants={itemVariants}
-      whileHover={{ scale: 1.01, x: 4 }}
       whileTap={{ scale: 0.99 }}
       onClick={onClick}
-      className={`w-full flex items-center gap-4 p-3 rounded-2xl bg-surface border border-border hover:shadow-md transition-all text-left group ${
-        !scene.unlocked ? 'opacity-40 pointer-events-none' : ''
+      className={`w-full flex items-center gap-4 py-3.5 text-left active:bg-gray-50 transition-colors border-b border-border/40 last:border-b-0 ${
+        !scene.unlocked ? 'opacity-40' : ''
       }`}
     >
-      {/* 序号 */}
-      <div
-        className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold text-white"
-        style={{ background: `linear-gradient(135deg, ${categoryColor}, ${categoryColor}DD)` }}
-      >
-        {String(index + 1).padStart(2, '0')}
-      </div>
-
-      {/* 封面图 */}
-      {scene.coverImage && (
-        <div className="w-16 h-12 rounded-lg overflow-hidden bg-border-light shrink-0">
+      {/* 序号 + 封面图组合(64x64) */}
+      <div className="w-16 h-16 rounded-[14px] overflow-hidden shrink-0 relative bg-gray-100">
+        {scene.coverImage ? (
           <img
             src={scene.coverImage.startsWith('/') ? scene.coverImage : '/' + scene.coverImage}
             alt={scene.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover"
+            loading="lazy"
           />
-        </div>
-      )}
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center text-lg font-bold text-white"
+            style={{ background: `linear-gradient(135deg, ${categoryColor}, ${categoryColor}DD)` }}
+          >
+            {String(index + 1).padStart(2, '0')}
+          </div>
+        )}
+      </div>
 
       {/* 信息 */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold text-text truncate">{scene.title}</h3>
-        <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">{scene.principle}</p>
+        <h3 className="text-[17px] font-semibold text-text leading-tight truncate">
+          {scene.title}
+        </h3>
+        <p className="text-[13px] text-text-secondary mt-1 line-clamp-1 leading-relaxed">
+          {scene.principle || '点击查看完整故事'}
+        </p>
+        {!scene.unlocked && (
+          <span className="inline-block mt-1 text-[10px] px-1.5 py-0.5 rounded-md font-medium bg-gray-200 text-gray-500">
+            未解锁
+          </span>
+        )}
       </div>
 
-      {/* 播放按钮 */}
-      <div
-        className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ backgroundColor: categoryColor + '18' }}
-      >
-        <Play size={16} weight="fill" style={{ color: categoryColor }} />
-      </div>
+      {/* 右侧箭头 */}
+      <CaretRight size={18} weight="bold" className="text-text-tertiary shrink-0" />
     </motion.button>
   )
 }
