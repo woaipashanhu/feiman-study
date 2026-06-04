@@ -82,6 +82,55 @@ export default function GalleryCategoryList() {
         </p>
       )}
 
+      {/* 画作缩略图 marquee 横滚条 - App Store Today 风格:横向无限循环,缓慢向左流动 */}
+      {artworks.length > 0 && (
+        <div
+          className="overflow-hidden -mx-5 py-3 mb-4"
+          style={{
+            maskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)',
+          }}
+        >
+          <motion.div
+            className="flex gap-3 px-3"
+            animate={{ x: ['0%', '-50%'] }}
+            transition={{
+              x: { repeat: Infinity, duration: 40, ease: 'linear' },
+            }}
+          >
+            {/* 重复 2 份:列表 + 列表,transform -50% 一循环,实现无缝 marquee */}
+            {[...artworks, ...artworks].map((art, i) => (
+              <motion.button
+                key={`${art.id}-${i}`}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate(`/gallery/${art.id}`)}
+                className="shrink-0 w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 shadow-md ring-1 ring-black/5 active:opacity-80"
+                aria-label={art.title}
+              >
+                {art.image ? (
+                  <img
+                    src={art.image}
+                    alt={art.title}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div
+                    className="w-full h-full flex items-center justify-center text-xs font-bold"
+                    style={{
+                      backgroundColor: (category.color || '#8B5CF6') + '15',
+                      color: category.color || '#8B5CF6',
+                    }}
+                  >
+                    无图
+                  </div>
+                )}
+              </motion.button>
+            ))}
+          </motion.div>
+        </div>
+      )}
+
       {/* 作品列表 */}
       <motion.div className="space-y-2" variants={containerVariants} initial="hidden" animate="show">
         {artworks.map((artwork, index) => (
