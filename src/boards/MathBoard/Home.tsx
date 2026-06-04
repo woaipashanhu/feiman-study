@@ -9,7 +9,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
-import { EnvelopeSimple, BookOpen } from 'phosphor-react'
+import { EnvelopeSimple } from 'phosphor-react'
 import type { MathData, Section } from '@/types/content'
 
 const containerVariants = {
@@ -119,20 +119,14 @@ function SectionCard({
         background: `linear-gradient(160deg, ${color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 大图标区(占 70% 上半部) - 大 emoji + 装饰光晕 */}
+      {/* 大图标区(占 70% 上半部) - 大 emoji + 装饰光晕(去掉孤立的小图标) */}
       <div className="absolute inset-x-0 top-0 h-[70%] flex items-center justify-center">
         <div
-          className="absolute w-64 h-64 rounded-full blur-3xl opacity-30"
+          className="absolute w-72 h-72 rounded-full blur-3xl opacity-30"
           style={{ backgroundColor: color }}
         />
-        <div className="text-[120px] relative z-10 drop-shadow-2xl">
+        <div className="text-[160px] relative z-10 drop-shadow-2xl">
           📐
-        </div>
-        <div
-          className="absolute bottom-6 right-6 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-md"
-          style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff' }}
-        >
-          <BookOpen size={24} weight="regular" />
         </div>
       </div>
 

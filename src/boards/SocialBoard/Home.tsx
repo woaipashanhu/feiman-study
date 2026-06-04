@@ -9,7 +9,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
-import { EnvelopeSimple, BookBookmark, ChatCircleText } from 'phosphor-react'
+import { EnvelopeSimple } from 'phosphor-react'
 import type { SocialData } from '@/types/content'
 
 const containerVariants = {
@@ -54,19 +54,17 @@ export default function SocialHome() {
       id: 'carnegie',
       name: '卡耐基社交智慧',
       description: '人际关系的黄金法则',
-      icon: <BookBookmark size={24} weight="regular" />,
       color: '#FF9F43',
       count: socialData?.carnegieCatalog?.length || 0,
-      iconEmoji: '🤝',
+      iconEmoji: '👥', // 用户更易识别的"社交人群"主题
     },
     {
       id: 'social-story',
       name: '社交故事',
       description: '用绘本学社交',
-      icon: <ChatCircleText size={24} weight="regular" />,
       color: '#A55EEA',
       count: socialData?.socialStoryCatalog?.length || 0,
-      iconEmoji: '📖',
+      iconEmoji: '🎭', // 戏剧/故事,比 📖 更"故事感"
     },
   ]
 
@@ -117,7 +115,6 @@ function CategoryCard({
     id: string
     name: string
     description: string
-    icon: React.ReactNode
     color: string
     count: number
     iconEmoji: string
@@ -140,23 +137,16 @@ function CategoryCard({
         background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 大图标区(占 70% 上半部) - 居中大图标 + 装饰 */}
+      {/* 大图标区(占 70% 上半部) - 居中大图标(去掉孤立小图标) */}
       <div className="absolute inset-x-0 top-0 h-[70%] flex items-center justify-center">
         {/* 装饰光晕 */}
         <div
-          className="absolute w-64 h-64 rounded-full blur-3xl opacity-30"
+          className="absolute w-72 h-72 rounded-full blur-3xl opacity-30"
           style={{ backgroundColor: category.color }}
         />
         {/* 主图标 - 大号 emoji */}
-        <div className="text-[120px] relative z-10 drop-shadow-2xl">
+        <div className="text-[160px] relative z-10 drop-shadow-2xl">
           {category.iconEmoji}
-        </div>
-        {/* 副图标(小图标) */}
-        <div
-          className="absolute bottom-6 right-6 w-16 h-16 rounded-2xl flex items-center justify-center backdrop-blur-md"
-          style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: '#fff' }}
-        >
-          {category.icon}
         </div>
       </div>
 
