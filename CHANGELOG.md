@@ -42,6 +42,110 @@
 
 ---
 
+### 2026-06-04 会话 #23 — SocialBoard + MathBoard + NeimenBoard 全面参照科学改造
+
+#### 本次会话目标
+按用户反馈，把画廊之外的所有 3 个板块（SocialBoard/MathBoard/NeimenBoard）也全部改造成 App Store Today 风格（1 屏 1 大卡片首页 + 全屏 Banner 分类页），跟科学/画廊保持一致的设计语言。
+
+#### 完成的工作（5 个独立 commit）
+
+**1. 🟠 SocialBoard 改造（commit 74c94f5）**
+- Home: 2x2 网格 → **1 屏 1 大卡片**（🤝 卡耐基 + 📖 故事 emoji 主题）
+- CategoryList: 卡片背景列表 → **45vh Banner + 标题区 + App Store Today 风格列表**
+- 删 `SocialBoard/List.tsx` 死代码
+- 详情页：缩放动画 + 右上角 X 关闭
+
+**2. 🔵 MathBoard 改造（commit af5860f）**
+- Home: 2x2 网格 → **1 屏 1 大卡片**（📐 数学主题）
+- ChapterList: 卡片背景列表 → **45vh Banner + 课程列表全屏页**
+- 详情页：缩放动画 + 右上角 X 关闭
+
+**3. 🔴 NeimenBoard 改造（commit fc5001e）**
+- Home: 2x2 网格 → **1 屏 1 大卡片**（🌬️ 呼吸 + 🧘 冥想 + 💺 体态 emoji 主题）
+- CategoryList: 卡片背景列表 → **45vh Banner + 功法列表全屏页**
+- 删 `NeimenBoard/List.tsx` 死代码
+- 详情页：缩放动画 + 右上角 X 关闭
+
+**4. 🛣 router 调整（commit abb286e）**
+- `/social/category/:categoryId` 从 BoardLayout 内移到顶层（全屏）
+- `/math/section/:sectionId` 从 BoardLayout 内移到顶层（全屏）
+- `/neimen/category/:categoryId` 从 BoardLayout 内移到顶层（全屏）
+- 跟 `/science/category/*` 和 `/gallery/category/*` 一致
+
+**5. 🚀 部署**
+- 服务器 JS bundle: `index-B9sEHrd5.js` = 本地 dist hash
+
+#### 5 个板块设计语言统一
+
+```
+┌────────────────────────────────────┐
+│  34px 大标题                  📬    │  ← 顶部栏(无副标题)
+├────────────────────────────────────┤
+│  ┌──────────────────────────────┐  │
+│  │                              │  │
+│  │  大图标/封面 (70%)            │  │  ← 1 屏 1 卡片
+│  │  主题渐变 + 光晕              │  │     calc(100vh - 300px)
+│  │  数量角标                     │  │
+│  ├──────────────────────────────┤  │
+│  │  今日推荐                     │  │  ← 文字区 (30%)
+│  │  分类名 (24px)                │  │
+│  │  描述 (13px)                  │  │
+│  └──────────────────────────────┘  │
+│  ┌──────────────────────────────┐  │  ← 下一张卡露半张
+└────────────────────────────────────┘
+```
+
+#### 详情页统一模式
+
+```
+┌────────────────────────────────────┐
+│  ┌──────────────────────────────┐  │
+│  │  45vh Banner (主题渐变+大图标) │  │
+│  │                       ⊗      │  │  ← 右上角 X
+│  │  X 个场景/课程/功法          │  │
+│  │  分类大标题 (32px)            │  │
+│  │  描述 (15px)                  │  │
+│  └──────────────────────────────┘  │
+│  全部场景/课程/功法                 │  ← App Store 列表
+│  ━━━━━━━━━━━                    │
+│  缩略图  标题(17pt) 描述(13pt) > │
+│  ━━━━━━━━━━━                    │
+│  缩略图  标题        描述      > │
+└────────────────────────────────────┘
+```
+
+#### 文件变更清单
+
+| 文件 | 变更类型 | 说明 |
+|------|---------|------|
+| `src/boards/SocialBoard/Home.tsx` | 重写 | 1 屏 1 大卡片纵向堆叠 |
+| `src/boards/SocialBoard/CategoryList.tsx` | 重写 | 参照科学的 Banner + 标题区 + 列表 |
+| `src/boards/SocialBoard/List.tsx` | 删除 | 死代码 |
+| `src/boards/MathBoard/Home.tsx` | 重写 | 1 屏 1 大卡片纵向堆叠 |
+| `src/boards/MathBoard/ChapterList.tsx` | 重写 | 参照科学的 Banner + 课程列表 |
+| `src/boards/NeimenBoard/Home.tsx` | 重写 | 1 屏 1 大卡片纵向堆叠 |
+| `src/boards/NeimenBoard/CategoryList.tsx` | 重写 | 参照科学的 Banner + 功法列表 |
+| `src/boards/NeimenBoard/List.tsx` | 删除 | 死代码 |
+| `src/router/index.tsx` | 路由调整 | 3 个分类页全部移到 BoardLayout 外 |
+
+#### 验证结果
+
+```
+✅ TypeScript 零错误（修复了 NeimenCategory.description 字段问题）
+✅ Vite 构建成功
+✅ 5 步部署全过
+✅ 服务器 JS hash = 本地 dist hash
+```
+
+#### 跨板块影响
+- 5 个板块（数学/科学/社交/画廊/内功）现在设计语言完全统一
+- 都是 34px 标题 + 1 屏 1 大卡片首页
+- 都是 45vh Banner + App Store Today 风格列表分类页
+- 都是右上角 X 关闭按钮 + 缩放展开/收起动画
+- 都是 BoardLayout 外（全屏无 TabBar）
+
+---
+
 ### 2026-06-04 会话 #22 — 画廊微调：动画减速 + 文字区收紧
 
 #### 本次会话目标
