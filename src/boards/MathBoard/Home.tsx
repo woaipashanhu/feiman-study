@@ -11,7 +11,7 @@ import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
 import { EnvelopeSimple } from 'phosphor-react'
 import type { MathData, Section } from '@/types/content'
-import { MathThumbnails } from './MathThumbnails'
+import { VideoPreview } from './VideoPreview'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,9 +52,6 @@ export default function MathHome() {
 
   const sections = mathData?.sections || []
   const color = '#3B82F6'
-  // 取第一节课的前 4 节,作为顶部缩略图(目前只有 M1)
-  const firstSection = sections[0]
-  const previewLessons = firstSection?.lessons?.slice(0, 4) || []
 
   return (
     <div className="h-full flex flex-col overflow-y-auto">
@@ -71,21 +68,6 @@ export default function MathHome() {
           <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
         </motion.button>
       </header>
-
-      {/* 顶部 4 横排缩略图(视频预览/fallback 数字动画) */}
-      {previewLessons.length > 0 && (
-        <div className="px-5 mb-4 shrink-0">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-wider">
-              课程预览
-            </span>
-            <span className="text-[10px] text-text-tertiary/70 font-medium">
-              前 {previewLessons.length} 节
-            </span>
-          </div>
-          <MathThumbnails lessons={previewLessons} showLabel={false} size={72} />
-        </div>
-      )}
 
       {/* 大卡片列表 - 纵向堆叠,1 屏 1 主题 */}
       <motion.div
@@ -123,6 +105,8 @@ function SectionCard({
   onNavigate: () => void
 }) {
   const lessonCount = section.lessons?.length || 0
+  // 取前 4 节课作为视频预览(2x2 网格)
+  const previewLessons = section.lessons?.slice(0, 4) || []
 
   return (
     <motion.button
@@ -138,15 +122,36 @@ function SectionCard({
         background: `linear-gradient(160deg, ${color}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 大图标区(占 70% 上半部) - 大 emoji + 装饰光晕(去掉孤立的小图标) */}
-      <div className="absolute inset-x-0 top-0 h-[70%] flex items-center justify-center">
-        <div
-          className="absolute w-72 h-72 rounded-full blur-3xl opacity-30"
-          style={{ backgroundColor: color }}
-        />
-        <div className="text-[160px] relative z-10 drop-shadow-2xl">
-          📐
-        </div>
+      {/* 视频预览网格区 - 2x2(占 70% 上半部,参照童画廊 2x2 画作网格) */}
+      <div className="absolute inset-x-0 top-0 h-[70%] p-5 grid grid-cols-2 grid-rows-2 gap-2">
+        {previewLessons.map((lesson) => (
+          <div
+            key={lesson.id}
+            className="rounded-2xl overflow-hidden bg-gray-900 shadow-md"
+          >
+            <VideoPreview
+              src={lesson.previewUrl}
+              poster={lesson.cover}
+              fallbackColor={color}
+              rounded={16}
+              className="w-full h-full"
+              fallback={
+                <div className="w-full h-full flex items-center justify-center text-white/40 text-3xl font-bold">
+                  {lesson.order ?? '·'}
+                </div>
+              }
+            />
+          </div>
+        ))}
+        {/* 占位:课程少于 4 个时填充 */}
+        {previewLessons.length < 4 && Array.from({ length: 4 - previewLessons.length }).map((_, i) => (
+          <div
+            key={`empty-${i}`}
+            className="rounded-2xl border-2 border-dashed border-white/15 flex items-center justify-center"
+          >
+            <span className="text-white/30 text-xs">+</span>
+          </div>
+        ))}
       </div>
 
       {/* 顶部渐变遮罩 */}
