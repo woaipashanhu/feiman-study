@@ -2,7 +2,8 @@
  * ============================================================
  *  数学课 — 章节课程列表页（App Store Today 风格）
  *
- *  顶部 45vh Banner + 标题区 + App Store 风格分隔线列表
+ *  顶部大卡片（2x2预览网格 + 文字区）+ App Store 风格分隔线列表
+ *  从首页大卡片"展开"而来，设计语言一致
  *  关闭按钮在右上角（圆形叉号）
  *  缩放展开/收起动画
  * ============================================================
@@ -12,7 +13,6 @@ import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
 import { X, CaretRight, Clock } from 'phosphor-react'
 import type { MathData, Lesson } from '@/types/content'
-import { MathThumbnails } from './MathThumbnails'
 import { VideoPreview } from './VideoPreview'
 
 const containerVariants = {
@@ -48,6 +48,7 @@ export default function MathChapterList() {
 
   const section = mathData?.sections?.find((s) => s.id === sectionId)
   const lessons = section?.lessons || []
+  const previewLessons = lessons.slice(0, 4)
 
   const handleClose = () => {
     navigate('/math')
@@ -56,7 +57,19 @@ export default function MathChapterList() {
   if (loading) {
     return (
       <div className="h-full flex flex-col bg-bg">
-        <div className="h-[45vh] bg-gray-100 animate-pulse" />
+        <div className="px-4 pt-4">
+          <div
+            className="w-full rounded-[20px] overflow-hidden animate-pulse"
+            style={{ height: 'calc(100vh - 360px)', minHeight: '340px' }}
+          >
+            <div className="h-[60%] bg-gray-200" />
+            <div className="h-[40%] bg-gray-100 p-5 space-y-3">
+              <div className="h-3 w-16 bg-gray-200 rounded" />
+              <div className="h-6 w-3/4 bg-gray-200 rounded" />
+              <div className="h-3 w-1/2 bg-gray-200 rounded" />
+            </div>
+          </div>
+        </div>
         <div className="px-5 py-4 space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />
@@ -88,64 +101,107 @@ export default function MathChapterList() {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      {/* 顶部 Banner - 45vh, 大图标 + 渐变 */}
-      <div className="relative shrink-0" style={{ height: '45vh', minHeight: '320px' }}>
+      {/* 顶部大卡片 — 从首页卡片"展开"而来 */}
+      <div className="px-4 pt-4 shrink-0">
         <div
-          className="absolute inset-0 overflow-hidden"
-          style={{
-            background: `linear-gradient(160deg, #3B82F660 0%, #1a1a2e 80%)`,
-          }}
+          className="w-full rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 relative"
+          style={{ height: 'calc(100vh - 360px)', minHeight: '340px' }}
         >
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-30"
-            style={{ backgroundColor: '#3B82F6' }}
-          />
-          <div className="absolute inset-0 flex items-center justify-center text-[140px] drop-shadow-2xl">
-            📐
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
-        </div>
-
-        <motion.button
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={handleClose}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/10 flex items-center justify-center z-20"
-        >
-          <X size={18} weight="bold" className="text-white" />
-        </motion.button>
-
-        {/* 顶部 4 横排缩略图(Banner 内部,顶部 padding) */}
-        {lessons.length > 0 && (
-          <div className="absolute top-3 left-5 right-16 z-10">
-            <MathThumbnails
-              lessons={lessons}
-              showLabel={false}
-              size={56}
+          {/* 上半部分 — 2x2课程预览网格 */}
+          <div className="relative h-[60%] overflow-hidden">
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `linear-gradient(160deg, #3B82F620 0%, #0f172a 70%)`,
+              }}
             />
-          </div>
-        )}
+            <div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full blur-3xl opacity-20"
+              style={{ backgroundColor: '#3B82F6' }}
+            />
 
-        <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
-          <span className="text-[13px] text-white/50 font-medium">
-            {lessons.length} 节课程
-          </span>
-          <h1 className="text-[32px] font-bold text-white leading-tight mt-1">
-            {section.title}
-          </h1>
-          <p className="text-[15px] text-white/60 mt-2 leading-relaxed">
-            费曼讲数学,让孩子爱上思考
-          </p>
+            {/* 2x2 预览网格 */}
+            {previewLessons.length > 0 && (
+              <div className="absolute inset-3 grid grid-cols-2 grid-rows-2 gap-2 z-10">
+                {previewLessons.map((lesson, idx) => (
+                  <motion.div
+                    key={lesson.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.1 + idx * 0.06, type: 'spring', stiffness: 300, damping: 25 }}
+                    className="relative rounded-xl overflow-hidden bg-gray-900/50"
+                    onClick={() => navigate(`/math/lesson/${lesson.id}`)}
+                  >
+                    <VideoPreview
+                      src={lesson.previewUrl}
+                      poster={lesson.cover}
+                      fallbackColor="#3B82F6"
+                      rounded={12}
+                      className="w-full h-full"
+                      fallback={
+                        <span className="text-xl font-bold" style={{ color: '#3B82F6' }}>
+                          {idx + 1}
+                        </span>
+                      }
+                    />
+                    {/* 序号角标 */}
+                    <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-white">{idx + 1}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* 顶部渐变遮罩 */}
+            <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-20" />
+          </div>
+
+          {/* 下半部分 — 文字信息 */}
+          <div className="relative h-[40%] flex flex-col justify-end p-5 pb-5">
+            {/* 渐变过渡 */}
+            <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-black/30 to-transparent pointer-events-none" />
+
+            <div className="relative z-10">
+              {/* 小标签 */}
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="text-[11px] font-medium text-blue-500/70 tracking-wide">
+                  今日推荐
+                </span>
+                <span className="text-[11px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
+                  {lessons.length} 节课程
+                </span>
+              </div>
+
+              {/* 大标题 */}
+              <h1 className="text-[26px] font-bold text-text leading-tight">
+                {section.title}
+              </h1>
+
+              {/* 描述 */}
+              <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed line-clamp-2">
+                费曼讲数学，让孩子爱上思考
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 课程列表 - App Store Today 风格 */}
-      <div className="px-5 pt-2 pb-6">
+      {/* 关闭按钮 — 页面右上角，浮于卡片上方 */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={handleClose}
+        className="fixed top-4 right-4 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md border border-black/5 shadow-sm flex items-center justify-center z-50"
+      >
+        <X size={18} weight="bold" className="text-text" />
+      </motion.button>
+
+      {/* 课程列表 — App Store Today 风格 */}
+      <div className="px-5 pt-5 pb-6">
         <h2 className="text-[13px] text-text-tertiary font-medium uppercase tracking-wider mb-2 px-1">
           全部课程
         </h2>
