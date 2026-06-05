@@ -42,6 +42,77 @@
 
 ---
 
+### 2026-06-05 会话 #25 — 数学板块"动态预览"改造:VideoPreview 组件 + 4 横排缩略图
+
+#### 本次会话目标
+用户需求: 数学板块 26 节课(视频)想在视觉上"动起来",具体:
+- Home 顶部加 4 个视频缩略图横排(原本只有 1 大三角尺卡片)
+- 章节列表 Banner 内顶部加 4 个横排
+- 列表 26 项左侧缩略图,也用视频循环播放
+- 性能护栏:同时播不超过十几个
+
+#### 真实约束 & 设计决策
+1. **视频源是阿里云 VOD 加密流**,普通 `<video>` 元素播不了(需要 playauth 鉴权)
+2. **Aliplayer 实例**每个都要加载 SDK + 解密,30 个并发会崩
+3. **解决方案**: 后端生成"脱敏版"低码率预览(8 秒/480p/无音频),前端用普通 `<video>`
+4. **前置条件**: 后端必须先生成 mp4,前端才能用上
+5. **过渡方案**: 后端 mp4 还没来之前,fallback 到 CSS 动效(数字 + 算式淡入淡出),零成本、零带宽
+
+#### 改动列表(4 个 commit)
+
+**1. feat(math): 新增 VideoPreview 组件 + 全局 LRU 池(≤12 并发)**
+- `src/boards/MathBoard/VideoPreview.tsx`: 通用视频缩略图组件
+  - 三种状态: src+poster / src only / fallback
+  - IntersectionObserver: 30% 可见才播,离开暂停
+  - iOS Safari 兼容三件套: muted + playsinline + loop
+  - 加载完成时淡入,小红点"Live"角标
+- `src/boards/MathBoard/videoPool.ts`: 全局 LRU 池
+  - 12 并发上限,Map 保持插入顺序实现 LRU
+  - 池满时自动暂停最久不用的
+  - 路由切换/组件卸载自动 release
+  - 单例,所有板块共享(未来画廊/科学/社交的视频预览也能用)
+
+**2. feat(math): 新增 MathThumbnails 4 横排缩略图组件**
+- `src/boards/MathBoard/MathThumbnails.tsx`
+- Props: lessons(自动取前 4) + showLabel + size
+- Fallback: 大数字 1/2/3/4 + 算式 1+0, 2+3, 3+4, 4+0 淡入淡出
+- 4 个依次延迟 0.06s 淡入
+
+**3. feat(math): Home 顶部 + ChapterList Banner 内接入 4 横排**
+- `Home.tsx`: header 后插入 4 横排(72px 大,带"课程预览/前 4 节"标签)
+- `ChapterList.tsx`:
+  - Banner 内部顶部(left-5 right-16)放 4 横排(56px,避开 X 按钮)
+  - 列表 26 项的 64x64 缩略图改用 VideoPreview
+  - 滚动到可见的才播
+
+**4. feat(math): math.json 给 26 节课加 previewUrl 字段 + Zod schema 同步**
+- `public/data/math.json`: 26 节课全部加 previewUrl(暂时空字符串)
+- `src/types/content.ts`: LessonSchema 加 previewUrl: optional
+- JSON version: 2026-05-30-v1 → 2026-06-05-v2-preview
+
+#### 后端任务(下次会话或交给后端)
+需要给每节课生成脱敏预览视频(8 秒/480p/无音频/低码率),命令参考:
+```bash
+ffmpeg -i original.mp4 \\
+  -t 8 -vf "scale=480:-2,fps=15" -an \\
+  -c:v libx264 -crf 30 -preset slow \\
+  -movflags +faststart \\
+  preview.mp4
+```
+预计: 26 节课 × 200-500KB = 10-15MB 总大小,CDN 压力不大。
+路径建议: `https://feiman-manim.woaipashanhu.workers.dev/previews/{videoId}.mp4`
+
+#### 部署
+- hash: `index-Bwd3Z2lZ.js`
+- 服务器: 47.99.101.168:8890
+- 当前显示 fallback(数字),等后端 mp4 就位后自动切到视频模式
+
+#### 验证截图
+- `/tmp/test-math-home.png`: Home 顶部 4 横排数字(1+0, 2+3, 3+4, 4+0)
+- `/tmp/test-math-section.png`: 章节页顶部 4 横排 + 列表 26 项数字 fallback
+
+---
+
 ### 2026-06-04 会话 #24 — 设计语言统一后的"小修小补":Banner 渐变切字 / 首页去噪 / emoji 优化
 
 #### 本次会话目标
