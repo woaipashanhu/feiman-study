@@ -1,5 +1,5 @@
 {
-  "version": "2026-06-05-v2-preview",
+  "version": "2026-06-05-v3-real-preview",
   "title": "费曼数学课",
   "description": "用动画理解数学，适合6-12岁",
   "playauthApi": "https://playauth-heildokxna.cn-shanghai.fcapp.run",
@@ -18,7 +18,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/902be27837e671f180fd6733a68f0102.jpg",
           "duration": 85.1,
           "order": 1,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-01.mp4"
         },
         {
           "id": "m1-02",
@@ -28,7 +28,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/8072d58537e671f19e2d6633b79f0102.jpg",
           "duration": 97.3,
           "order": 2,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-02.mp4"
         },
         {
           "id": "m1-03",
@@ -38,7 +38,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/10be7a8737e671f180966723b78e0102.jpg",
           "duration": 93.2,
           "order": 3,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-03.mp4"
         },
         {
           "id": "m1-04",
@@ -48,7 +48,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/e0e1168937e671f180e14531948c0102.jpg",
           "duration": 91.9,
           "order": 4,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-04.mp4"
         },
         {
           "id": "m1-05",
@@ -58,7 +58,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/30ebac8a37e671f1b2815420848d0102.jpg",
           "duration": 106.6,
           "order": 5,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-05.mp4"
         },
         {
           "id": "m1-06",
@@ -68,7 +68,7 @@
           "cover": "https://feiman-manim.woaipashanhu.workers.dev/covers/a01d5e8c37e671f180b96732b68f0102.jpg",
           "duration": 135.6,
           "order": 6,
-          "previewUrl": ""
+          "previewUrl": "/previews/m1-06.mp4"
         },
         {
           "id": "m1-07",
