@@ -42,6 +42,54 @@
 
 ---
 
+### 2026-06-05 会话 #26 — 数学板块"真视频预览"激活:deploy.sh 同步漏洞修复 + 6 节课上线
+
+#### 本次会话目标
+用户提供本地视频源 `/Users/liuzhen/Desktop/Manim动画视频/M1/`,
+让我激活数学板块的真视频缩略图(之前是 fallback 数字动画)。
+
+#### 关键发现
+**视频源直接是 mp4**(用户已经脱敏过),不是加密 VOD
+- 普通 `<video>` 元素可直接播
+- 之前担心的"后端生成预览"完全不需要
+- **绕开:把 ffmpeg 切预览从"后端任务"变成"本地一次性脚本"**
+
+#### 视频处理
+- ffmpeg 切 8 秒 / 480p / 15fps / 无音频 / CRF 30
+- 体积: 11-20KB / 节
+- 6 节课共 92KB
+- movflags +faststart: moov 提前,支持流式播放(Accept-Ranges 验证通过)
+
+#### 改动列表(2 个 commit)
+
+**1. fix(deploy): previews/ 目录漏同步**
+- deploy.sh 缺一条同步规则,导致部署后访问 mp4 返回 200 + text/html
+  (nginx 把 SPA 路由 fallback 到 index.html,用户看不到视频)
+- 加 previews/ 目录同步,跟 images/ 一样的 mkdir + cp -rf 模式
+- **教训: 以后新增 public/ 子目录,deploy.sh 必须同步加规则**
+
+**2. feat(math): 接入真视频预览 - 6 节课**
+- public/previews/m1-01.mp4 ~ m1-06.mp4 (6 个文件)
+- public/data/math.json: 前 6 节课 previewUrl 填上
+  其余 20 节课 previewUrl 保持空(下次会话再批量)
+- JSON version: v2 → v3
+
+#### 实际效果(已验证截图)
+- 顶部 4 横排: 黑色 manim 动画画面 + 几何元素动画 + 红色"Live"角标
+- 列表 26 项: 64x64 缩略图变成视频预览(滚到可见才播)
+- 全部性能护栏正常: LRU 池 12 并发 + IntersectionObserver + 路由切换 release
+
+#### 下次会话待办
+- [ ] 批量切剩余 20 节课(7-26)预览
+- [ ] 处理缩略图"黑底突兀"问题(可能需要浅色卡片背景或加白边)
+- [ ] 其他板块是否也接入真视频预览(科学/画廊/内功是静态资源,不需要)
+
+#### 部署
+- hash: 同上
+- 服务器: 47.99.101.168:8890
+
+---
+
 ### 2026-06-05 会话 #25 — 数学板块"动态预览"改造:VideoPreview 组件 + 4 横排缩略图
 
 #### 本次会话目标
