@@ -181,6 +181,13 @@ if [ -d "${TMP_DEPLOY}/images" ]; then
   cp -rf "${TMP_DEPLOY}/images/"* "${REMOTE_DIR}/images/" 2>/dev/null || true
 fi
 
+# 同步 previews/ 目录(视频缩略图/动态预览)
+if [ -d "${TMP_DEPLOY}/previews" ]; then
+  echo "  🎬 同步 previews/ 目录..."
+  mkdir -p "${REMOTE_DIR}/previews"
+  cp -rf "${TMP_DEPLOY}/previews/"* "${REMOTE_DIR}/previews/" 2>/dev/null || true
+fi
+
 # 同步 favicon / manifest 等静态资源
 for static_file in favicon.svg manifest.json robots.txt; do
   if [ -f "${TMP_DEPLOY}/${static_file}" ]; then
