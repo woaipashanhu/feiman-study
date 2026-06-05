@@ -7,6 +7,8 @@ export const LessonSchema = z.object({
   title: z.string(),
   subtitle: z.string().optional(),
   cover: z.string().optional(),
+  /** 视频预览(后端生成的脱敏低码率 mp4),空字符串表示无,前端用 fallback */
+  previewUrl: z.string().optional(),
   duration: z.number().optional(),
   order: z.number().optional(),
 })
