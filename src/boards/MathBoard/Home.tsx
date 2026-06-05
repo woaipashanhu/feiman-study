@@ -11,6 +11,7 @@ import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
 import { EnvelopeSimple } from 'phosphor-react'
 import type { MathData, Section } from '@/types/content'
+import { MathThumbnails } from './MathThumbnails'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -51,6 +52,9 @@ export default function MathHome() {
 
   const sections = mathData?.sections || []
   const color = '#3B82F6'
+  // 取第一节课的前 4 节,作为顶部缩略图(目前只有 M1)
+  const firstSection = sections[0]
+  const previewLessons = firstSection?.lessons?.slice(0, 4) || []
 
   return (
     <div className="h-full flex flex-col overflow-y-auto">
@@ -67,6 +71,21 @@ export default function MathHome() {
           <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-white" />
         </motion.button>
       </header>
+
+      {/* 顶部 4 横排缩略图(视频预览/fallback 数字动画) */}
+      {previewLessons.length > 0 && (
+        <div className="px-5 mb-4 shrink-0">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-[11px] text-text-tertiary font-semibold uppercase tracking-wider">
+              课程预览
+            </span>
+            <span className="text-[10px] text-text-tertiary/70 font-medium">
+              前 {previewLessons.length} 节
+            </span>
+          </div>
+          <MathThumbnails lessons={previewLessons} showLabel={false} size={72} />
+        </div>
+      )}
 
       {/* 大卡片列表 - 纵向堆叠,1 屏 1 主题 */}
       <motion.div

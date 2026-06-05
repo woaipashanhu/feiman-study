@@ -12,6 +12,8 @@ import { useContentLoader } from '@/shared/hooks'
 import { motion } from 'framer-motion'
 import { X, CaretRight, Clock } from 'phosphor-react'
 import type { MathData, Lesson } from '@/types/content'
+import { MathThumbnails } from './MathThumbnails'
+import { VideoPreview } from './VideoPreview'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -118,6 +120,17 @@ export default function MathChapterList() {
           <X size={18} weight="bold" className="text-white" />
         </motion.button>
 
+        {/* 顶部 4 横排缩略图(Banner 内部,顶部 padding) */}
+        {lessons.length > 0 && (
+          <div className="absolute top-3 left-5 right-16 z-10">
+            <MathThumbnails
+              lessons={lessons}
+              showLabel={false}
+              size={56}
+            />
+          </div>
+        )}
+
         <div className="absolute inset-x-0 bottom-0 p-5 pb-6">
           <span className="text-[13px] text-white/50 font-medium">
             {lessons.length} 节课程
@@ -167,23 +180,20 @@ function LessonListItem({
       onClick={onClick}
       className="w-full flex items-center gap-4 py-3.5 text-left active:bg-gray-50 transition-colors border-b border-border/40 last:border-b-0"
     >
-      {/* 缩略图 - 64x64 iOS Squircle */}
+      {/* 缩略图 - 64x64 iOS Squircle,支持视频预览(滚动到可见才播) */}
       <div className="w-16 h-16 rounded-[14px] overflow-hidden shrink-0 bg-gray-100">
-        {lesson.cover ? (
-          <img
-            src={lesson.cover}
-            alt={lesson.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-sm font-bold"
-            style={{ backgroundColor: '#3B82F612', color: '#3B82F6' }}
-          >
-            {index + 1}
-          </div>
-        )}
+        <VideoPreview
+          src={lesson.previewUrl}
+          poster={lesson.cover}
+          fallbackColor="#3B82F6"
+          rounded={14}
+          className="w-full h-full"
+          fallback={
+            <span className="text-sm font-bold" style={{ color: '#3B82F6' }}>
+              {index + 1}
+            </span>
+          }
+        />
       </div>
 
       {/* 信息 */}
