@@ -184,10 +184,10 @@ function ProfileContent({
             <section
               onClick={() => navigate('/favorites')}
               className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform"
-              style={{ height: 'calc(100vh - 520px)', minHeight: '300px' }}
+              style={{ height: 'calc(100vh - 480px)', minHeight: '340px' }}
             >
               {/* 上半部分 — 2×2 收藏图标墙 (深色背景,融入卡片) */}
-              <div className="relative h-[58%] overflow-hidden">
+              <div className="relative h-[65%] overflow-hidden">
                 <div
                   className="absolute inset-0"
                   style={{
@@ -201,7 +201,7 @@ function ProfileContent({
 
                 {/* 2×2 跑马灯 */}
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <FavoriteMarquee items={recentFavorites} />
+                  <FavoriteMarquee items={recentFavorites} size="compact" />
                 </div>
 
                 {/* 顶部渐变遮罩 */}

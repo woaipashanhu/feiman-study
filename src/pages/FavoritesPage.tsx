@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Trash, Heart, BookOpen } from 'phosphor-react'
 import { useFavorites, type BoardId, BOARD_LABELS, BOARD_EMOJIS, BOARD_COLORS as HOOK_BOARD_COLORS } from '@/shared/hooks/useFavorites'
-import { FavoriteMarquee } from '@/shared/components/FavoriteMarquee'
 import { VideoPreview } from '@/shared/components/VideoPreview'
 
 const BOARD_ORDER: BoardId[] = ['math', 'science', 'social', 'gallery', 'neimen']
@@ -78,9 +77,103 @@ export default function FavoritesPage() {
           <EmptyState onExplore={() => navigate('/')} />
         ) : (
           <>
-            {/* 顶部跑马灯 — 2x2 图标墙，App Store Today 风格 */}
-            <div className="pt-4 pb-2">
-              <FavoriteMarquee items={all} />
+            {/* 顶部大卡片 — App Store Today 风格 (参照数学课 ChapterList) */}
+            <div className="px-4 pt-4 pb-2">
+              <div
+                className="w-full rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 relative"
+                style={{ height: '320px' }}
+              >
+                {/* 上半部分 — 2x2 收藏预览网格 */}
+                <div className="relative h-[60%] overflow-hidden">
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(160deg, #EF444420 0%, #0f172a 70%)`,
+                    }}
+                  />
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full blur-3xl opacity-15"
+                    style={{ backgroundColor: '#EF4444' }}
+                  />
+
+                  {/* 2x2 预览网格 */}
+                  {all.length > 0 && (
+                    <div className="absolute inset-3 grid grid-cols-2 grid-rows-2 gap-2 z-10">
+                      {all.slice(0, 4).map((item, idx) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: 0.1 + idx * 0.06, type: 'spring', stiffness: 300, damping: 25 }}
+                          className="relative rounded-xl overflow-hidden bg-gray-900/50"
+                          onClick={() => handleItemClick(item.boardId, item.contentId)}
+                        >
+                          {item.videoUrl ? (
+                            <VideoPreview
+                              src={item.videoUrl}
+                              poster={item.cover}
+                              fallbackColor={BOARD_COLORS[item.boardId]}
+                              rounded={12}
+                              className="w-full h-full"
+                              fallback={
+                                <span className="text-xl font-bold" style={{ color: BOARD_COLORS[item.boardId] }}>
+                                  {idx + 1}
+                                </span>
+                              }
+                            />
+                          ) : item.cover ? (
+                            <img
+                              src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
+                              alt={item.title}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex items-center justify-center"
+                              style={{
+                                background: `linear-gradient(135deg, ${BOARD_COLORS[item.boardId]}40, ${BOARD_COLORS[item.boardId]}20)`,
+                              }}
+                            >
+                              <span className="text-3xl">{BOARD_EMOJIS[item.boardId]}</span>
+                            </div>
+                          )}
+                          {/* 序号角标 */}
+                          <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                            <span className="text-[10px] font-bold text-white">{idx + 1}</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* 顶部渐变遮罩 */}
+                  <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-20" />
+                </div>
+
+                {/* 下半部分 — 文字信息 */}
+                <div className="relative h-[40%] flex flex-col justify-end p-5 bg-white">
+                  {/* 渐变过渡 */}
+                  <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/8 to-transparent pointer-events-none" />
+
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[11px] font-medium text-red-500/70 tracking-wide">
+                        我的收藏
+                      </span>
+                      <span className="text-[11px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
+                        {total} 个内容
+                      </span>
+                    </div>
+                    <h2 className="text-[22px] font-bold text-text leading-tight">
+                      收藏夹
+                    </h2>
+                    <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed line-clamp-2">
+                      数学课、科学探索、社交故事、名画鉴赏、内功功法
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* 分组列表 */}

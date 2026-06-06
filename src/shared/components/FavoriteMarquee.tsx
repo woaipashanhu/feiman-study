@@ -35,15 +35,22 @@ import { VideoPreview } from '@/shared/components/VideoPreview'
 
 interface FavoriteMarqueeProps {
   items: FavoriteItem[]
+  /** 尺寸模式: 'lg' = 150px(默认), 'compact' = 100px(用于小卡片) */
+  size?: 'lg' | 'compact'
 }
 
-const ICON_SIZE = 150
-const GAP = 14
-const ICON_STEP = ICON_SIZE + GAP // 164
+const ICON_SIZE_LG = 150
+const GAP_LG = 14
+const ICON_SIZE_SM = 100
+const GAP_SM = 10
+
 const STEP_INTERVAL_MS = 3500
 const SLIDE_MS = 800
 
-export function FavoriteMarquee({ items }: FavoriteMarqueeProps) {
+export function FavoriteMarquee({ items, size = 'lg' }: FavoriteMarqueeProps) {
+  const ICON_SIZE = size === 'compact' ? ICON_SIZE_SM : ICON_SIZE_LG
+  const GAP = size === 'compact' ? GAP_SM : GAP_LG
+  const ICON_STEP = ICON_SIZE + GAP
   const navigate = useNavigate()
   const [offset, setOffset] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
@@ -119,10 +126,13 @@ export function FavoriteMarquee({ items }: FavoriteMarqueeProps) {
 function MarqueeIcon({
   item,
   onClick,
+  iconSize = ICON_SIZE_LG,
 }: {
   item: FavoriteItem
   onClick: () => void
+  iconSize?: number
 }) {
+  const ICON_SIZE = iconSize
   const color = BOARD_COLORS[item.boardId]
   const coverSrc = item.cover
     ? item.cover.startsWith('data:') || item.cover.startsWith('http') || item.cover.startsWith('/')
@@ -159,7 +169,7 @@ function MarqueeIcon({
             poster={coverSrc ?? undefined}
             fallbackColor={color}
             fallback={
-              <span style={{ fontSize: 44 }}>{BOARD_EMOJIS[item.boardId]}</span>
+              <span style={{ fontSize: ICON_SIZE === ICON_SIZE_SM ? 32 : 44 }}>{BOARD_EMOJIS[item.boardId]}</span>
             }
             rounded={22}
             className="w-full h-full"
