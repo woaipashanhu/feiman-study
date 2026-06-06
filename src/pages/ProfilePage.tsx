@@ -10,15 +10,17 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ChartBar, Gift, PencilSimpleLine, Medal, BookOpen,
-  ArrowLeft, ArrowClockwise, FloppyDisk, CheckCircle, ChatCircleText,
-  Sun, Moon, PaperPlaneRight
+  ChartBar, PencilSimpleLine, Medal, BookOpen,
+  ArrowLeft, FloppyDisk, CheckCircle, ChatCircleText,
+  Sun, Moon, PaperPlaneRight, Heart, Quotes, CaretRight
 } from 'phosphor-react'
 import { useLearningTracker, type AchievementState, type LearningRecord } from '@/shared/hooks/useLearningTracker'
-import { getDailyQuote, getRandomQuote, type DailyQuote } from '@/shared/utils/dailyQuotes'
+import { getDailyQuote, type DailyQuote } from '@/shared/utils/dailyQuotes'
 import { useMoodTracker, type MoodEmoji } from '@/shared/hooks/useMoodTracker'
 import { useFeedback, type FeedbackCategory } from '@/shared/hooks/useFeedback'
 import { useTheme } from '@/shared/hooks/useTheme'
+import { useFavorites } from '@/shared/hooks/useFavorites'
+import { FavoriteMarquee } from '@/shared/components/FavoriteMarquee'
 
 const BOARD_NAMES: Record<string, string> = {
   math: '数学课',
@@ -74,10 +76,10 @@ function ProfileContent({
   recentRecords = [],
   onBack,
 }: ProfileContentProps) {
+  const navigate = useNavigate()
   const [moodText, setMoodText] = useState('')
   const [selectedEmoji, setSelectedEmoji] = useState<MoodEmoji | ''>('')
   const [saved, setSaved] = useState(false)
-  const [quote, setQuote] = useState(dailyQuote)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
 
   const { submitFeedback, feedbackCategories } = useFeedback()
@@ -87,6 +89,7 @@ function ProfileContent({
 
   const { isDark, toggleDark } = useTheme()
   const { getTodayMood, saveMood, getRecentMoods, MOOD_OPTIONS } = useMoodTracker()
+  const { getRecentFavorites, count: countFavorites } = useFavorites()
 
   useEffect(() => {
     const todayMood = getTodayMood()
@@ -102,9 +105,7 @@ function ProfileContent({
     totalLearned: 0, totalDuration: 0, streakDays: 0,
     stars: 0, badges: [], lastLearnDate: '',
   }
-  const currentQuote = quote || { text: '每天进步一点点，一年后你会感谢今天的自己。', author: '' }
-
-  const handleRefreshQuote = () => setQuote(getRandomQuote())
+  const currentQuote = dailyQuote || { text: '每天进步一点点，一年后你会感谢今天的自己。', author: '' }
 
   const handleSaveMood = () => {
     if (!moodText.trim() || !selectedEmoji) return
@@ -118,6 +119,8 @@ function ProfileContent({
     .slice()
     .sort((a, b) => b.lastVisitAt - a.lastVisitAt)
     .slice(0, 5)
+  const recentFavorites = getRecentFavorites(6)
+  const totalFavorites = countFavorites()
 
   return (
     <div className="h-full flex flex-col bg-bg overflow-hidden">
@@ -157,27 +160,109 @@ function ProfileContent({
           </div>
         </section>
 
-        {/* 每日名言 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-              <Gift size={14} weight="bold" />
-              每日名言
-            </h3>
-            <button
-              onClick={handleRefreshQuote}
-              className="text-text-tertiary hover:text-brand transition-colors p-1 rounded"
-              title="换一句"
+        {/* 我的收藏 — App Store Today 大卡片 */}
+        <div className="px-4">
+          {totalFavorites === 0 ? (
+            <section
+              onClick={() => navigate('/favorites')}
+              className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 bg-surface cursor-pointer active:scale-[0.98] transition-transform"
             >
-              <ArrowClockwise size={14} />
-            </button>
-          </div>
-          <blockquote className="text-sm text-text italic leading-relaxed border-l-2 border-brand/30 pl-3">
-            「{currentQuote.text}」
-          </blockquote>
-          {currentQuote.author && (
-            <p className="text-[10px] text-text-tertiary mt-1.5 text-right">— {currentQuote.author}</p>
+              <div className="p-5 flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
+                  <Heart size={24} weight="fill" className="text-red-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-text">我的收藏</h3>
+                  <p className="text-[13px] text-text-secondary mt-0.5">
+                    打开视频/绘本/名画/功法,点右下角 ❤ 就能收藏
+                  </p>
+                </div>
+                <CaretRight size={18} className="text-text-tertiary shrink-0" />
+              </div>
+            </section>
+          ) : (
+            <section
+              onClick={() => navigate('/favorites')}
+              className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform"
+              style={{ height: 'calc(100vh - 520px)', minHeight: '300px' }}
+            >
+              {/* 上半部分 — 2×2 收藏图标墙 (深色背景,融入卡片) */}
+              <div className="relative h-[58%] overflow-hidden">
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(160deg, #EF444420 0%, #1a0f1a 70%)`,
+                  }}
+                />
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full blur-3xl opacity-15"
+                  style={{ backgroundColor: '#EF4444' }}
+                />
+
+                {/* 2×2 跑马灯 */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <FavoriteMarquee items={recentFavorites} />
+                </div>
+
+                {/* 顶部渐变遮罩 */}
+                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/15 to-transparent pointer-events-none z-20" />
+              </div>
+
+              {/* 下半部分 — 文字信息 */}
+              <div className="relative h-[42%] flex flex-col justify-end p-5 bg-white">
+                {/* 渐变过渡 */}
+                <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/8 to-transparent pointer-events-none" />
+
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[11px] font-medium text-red-500/70 tracking-wide">
+                      我的收藏
+                    </span>
+                    <span className="text-[11px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
+                      {totalFavorites} 个内容
+                    </span>
+                  </div>
+                  <h2 className="text-[22px] font-bold text-text leading-tight">
+                    收藏夹
+                  </h2>
+                  <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed line-clamp-2">
+                    数学课、科学探索、社交故事、名画鉴赏、内功功法
+                  </p>
+                </div>
+              </div>
+            </section>
           )}
+        </div>
+
+        {/* 树洞入口 - 每日名言 */}
+        <section
+          onClick={() => navigate('/tree-hole')}
+          className="relative rounded-xl p-4 border border-amber-300/20 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
+          style={{
+            background: 'linear-gradient(135deg, #4a2c5e 0%, #2d1b4e 50%, #1a0f33 100%)',
+          }}
+        >
+          {/* 装饰光斑 */}
+          <div
+            className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-40 blur-2xl"
+            style={{ background: 'radial-gradient(circle, #fbbf24 0%, transparent 70%)' }}
+          />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-semibold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
+                <Quotes size={14} weight="fill" />
+                树洞 · 每日一言
+              </h3>
+              <CaretRight size={14} className="text-amber-200/60" />
+            </div>
+            <blockquote className="text-sm text-white/95 italic leading-relaxed">
+              「{currentQuote.text}」
+            </blockquote>
+            {currentQuote.author && (
+              <p className="text-[10px] text-amber-200/60 mt-1.5 text-right">— {currentQuote.author}</p>
+            )}
+            <p className="text-[10px] text-amber-200/40 mt-2 text-center">点进来听我念给你听 ↓</p>
+          </div>
         </section>
 
         {/* 心情记录 */}

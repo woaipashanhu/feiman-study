@@ -11,14 +11,16 @@ import { useState, useCallback, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import type { ScienceData, ScienceScene } from '@/types/content'
+import { useFavorites } from '@/shared/hooks/useFavorites'
 import { setOGMeta } from '@/shared/utils'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, EnvelopeSimple, List, Play, X } from 'phosphor-react'
+import { ArrowLeft, EnvelopeSimple, List, Play, X, Heart } from 'phosphor-react'
 
 export default function SciencePlayer() {
   const { id = '' } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [showList, setShowList] = useState(false)
+  const { isFavorited, toggleFavorite } = useFavorites()
   const { data: scienceData } = useContentLoader<ScienceData>({
     url: '/data/science.json',
     type: 'science',
@@ -123,6 +125,31 @@ export default function SciencePlayer() {
               </svg>
             </button>
           </div>
+
+          {/* 收藏按钮 */}
+          {sceneInfo && (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() =>
+                toggleFavorite({
+                  boardId: 'science',
+                  contentId: id,
+                  title: sceneInfo.title,
+                  cover: sceneInfo.thumbnail,
+                  subtitle: sceneInfo.description,
+                })
+              }
+              className="w-9 h-9 rounded-full flex items-center justify-center ml-3 bg-white/10 hover:bg-white/20 transition-colors"
+              title="收藏"
+            >
+              <Heart
+                size={18}
+                weight={isFavorited('science', id) ? 'fill' : 'regular'}
+                className={isFavorited('science', id) ? 'text-red-500' : 'text-white/60'}
+              />
+            </motion.button>
+          )}
         </div>
       </footer>
 

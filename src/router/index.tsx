@@ -34,6 +34,8 @@ const NeimenCategoryList = lazy(() => import('@/boards/NeimenBoard/CategoryList'
 
 // 个人中心页面（全屏）
 const ProfilePage = lazy(() => import('@/pages/ProfilePage').then(m => ({ default: m.default })))
+// 收藏全屏页
+const FavoritesPage = lazy(() => import('@/pages/FavoritesPage').then(m => ({ default: m.default })))
 // 社交绘本分类列表 — 带布局（有 TabBar）
 const SocialCategoryList = lazy(() => import('@/boards/SocialBoard/CategoryList').then(m => ({ default: m.default })))
 
@@ -158,6 +160,16 @@ export function AppRouter() {
           <PageTransition>
             <SafeLazy location="ProfilePage">
               <ProfilePage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/favorites"
+        element={
+          <PageTransition>
+            <SafeLazy location="FavoritesPage">
+              <FavoritesPage />
             </SafeLazy>
           </PageTransition>
         }

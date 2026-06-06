@@ -11,9 +11,10 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
 import { setOGMeta } from '@/shared/utils'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, EnvelopeSimple, List, X, Play, Clock } from 'phosphor-react'
+import { ArrowLeft, EnvelopeSimple, List, X, Play, Clock, Heart } from 'phosphor-react'
 import { Aliplayer } from './Aliplayer'
 import type { MathData } from '@/types/content'
+import { useFavorites } from '@/shared/hooks/useFavorites'
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60)
@@ -26,6 +27,7 @@ export default function MathPlayer() {
   const navigate = useNavigate()
   const [showList, setShowList] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const { isFavorited, toggleFavorite } = useFavorites()
 
   const { data: mathData } = useContentLoader<MathData>({
     url: '/data/math.json',
@@ -168,6 +170,32 @@ export default function MathPlayer() {
               下一课
             </button>
           </div>
+
+          {/* 收藏按钮 */}
+          {currentLesson && (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() =>
+                toggleFavorite({
+                  boardId: 'math',
+                  contentId: currentLesson.id,
+                  title: currentLesson.title,
+                  cover: currentLesson.cover,
+                  subtitle: currentLesson.subtitle,
+                  videoUrl: currentLesson.previewUrl,
+                })
+              }
+              className="w-9 h-9 rounded-full flex items-center justify-center ml-3 bg-white/10 hover:bg-white/20 transition-colors"
+              title="收藏"
+            >
+              <Heart
+                size={18}
+                weight={isFavorited('math', currentLesson.id) ? 'fill' : 'regular'}
+                className={isFavorited('math', currentLesson.id) ? 'text-red-500' : 'text-white/60'}
+              />
+            </motion.button>
+          )}
         </div>
       </footer>
 
