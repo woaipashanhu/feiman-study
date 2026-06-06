@@ -1,6 +1,6 @@
 ---
 name: 费曼科学课 V3 (feiman-v3-new)
-description: 维护「刘费曼的科学课」V3 STEM 教育平台（React 19 + TypeScript + Vite 6 + Tailwind CSS v4 + Framer Motion）。五大板块：1.数学课（视频播放）2.科学可视化（Three.js 3D交互页面）3.社交技能训练（小狐狸学堂儿童互动绘本）4.童画廊（世界名画鉴赏+音频讲解）5.内功养生法（八卦掌绘本）。React SPA 单体架构，原生组件渲染，服务器部署。触发条件：用户提到'添加视频''加个视频''更新网站''加课''科学可视化''交互页面''社交训练''童画廊''内功养生法''综合网站''板块整合''更新日志'或提供视频文件路径。
+description: 维护「刘费曼的科学课」V3 STEM 教育平台（React 19 + TypeScript + Vite 6 + Tailwind CSS v4 + Framer Motion）。五大板块：1.数学课（视频播放）2.科学可视化（Three.js 3D交互页面）3.社交技能训练（小狐狸学堂儿童互动绘本）4.童画廊（世界名画鉴赏+音频讲解）5.内功养生法（八卦掌绘本）+ 小纸条模块（苹果风全屏子页面，从 ProfilePage 入口卡进入）。React SPA 单体架构，原生组件渲染，服务器部署。触发条件：用户提到'添加视频''加个视频''更新网站''加课''科学可视化''交互页面''社交训练''童画廊''内功养生法''综合网站''板块整合''更新日志''小纸条''时空纸条''收到的纸条''写过的纸条''今日纸条''写一张纸条''信纸''名言收藏''AI 转换''长图分享'或提供视频文件路径。
 ---
 
 # 费曼科学课 V3 — Agent 操作手册
@@ -108,6 +108,7 @@ public/data/                        # 静态 JSON 数据
 | 社交训练 | `/social` / `/social/scene/:id` | 绘本阅读器, 86场景 | ✅ 完成 |
 | 童画廊 | `/gallery` / `/gallery/:id` | 瀑布流 + 全屏查看 | ✅ 完成 |
 | 内功养生法 | `/neimen` / `/neimen/:id` | 卡片翻转详情 | ✅ 完成 |
+| 小纸条模块 | `/letters` / `/letters/today` / `/letters/letter/:id` / `/letters/compose` / `/letters/inbox/:token` | 苹果风全屏子页面(从 ProfilePage 入口卡进入,**不**占 TabBar) | ✅ V1 完成 |
 
 ---
 
@@ -204,7 +205,91 @@ npm run predeploy
 
 | 版本 | 日期 | 更新内容 |
 |------|------|---------|
+| v14 | 2026-06-06 | 小纸条模块 V1(数据层+视觉+5 页面+路由+ProfilePage 入口+AI+长图+分享) |
 | v13 | 2026-05-31 | 科学板块交互架构改造（原型） |
 | v12 | 2026-05-31 | 部署防错体系 + 错误监控系统 |
 | v11 | 2026-05-30 | PWA + 骨架屏 + 下拉刷新等体验优化 |
 | v10 | 2026-05-29 | 五大板块基础功能完成 |
+
+---
+
+## 小纸条模块
+
+### 命名规范(锁死)
+
+**正确**:小纸条 / 时空纸条 / 收到的纸条 / 写过的纸条 / 今日纸条 / 写一张纸条
+**错误**(禁止):信札 / 收件箱 / 写信 / 邮件 / 简讯 / 推送
+
+### 路由
+
+| 路径 | 页面 | 职责 |
+|---|---|---|
+| `/letters` | LettersPage | 主页 3 Tab(时空/收到/写过)+ FAB 写一张纸条 |
+| `/letters/today` | LetterTodayPage | 拆信 + 收藏到时空纸条 |
+| `/letters/letter/:id` | LetterDetailPage | 单张详情 + 收藏切换 + 删除 |
+| `/letters/compose` | LetterComposePage | 写信 UI + AI 转换 + 引用 + 长图 + Web Share |
+| `/letters/inbox/:token` | LetterInboxPage | 分享落地页(V1 占位,V2 真实解析) |
+
+### 数据层
+
+- 类型:`src/types/letters.ts`(LetterSchema + Zod)
+- Hook:`src/shared/hooks/useLetters.ts`(CRUD + localStorage + 跨实例同步)
+- localStorage key:`feiman_letters`(Base64 加密,复用 saveSecure/loadSecure,与 useFavorites 同套)
+- 上限:500 条
+- 三种 kind:`quote`(时空纸条)/ `personal`(收到的纸条)/ `compose`(写过的纸条)
+
+### 视觉规范(锁死,palette.ts)
+
+- **5 色**:ivory `#FAF7F2` / midnight `#0E1014` / kraft `#D4B895` / vermilion `#C83820` / gold `#B88840`
+- **字体栈**:思源宋体 SC(中文/古文/印章)+ 苹方(英文/UI)+ SF Mono(英文小字)
+- **3 信纸底色**:`ivory`(默认)/ `midnight`(V2)/ `kraft`(V2)
+- **iOS 风格**:Segmented Control + spring(300, 30) + Segmented layoutId 滑块
+- **反例(已拒绝)**:火漆、卷轴、仿毛笔字、多重浮雕、emoji 满屏、720° 旋转粒子
+
+### 组件结构
+
+```
+src/shared/components/LetterPaper/
+├── palette.ts          # LETTER_PALETTE + FONT_STACK + SPRING + PAPER_SHADOW
+├── LetterStamp.tsx     # 印章(朱红/烫金 × 小/中/大)
+└── index.tsx           # LetterPaper(变体 quote / personal / compose / preview)
+```
+
+### 写信页 LetterComposePage 工具
+
+- **字号**:小(15px)/ 中(17px)/ 大(20px)
+- **底色**:ivory(V1);midnight/kraft 灰色 V2 占位
+- **AI 转换**:`useAITransform` hook — V1 mock(8 古文 + 8 英文模板),V2 切 DeepSeek
+- **引用**:从今日纸条 + 时空纸条列表选
+- **生成长图**:html2canvas-pro 2.0.4,750×1334 PNG
+- **Web Share**:navigator.share(图片 + 文本),降级到剪贴板复制
+
+### 入口
+
+- **ProfilePage 卡片**:"一封来自今天的信"(暖米色 #FAF7F2 → #F0E8D8 渐变 + 朱红 LETTERS 小标签 + 思源宋体 22px 标题)
+- 入口卡 → 跳 `/letters/today`(今日拆信)而非 `/letters`(主页)
+- **不**占底部 TabBar 5 板块位置(P2 计划表 #31 待定)
+
+### 触发词(用户常用)
+
+| 用户说 | Agent 应该 |
+|---|---|
+| "小纸条" / "打开小纸条" | 跳 `/letters` |
+| "时空纸条" | 跳 `/letters?tab=quote` |
+| "收到的纸条" | 跳 `/letters?tab=personal` |
+| "写过的纸条" | 跳 `/letters?tab=compose` |
+| "今日纸条" / "今日名言" | 跳 `/letters/today` |
+| "写一张纸条" / "写信" | 跳 `/letters/compose` |
+| "收藏名言" / "收藏到时空" | `useLetters().addQuote(...)` |
+| "AI 转换" / "古文" / "翻译" | `useAITransform().run(input)` |
+| "分享纸条" / "寄出" | `navigator.share(图片+文本)` |
+
+### 已知约束
+
+- **V1 不做语音输入**:Web Speech 中文支持差,V2 接入讯飞/Whisper
+- **V1 不接真实 DeepSeek**:mock 实现,接口签名与 V2 一致
+- **V1 跨用户方案**:Web Share 分享长图/链接(无登录),V2 接账号 + 后端
+- **midnight / kraft 底色**:types 里有,视觉上 V1 默认都走 ivory
+- **小纸条不进 TabBar**:P2 #31 待定;当前从 ProfilePage 入口卡进
+- **系统欢迎信**:isSystem=true,用户不可删(removeLetter 保护)
+- **修过的坑**:useLetters 跨实例同步,CustomEvent 自身触发时直接 return,防 localStorage reload 覆盖新 state(2026-06-06)

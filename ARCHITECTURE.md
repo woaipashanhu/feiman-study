@@ -246,6 +246,13 @@ feiman-v3/
 /* ===== 第三阶段新增路由 ===== */
 /feiman/login                         → 登录/注册页
 /feiman/login?redirect=/feiman/math   → 登录后跳转
+
+/* ===== 小纸条模块路由(V1 已上线,详见 §十二) ===== */
+/letters                              → 小纸条主页(3 Tab:时空/收到/写过)
+/letters/today                        → 今日纸条(拆信+收藏)
+/letters/letter/:id                   → 单张纸条详情
+/letters/compose                      → 写一张纸条(AI+引用+长图+分享)
+/letters/inbox/:token                 → 分享落地页
 ```
 
 ---
@@ -611,6 +618,9 @@ export async function generatePoster(params: {
 | 26 | App推送通知 | 第三阶段 |
 | 27 | 微信小程序 | 第三阶段 |
 | 28 | iframe→react-three-fiber | 第三阶段 |
+| 29 | **小纸条模块 V1**(本次完成) | ✅ |
+| 30 | **小纸条模块 V2**(跨用户 + DeepSeek + 语音) | 第三阶段 |
+| 31 | 主页 TabBar 6th(小纸条入口?讨论中) | 待定 |
 
 ---
 
@@ -633,3 +643,134 @@ export async function generatePoster(params: {
 
 ### ADR-6: ProfileDrawer而非全屏页面
 **理由：** 侧边栏比全屏页面更轻量，不打断当前学习体验。用户看一眼学习记录可以关掉继续学。全屏个人中心页面作为第二阶段更深层的入口。
+
+### ADR-7: 小纸条模块数据放 localStorage(非 IndexedDB)
+**理由：** V1 单机场景,数据量小(MAX_LETTERS=500,平均每条 ~200B ≈ 100KB),localStorage 的 5MB 配额完全够用;Base64 简单加密复用 saveSecure/loadSecure,与 useFavorites 同一套架构。V2 跨用户切后端 + IndexedDB 缓存。
+
+### ADR-8: 视觉走苹果风 + 现代极简(拒绝仿古)
+**理由：** 用户原话"就苹果风吧,现代一点就可以"。小纸条本质是"现代的私人信"而非"古代文物"。Day One / Apple Books 范本。反例(已拒绝)写入 §十二.3:火漆、卷轴、仿毛笔字、多重浮雕、emoji 满屏。视觉稿锁在 `src/shared/components/LetterPaper/palette.ts` 的 LETTER_PALETTE 5 色 + PAPER_BG_STYLE 三底色。
+
+### ADR-9: V1 AI 转换用 mock(非真实 DeepSeek)
+**理由：** 演示环境无 VITE_DEEPSEEK_KEY 配置;V1 mock 8-10 个古文/英文模板 + 启发式抽取原文首句,1-2s 模拟延迟,视觉到位,接口签名 V1/V2 一致,组件零修改可切真实 API。V2 接入 DeepSeek(中文古文最好最便宜),VITE_DEEPSEEK_KEY 由环境变量注入。失败降级:不显示 AI 版本,只显示原文。
+
+---
+
+## 十二、小纸条模块（Letters）
+
+### 12.1 模块定位
+
+全屏子页面(`/letters/*`),从 ProfilePage 入口卡进入,**不**占底部 TabBar 的 5 板块位置。三种纸条:
+
+| Tab | 类型标识 | 说明 |
+|---|---|---|
+| 时空纸条 | `quote` | 每日名言收藏,可由"今日纸条"拆信后收藏 |
+| 收到的纸条 | `personal` | 私人信(V1:仅系统欢迎信;V2:跨用户分享) |
+| 写过的纸条 | `compose` | 用户写信历史,支持 AI 转换 + 长图 + Web Share |
+
+### 12.2 数据模型
+
+定义在 `src/types/letters.ts`,Zod schema 验证:
+
+```typescript
+LetterSchema = {
+  id: string
+  kind: 'quote' | 'personal' | 'compose'
+  content: string                          // 原文
+  translations?: { classicalChinese?, english? }  // 古文/英文
+  author?: string                          // 名言作者 / 写信人
+  dynasty?: string                         // 朝代(古文)
+  bgKey: 'ivory' | 'midnight' | 'kraft'    // 信纸底色
+  isStarred: boolean                       // 是否收藏到时空纸条
+  refQuoteId?: string                      // 引用源 quote
+  refPersonalId?: string                   // 关联 personal
+  createdAt: number
+  updatedAt: number
+  isSystem?: boolean                       // 系统信不可删
+  shareToken?: string                      // V1 未启用
+}
+```
+
+**localStorage key**: `feiman_letters`(Base64 加密,复用 saveSecure/loadSecure,与 useFavorites 同一套)
+**上限**: 500 条
+**跨实例同步**: `storage` 事件 + 自定义事件(⚠️ CustomEvent 自身触发时直接 return,不 reload localStorage,防覆盖)
+
+### 12.3 视觉规范(锁死)
+
+**LETTER_PALETTE 5 色**(`palette.ts`):
+- `ivory #FAF7F2` 象牙白 — 默认主底
+- `midnight #0E1014` 系统黑 — V2 深色底
+- `kraft #D4B895` 牛皮纸 — V2 复古底
+- `vermilion #C83820` 哑光朱红 — 印章/重点
+- `gold #B88840` 烫金 — 装饰
+
+**字体栈**:
+- 思源宋体 SC (`Noto Serif SC` / `Source Han Serif SC`) — 中文/古文/印章
+- 苹方 / SF Pro Text — 英文/UI
+- SF Mono — 英文诗/小字
+
+**反例(已拒绝)**:
+- ❌ 火漆封蜡
+- ❌ 卷轴展开
+- ❌ 仿毛笔字(用真实书法字帖)
+- ❌ 多重浮雕(只允许纸纹 + 1 层阴影)
+- ❌ emoji 满屏(只允许印章 + Tab 图标)
+- ❌ 旋转 720° 粒子飞溅动效(只用 iOS spring 300/30)
+
+### 12.4 数据流
+
+```
+getDailyQuote()                          ← dailyQuotes.ts(扩展 dynasty/bgKey)
+   ↓
+[拆信封] → LetterTodayPage                → 点收藏 → useLetters.addQuote()
+   ↓
+[收藏后] 自动跳 LettersPage (时空纸条 tab)  → 看到这条 quote LetterPaper
+                                            → 点击 → LetterDetailPage
+
+[写信] LettersPage FAB → LetterComposePage
+   ↓
+[输入原文 + 字号/底色] → [可选 AI 转换] → [可选 引用] → 生成长图 / Web Share / 保存
+   ↓
+[保存] → useLetters.addCompose() → 跳 LetterDetailPage
+[分享] → navigator.share(图片 + 文本) → 落地页 /letters/inbox/:token
+```
+
+### 12.5 路由(`/letters/*`)
+
+| 路径 | 页面 | 说明 |
+|---|---|---|
+| `/letters` | LettersPage | 主页 3 Tab |
+| `/letters/today` | LetterTodayPage | 今日拆信 + 收藏 |
+| `/letters/letter/:id` | LetterDetailPage | 单张详情 + 收藏切换 + 删除 |
+| `/letters/compose` | LetterComposePage | 写信 UI + AI + 引用 + 长图 + 分享 |
+| `/letters/inbox/:token` | LetterInboxPage | 分享落地页(V1 占位,V2 token 解析) |
+
+### 12.6 文件清单
+
+| 文件 | 行数级别 | 职责 |
+|---|---|---|
+| `src/types/letters.ts` | 150 | Zod schema + 类型 + 工具 |
+| `src/shared/hooks/useLetters.ts` | 240 | CRUD + localStorage + 同步 |
+| `src/shared/hooks/useAITransform.ts` | 130 | V1 mock + V2 DeepSeek 接口预留 |
+| `src/shared/utils/dailyQuotes.ts` | +20 | 扩展 dynasty/bgKey |
+| `src/shared/components/LetterPaper/palette.ts` | 70 | 5 色 + 字体 + 动效 |
+| `src/shared/components/LetterPaper/LetterStamp.tsx` | 70 | 印章组件 |
+| `src/shared/components/LetterPaper/index.tsx` | 200 | 信纸组件(4 变体) |
+| `src/pages/LettersPage.tsx` | 200 | 主页 3 Tab |
+| `src/pages/LetterTodayPage.tsx` | 200 | 拆信 + 收藏 |
+| `src/pages/LetterDetailPage.tsx` | 150 | 详情页 |
+| `src/pages/LetterComposePage.tsx` | 500 | 写信 UI + AI + 引用 + 长图 + 分享 |
+| `src/pages/LetterInboxPage.tsx` | 60 | 分享落地页占位 |
+| `src/router/index.tsx` | +50 | 5 个 /letters/* 路由 |
+| `src/pages/ProfilePage.tsx` | +30 | "一封来自今天的信"入口卡 |
+| `scripts/screenshot-letters.mjs` | 100 | Puppeteer 截图脚本 |
+
+### 12.7 V1 vs V2 边界
+
+| 能力 | V1 (本次交付) | V2 (待做) |
+|---|---|---|
+| 数据 | localStorage + Base64 | 后端 API + IndexedDB 缓存 |
+| 跨用户 | Web Share 分享长图/链接(无登录) | 真实账号 + 收件箱 |
+| AI | Mock 8-10 模板 + 启发式 | DeepSeek 真实 API |
+| 语音 | 不做(Web Speech 中文差) | 接入讯飞/Whisper |
+| 信纸底色 | ivory 一种 | midnight + kraft 启用 |
+| token 解析 | 占位(显示 token 字符串) | 后端查询 letter + 渲染 |

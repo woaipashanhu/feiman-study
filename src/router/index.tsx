@@ -39,6 +39,13 @@ const FavoritesPage = lazy(() => import('@/pages/FavoritesPage').then(m => ({ de
 // 社交绘本分类列表 — 带布局（有 TabBar）
 const SocialCategoryList = lazy(() => import('@/boards/SocialBoard/CategoryList').then(m => ({ default: m.default })))
 
+// 小纸条模块 — 全屏子页面（无 TabBar）
+const LettersPage = lazy(() => import('@/pages/LettersPage').then(m => ({ default: m.default })))
+const LetterTodayPage = lazy(() => import('@/pages/LetterTodayPage').then(m => ({ default: m.default })))
+const LetterDetailPage = lazy(() => import('@/pages/LetterDetailPage').then(m => ({ default: m.default })))
+const LetterComposePage = lazy(() => import('@/pages/LetterComposePage').then(m => ({ default: m.default })))
+const LetterInboxPage = lazy(() => import('@/pages/LetterInboxPage').then(m => ({ default: m.default })))
+
 /** 带错误边界的 Suspense 包裹器 */
 function SafeLazy({ children, location }: { children: React.ReactNode; location: string }) {
   return (
@@ -170,6 +177,56 @@ export function AppRouter() {
           <PageTransition>
             <SafeLazy location="FavoritesPage">
               <FavoritesPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/letters"
+        element={
+          <PageTransition>
+            <SafeLazy location="LettersPage">
+              <LettersPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/letters/today"
+        element={
+          <PageTransition>
+            <SafeLazy location="LetterTodayPage">
+              <LetterTodayPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/letters/letter/:id"
+        element={
+          <PageTransition>
+            <SafeLazy location="LetterDetailPage">
+              <LetterDetailPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/letters/compose"
+        element={
+          <PageTransition>
+            <SafeLazy location="LetterComposePage">
+              <LetterComposePage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/letters/inbox/:token"
+        element={
+          <PageTransition>
+            <SafeLazy location="LetterInboxPage">
+              <LetterInboxPage />
             </SafeLazy>
           </PageTransition>
         }

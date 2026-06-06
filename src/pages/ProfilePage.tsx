@@ -20,7 +20,7 @@ import { useMoodTracker, type MoodEmoji } from '@/shared/hooks/useMoodTracker'
 import { useFeedback, type FeedbackCategory } from '@/shared/hooks/useFeedback'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { useFavorites } from '@/shared/hooks/useFavorites'
-import { FavoriteMarquee } from '@/shared/components/FavoriteMarquee'
+import { VideoPreview } from '@/shared/components/VideoPreview'
 
 const BOARD_NAMES: Record<string, string> = {
   math: '数学课',
@@ -161,78 +161,147 @@ function ProfileContent({
         </section>
 
         {/* 我的收藏 — App Store Today 大卡片 */}
-        <div className="px-4">
-          {totalFavorites === 0 ? (
-            <section
-              onClick={() => navigate('/favorites')}
-              className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 bg-surface cursor-pointer active:scale-[0.98] transition-transform"
-            >
-              <div className="p-5 flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
-                  <Heart size={24} weight="fill" className="text-red-400" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-base font-semibold text-text">我的收藏</h3>
-                  <p className="text-[13px] text-text-secondary mt-0.5">
-                    打开视频/绘本/名画/功法,点右下角 ❤ 就能收藏
-                  </p>
-                </div>
-                <CaretRight size={18} className="text-text-tertiary shrink-0" />
+        {totalFavorites === 0 ? (
+          <section
+            onClick={() => navigate('/favorites')}
+            className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 bg-surface cursor-pointer active:scale-[0.98] transition-transform"
+          >
+            <div className="p-5 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
+                <Heart size={24} weight="fill" className="text-red-400" />
               </div>
-            </section>
-          ) : (
-            <section
-              onClick={() => navigate('/favorites')}
-              className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform"
-              style={{ height: 'calc(100vh - 480px)', minHeight: '340px' }}
-            >
-              {/* 上半部分 — 2×2 收藏图标墙 (深色背景,融入卡片) */}
-              <div className="relative h-[65%] overflow-hidden">
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: `linear-gradient(160deg, #EF444420 0%, #1a0f1a 70%)`,
-                  }}
-                />
-                <div
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-60 h-60 rounded-full blur-3xl opacity-15"
-                  style={{ backgroundColor: '#EF4444' }}
-                />
+              <div className="flex-1">
+                <h3 className="text-base font-semibold text-text">我的收藏</h3>
+                <p className="text-[13px] text-text-secondary mt-0.5">
+                  打开视频/绘本/名画/功法,点右下角 ❤ 就能收藏
+                </p>
+              </div>
+              <CaretRight size={18} className="text-text-tertiary shrink-0" />
+            </div>
+          </section>
+        ) : (
+          <section
+            onClick={() => navigate('/favorites')}
+            className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform"
+            style={{ height: 'calc(100vh - 400px)', minHeight: '320px' }}
+          >
+            {/* 上半部分 — 2×2 收藏预览网格 */}
+            <div className="relative h-[55%] overflow-hidden">
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `linear-gradient(160deg, #EF444430 0%, #0f172a 70%)`,
+                }}
+              />
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full blur-3xl opacity-15"
+                style={{ backgroundColor: '#EF4444' }}
+              />
 
-                {/* 2×2 跑马灯 */}
+              {/* 2×2 预览网格 — 居中放大 */}
+              {recentFavorites.length > 0 && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <FavoriteMarquee items={recentFavorites} size="compact" />
-                </div>
-
-                {/* 顶部渐变遮罩 */}
-                <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-black/15 to-transparent pointer-events-none z-20" />
-              </div>
-
-              {/* 下半部分 — 文字信息 */}
-              <div className="relative h-[42%] flex flex-col justify-end p-5 bg-white">
-                {/* 渐变过渡 */}
-                <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/8 to-transparent pointer-events-none" />
-
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-[11px] font-medium text-red-500/70 tracking-wide">
-                      我的收藏
-                    </span>
-                    <span className="text-[11px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
-                      {totalFavorites} 个内容
-                    </span>
+                  <div className="grid grid-cols-2 grid-rows-2 gap-3">
+                    {recentFavorites.slice(0, 4).map((item, idx) => (
+                      <div
+                        key={item.id}
+                        className="relative w-[80px] h-[80px] rounded-2xl overflow-hidden bg-gray-900/50 shadow-md"
+                      >
+                        {item.videoUrl ? (
+                          <VideoPreview
+                            src={item.videoUrl}
+                            poster={item.cover}
+                            fallbackColor="#EF4444"
+                            rounded={16}
+                            className="w-full h-full"
+                            fallback={
+                              <span className="text-base font-bold text-red-400">{idx + 1}</span>
+                            }
+                          />
+                        ) : item.cover ? (
+                          <img
+                            src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
+                            alt={item.title}
+                            className="w-full h-full object-contain"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-red-500/20">
+                            <span className="text-2xl">❤️</span>
+                          </div>
+                        )}
+                        <div className="absolute top-1 left-1 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                          <span className="text-[10px] font-bold text-white">{idx + 1}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <h2 className="text-[22px] font-bold text-text leading-tight">
-                    收藏夹
-                  </h2>
-                  <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed line-clamp-2">
-                    数学课、科学探索、社交故事、名画鉴赏、内功功法
-                  </p>
                 </div>
+              )}
+
+              {/* 顶部渐变遮罩 */}
+              <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-20" />
+            </div>
+
+            {/* 下半部分 — 文字信息 */}
+            <div className="relative h-[45%] flex flex-col justify-end p-5 bg-surface">
+              {/* 渐变过渡 */}
+              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/8 to-transparent pointer-events-none" />
+
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-[11px] font-medium text-red-500 tracking-wide">
+                    我的收藏
+                  </span>
+                  <span className="text-[10px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
+                    {totalFavorites} 个内容
+                  </span>
+                </div>
+                <h2 className="text-[22px] font-bold text-text leading-tight">
+                  收藏夹
+                </h2>
+                <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
+                  数学课、科学探索、社交故事、名画鉴赏、内功功法
+                </p>
               </div>
-            </section>
-          )}
-        </div>
+            </div>
+          </section>
+        )}
+
+        {/* 小纸条入口 — 暖米色卡片(冷暖对比,区别于收藏卡) */}
+        <section
+          onClick={() => navigate('/letters/today')}
+          className="relative rounded-2xl p-5 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ring-1 ring-black/5"
+          style={{
+            background: 'linear-gradient(135deg, #FAF7F2 0%, #F0E8D8 100%)',
+          }}
+        >
+          {/* 装饰:右上角金色光斑 */}
+          <div
+            className="absolute -top-6 -right-6 w-20 h-20 rounded-full opacity-40 blur-2xl"
+            style={{ background: 'radial-gradient(circle, #B88840 0%, transparent 70%)' }}
+          />
+          <div className="relative">
+            <div className="flex items-center justify-between mb-2">
+              <span
+                className="text-[10px] font-bold tracking-[0.18em] px-2 py-0.5 rounded"
+                style={{ backgroundColor: '#C83820', color: '#FAF7F2' }}
+              >
+                LETTERS
+              </span>
+              <CaretRight size={16} className="text-text-tertiary" />
+            </div>
+            <h2
+              className="text-[22px] font-bold text-text leading-tight"
+              style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}
+            >
+              一封来自今天的信
+            </h2>
+            <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
+              写一封信,收一句名言。每日一句,纸短情长。
+            </p>
+          </div>
+        </section>
 
         {/* 树洞入口 - 每日名言 */}
         <section
