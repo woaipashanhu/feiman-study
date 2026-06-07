@@ -15,11 +15,11 @@
  *  视觉:苹果风 + 暖米色基底,与个人中心/收藏形成层次
  * ============================================================
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 // useNavigate is also used in EmptyFor below
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
-import { ArrowLeft, EnvelopeSimple, Plus, Quotes, EnvelopeOpen, PencilSimpleLine } from 'phosphor-react'
+import { ArrowLeft, EnvelopeSimple, Plus, Quotes, EnvelopeOpen, PencilSimpleLine, Lightning, ArrowRight } from 'phosphor-react'
 import { useLetters } from '@/shared/hooks/useLetters'
 import { LetterPaper } from '@/shared/components/LetterPaper'
 import { LETTER_KIND_LABEL, type LetterKind } from '@/types/letters'
@@ -70,6 +70,17 @@ export default function LettersPage() {
         >
           <EnvelopeSimple size={18} weight="fill" className="text-white" />
         </motion.button>
+        {/* V4: 啊哈时刻入口 */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate('/aha')}
+          className="w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+          style={{ backgroundColor: '#F8F1E7', border: '1px solid rgba(0,0,0,0.05)' }}
+          aria-label="啊哈时刻"
+        >
+          <Lightning size={18} weight="fill" style={{ color: '#C73E3A' }} />
+        </motion.button>
       </header>
 
       {/* Segmented Control — iOS 风格 */}
@@ -111,6 +122,9 @@ export default function LettersPage() {
           </div>
         </LayoutGroup>
       </div>
+
+      {/* V4: 今日灵感卡片(显示最近 1 个 aha moment) */}
+      <AhaTodayCard onClick={() => navigate('/aha')} />
 
       {/* 列表区 */}
       <div className="flex-1 overflow-y-auto px-4 pb-32">
@@ -206,5 +220,43 @@ function EmptyFor({ kind }: { kind: Tab }) {
         actionPath={cfg.path}
       />
     </div>
+  )
+}
+
+
+// =============== V4 啊哈时刻今日卡片 ===============
+
+function AhaTodayCard({ onClick }: { onClick: () => void }) {
+  const [moment, setMoment] = useState<any>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    const token = localStorage.getItem('feiman_auth_access')
+    if (!token) { setLoaded(true); return }
+    fetch('/api/aha/moments?limit=1', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(r => r.json())
+      .then(d => { if (d.ok) setMoment(d.moments?.[0] || null); setLoaded(true) })
+      .catch(() => setLoaded(true))
+  }, [])
+
+  if (!loaded || !moment) return null
+
+  return (
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="mx-4 mb-3 flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-[#FAF4E9] to-[#F8E8D8] border border-[#E8D9C0] text-left"
+    >
+      <span className="text-2xl shrink-0">{moment.mood || '💡'}</span>
+      <div className="flex-1 min-w-0">
+        <p className="text-[10px] text-text-tertiary mb-0.5">今日灵感</p>
+        <p className="text-[13px] text-text line-clamp-1">
+          {moment.type === 'audio' ? '🎤 录音灵感' : moment.content}
+        </p>
+      </div>
+      <ArrowRight size={16} className="text-text-tertiary shrink-0" />
+    </motion.button>
   )
 }
