@@ -24,6 +24,7 @@
  */
 import express, { type Request, type Response, type NextFunction } from 'express'
 import cors from 'cors'
+import * as Sentry from '@sentry/node'
 import { lettersRouter } from './routes-letters.js'
 import { authRouter } from './routes-auth.js'
 import { aiRouter } from './routes-ai.js'
@@ -35,6 +36,26 @@ import { requireAuth, getCurrentUser } from './auth.js'
 const PORT = parseInt(process.env.PORT || '3000', 10)
 const HOST = process.env.HOST || '0.0.0.0'
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*'
+
+// V3.6 错误监控:初始化 Sentry(占位 DSN 时静默)
+// 上线前用户填真实 SENTRY_DSN 即可激活
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'production',
+    tracesSampleRate: 0.2,
+    // 忽略健康检查 + 收信落地页 401
+    denyUrls: [
+      /\/api\/health/,
+      /\/api\/letters\/by-token\//,
+    ],
+    beforeSendTransaction(event) {
+      if (event.transaction === 'GET /api/health') return null
+      return event
+    },
+  })
+  console.log('[Sentry] backend initialized')
+}
 
 const app = express()
 
@@ -119,6 +140,8 @@ app.use((req: Request, res: Response) => {
 // 错误兜底
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   console.error('[error]', err)
+  // 同步到 Sentry(已 init 时)
+  Sentry.captureException(err)
   res.status(500).json({
     error: 'internal_error',
     message: process.env.NODE_ENV === 'production' ? '服务器内部错误' : err.message,

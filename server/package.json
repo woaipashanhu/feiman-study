@@ -11,6 +11,7 @@
     "test:api": "bash ./scripts/smoke-test.sh"
   },
   "dependencies": {
+    "@sentry/node": "^10.56.0",
     "@types/multer": "^2.1.0",
     "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.3",

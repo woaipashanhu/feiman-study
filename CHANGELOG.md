@@ -1,3 +1,78 @@
+### 2026-06-07 会话 #42 — P3-1 错误监控 Sentry(占位就绪,等真实 DSN 激活)
+
+#### 本次会话目标
+
+完成 §13.5 P3-1 错误监控 Sentry。上线后用户报"页面打不开"你看不到栈——Sentry 捕获后自动发邮件/PC alert。
+
+#### 完成的工作
+
+**1. 前端 `@sentry/react` 集成 ✅**
+- 装 `@sentry/react`(npm + npmmirror 走代理)
+- `src/main.tsx` 加 `Sentry.init`(仅生产 + 有 DSN 才激活)
+- `integrations`: `browserTracingIntegration()`(性能)+ `replayIntegration()`(用户操作录屏,错误时 100% 录)
+- `tracesSampleRate=0.2` + `replaysSessionSampleRate=0.1` + `replaysOnErrorSampleRate=1.0`
+- `denyUrls` 过滤 `/api/letters/by-token/*` 401 误报 + `/api/health`
+- `src/shared/utils/error-reporter.ts` 加 `import('@sentry/react').then(Sentry => Sentry.captureException(...))`,前端错误都同步发 Sentry
+- 5 分钟去重机制保留(避免风暴)
+
+**2. 后端 `@sentry/node` 集成 ✅**
+- 装 `@sentry/node` + 服务器 npm i
+- `server/src/index.ts` 加 `Sentry.init`(有 SENTRY_DSN 才激活)
+- 错误兜底中间件同步 `Sentry.captureException(err)`,500 错自动上报
+- `denyUrls` 过滤 `/api/health` + `by-token/*`
+
+**3. 占位 DSN 写入两边 env ✅**
+- 本地: `.env.local` 加 `VITE_SENTRY_DSN=https://placeholder@sentry.io/000000`
+- 服务器: `/etc/feiman-letters.env` 加 `SENTRY_DSN=https://placeholder@sentry.io/000000`(chmod 600 保留)
+- pm2 dump 自动 bake SENTRY_DSN(env: `https://placeholder@sentry.io/000000`)
+
+**4. 部署验证 ✅**
+- 本地 `npm run build` 成功(Sentry SDK 烤入 main bundle)
+- 本地 `npx tsc --noEmit`(server)通过
+- 服务器 tar + scp dist(server + web)+ npm i @sentry/node + pm2 restart
+- 服务 uptime 91s,日志确认 `[Sentry] backend initialized`
+- 前后端 DSN 占位字符串已部署
+
+**5. 文档更新 ✅**
+- `ARCHITECTURE.md §13.5 P3-1`: `❌ 不做理由` → `✅ 2026-06-07 完成,DSN 占位,等真 DSN 激活`
+- 列了"上线前用户填真实 DSN 即可激活"流程(改 2 个 env → 重新 build → deploy)
+
+#### 关键判断
+
+- **占位 DSN 也能让 init 通过**:Sentry SDK fail-safe,DSN 无效时静默不发送——上线前不会"占位"导致报错
+- **DSN 是 env 不是源码**:用户 DSN 是隐私,不烤到 git;build 时 VITE 注入到 main bundle,跟 LongCat API key 同策略
+- **后端 `Sentry.Handlers.requestHandler()` 暂不接**:V3.6 只做错误监控,等真 DSN 激活后再加 tracing(需要再加 2 行 + /api/* 性能采样)
+- **不引 `nock`/`msw` 测试 SDK 调用**:个人项目 + 占位 DSN,加 mock 收益低
+
+#### 后续(用户操作)
+
+正式上线前:
+1. 去 [sentry.io](https://sentry.io) 注册(免费,5K events/月)
+2. 建 React + Node 两个 project
+3. 复制 DSN,改:
+   - 本地 `.env.local` 替换 `VITE_SENTRY_DSN`
+   - 服务器 `/etc/feiman-letters.env` 替换 `SENTRY_DSN`
+4. 重新 `npm run build` + `pm2 restart letters-server`
+5. 触发一个测试错误(前端 throw + 后端 500),Sentry 收件箱看到事件 = 激活成功
+
+#### 文件变更
+
+- `src/main.tsx`: +24 行(Sentry init)
+- `src/shared/utils/error-reporter.ts`: +9 行(Sentry 同步上报)
+- `server/src/index.ts`: +18 行(Sentry init + captureException)
+- `ARCHITECTURE.md`: §13.5 P3-1 状态更新
+- `.env.local`(gitignore)+ 服务器 `/etc/feiman-letters.env`: 各 +2 行
+- 新增依赖: `@sentry/react`(前端) + `@sentry/node`(后端)
+
+#### 验证
+
+- `npm run build` 成功,dist/assets/index-ChqcT5zh.js 含 7 处 Sentry 引用
+- `npx tsc --noEmit`(server)无错误
+- 服务器 health 200,uptime 91s,`[Sentry] backend initialized` 日志确认
+- 占位 DSN 不真发送(Sentry SDK fail-safe),不会泄露栈
+
+---
+
 ### 2026-06-06 会话 #32 — 收藏 marquee v17 改成"卡牌式滑动轮播"(4 图标窗口,一格一格滑)
 
 #### 本次会话目标

@@ -1030,12 +1030,21 @@ V3 新加 API(共 6 个 + 1 个 star):
 
 ### 13.5 🟦 P3 — 监控/工程化(等基础稳了再补)
 
-#### P3-1 · 错误监控 Sentry
+#### P3-1 · 错误监控 Sentry ✅ 2026-06-07
 
-- **场景**: 用户报"页面打不开"你看不到栈
-- **做多少**: `@sentry/react` + `@sentry/node` + DSN 配置
-- **估时**: 2 小时
-- **不做理由**: 个人项目,你自己能复现就不需要 Sentry
+- **场景**: 用户报"页面打不开"你看不到栈 → 有 Sentry 后,自动捕获 + 栈 + URL + UA
+- **做多少**:
+  - 前端 `@sentry/react` + `browserTracingIntegration` + `replayIntegration`
+  - 后端 `@sentry/node` + `captureException` 接入 error 兜底中间件
+  - `error-reporter.ts` 自动同步报 Sentry(去重 5 分钟)
+  - `denyUrls` 过滤 `/api/letters/by-token/*` 401 + `/api/health`
+  - `tracesSampleRate=0.2` + `replaysSessionSampleRate=0.1`
+- **当前状态**: **代码已就绪,DSN 用占位**。用户给真实 Sentry DSN 后,改两个 env 文件即激活:
+  - 本地: `VITE_SENTRY_DSN=...` 写 `.env.local`
+  - 服务: `SENTRY_DSN=...` 写 `/etc/feiman-letters.env`
+- **估时**: 2 小时(完成)
+- **后续**: 用户上线前注册 [sentry.io](https://sentry.io) → 建 project → 复制 DSN → 替换占位 → 重新 deploy
+- **收益**: 用户报错"打不开"→ 邮箱/PC 收到 alert + 栈 + 复现路径,不用再"猜+问截图"
 
 #### P3-2 · CI/CD GitHub Actions
 

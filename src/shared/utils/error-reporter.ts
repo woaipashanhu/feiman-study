@@ -58,6 +58,16 @@ export async function reportError(
 ) {
   const fp = fingerprint(error)
 
+  // 同时调用 Sentry(如果已初始化)
+  // 动态 import 避免 main.tsx 加载阶段就触发
+  import('@sentry/react').then((Sentry) => {
+    if (typeof Sentry.captureException === 'function') {
+      Sentry.captureException(error instanceof Error ? error : new Error(String(error)), {
+        contexts: { react: context as any },
+      })
+    }
+  }).catch(() => { /* Sentry 未装 */ })
+
   // 开发环境：不上报服务器，但发送到 DevErrorPanel
   if (IS_DEV) {
     // 动态导入避免循环依赖
