@@ -1,3 +1,10 @@
+/**
+ * ⚠️ DEPRECATED — V3 不再使用
+ * 移到 _legacy/ 防止误用。如确需恢复,从 git history 找回。
+ * V3.8 死代码清理 — 2026-06-07
+ *
+ */
+
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowUp } from 'phosphor-react'
