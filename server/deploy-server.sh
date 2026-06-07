@@ -129,34 +129,40 @@ ssh_cmd bash -s <<REMOTE_SCRIPT
 REMOTE_SCRIPT
 ok "nginx /api/* 反代配置完成"
 
-# ==================== 6. 重启进程 ====================
-log "6. 重启后端进程(端口 ${APP_PORT})..."
+# ==================== 6. PM2 重启进程 ====================
+log "6. PM2 重启后端进程(端口 ${APP_PORT})..."
 ssh_cmd bash -s <<REMOTE_SCRIPT
   set -e
-  # 如果有旧的,杀掉
-  pkill -f "node dist/index.js" 2>/dev/null || true
-  sleep 1
 
-  # 用 nohup 后台启动,日志写到 /var/log/feiman-letters.log
+  # 读 .env 文件(如果存在,合并到环境)
+  if [ -f /etc/feiman-letters.env ]; then
+    set -a; . /etc/feiman-letters.env; set +a
+  fi
+
   cd "${REMOTE_DIR}"
-  DB_PATH="${DB_DIR}/letters.db" \
-    PORT="${APP_PORT}" \
-    NODE_ENV=production \
-    nohup node dist/index.js >> /var/log/feiman-letters.log 2>&1 &
 
-  # 等 1.5s 让进程启动
-  sleep 1.5
+  # 检查 pm2 是否已管 letters-server
+  if pm2 describe letters-server > /dev/null 2>&1; then
+    echo "PM2 进程已存在,reload"
+    DB_PATH="${DB_DIR}/letters.db" PORT="${APP_PORT}" NODE_ENV=production \
+      pm2 reload letters-server --update-env
+  else
+    echo "PM2 启动新进程"
+    DB_PATH="${DB_DIR}/letters.db" PORT="${APP_PORT}" NODE_ENV=production \
+      pm2 start dist/index.js --name letters-server --time
+  fi
 
   # 健康检查
+  sleep 1.5
   if curl -sf http://127.0.0.1:${APP_PORT}/api/health > /dev/null; then
-    echo "✅ 后端进程已启动,健康检查通过"
+    echo "✅ PM2 reload 成功,健康检查通过"
   else
     echo "❌ 健康检查失败,日志:"
-    tail -20 /var/log/feiman-letters.log
+    pm2 logs letters-server --lines 30 --nostream --raw
     exit 1
   fi
 REMOTE_SCRIPT
-ok "后端进程重启完成"
+ok "PM2 进程重启完成"
 
 # ==================== 7. reload nginx ====================
 log "7. reload nginx 让 /api/ 反代生效..."

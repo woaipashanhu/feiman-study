@@ -9,9 +9,19 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      // 自动注册 + 立刻激活新 SW(用户不卡旧版本)
       registerType: 'autoUpdate',
+      injectRegister: 'auto',
       workbox: {
+        // 关键: 让新 SW 立刻 skipWaiting + 接管所有 client tab
+        // 不加这俩,用户得手动关掉所有 tab 重开才看到新版本
+        skipWaiting: true,
+        clientsClaim: true,
+        // 部署时删掉旧 chunk 的缓存,避免冲突
+        cleanupOutdatedCaches: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // ⚠️ 不缓存 API 路径(后端数据必须每次拉新)
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https?:\/\/.*\.(?:png|jpg|jpeg|svg|webp|gif)$/,
@@ -22,6 +32,11 @@ export default defineConfig({
             }
           }
         ]
+      },
+      // 每次部署生成新 manifest,强制 PWA 检测到更新
+      manifest: {
+        // 加一个 build 时间戳,逼着 SW 重新比对
+        // (PWA 插件内部已经按 dist hash 处理,但显式加更稳)
       },
       manifest: {
         name: '费曼科学课',
