@@ -1,26 +1,29 @@
 /**
  * ============================================================
- *  useLettersServer — 小纸条后端 API 客户端(V1)
+ *  useLettersServer — 小纸条后端 API 客户端(V1+V3)
  *
- *  端点: /api/letters
- *    POST /                            create
- *    GET  /                            list(默认 20)
- *    GET  /:id                         get by id
- *    GET  /by-token/:token             get by token(分享落地页)
- *    POST /:id/collect                 collect(全局计数)
- *    GET  /_health                     health
+ *  V1 接口(无登录):
+ *    POST   /letters                     create
+ *    GET    /letters?limit=20            list
+ *    GET    /letters/:id                 get by id
+ *    GET    /letters/by-token/:token     get by token
+ *    POST   /letters/:id/collect         collect(全局计数)
+ *
+ *  V3 接口(需登录,自动带 Authorization + 401 自动 refresh):
+ *    POST   /letters/:id/star            star 到"时空纸条"
+ *    GET    /me/inbox?limit=20           收件箱
  *
  *  失败降级: 后端不可用时,所有方法 throw(调用方需 try/catch)
  *  V1 不做离线缓存(V2 加 IndexedDB 缓存)
  * ============================================================
  */
-
-const API_BASE = import.meta.env.VITE_API_BASE || '/api'
+import { apiFetch } from './apiClient'
 
 export interface ServerLetter {
   id: string
   content: string
   author: string | null
+  authorUserId: string | null
   bgKey: string
   translations: { classicalChinese?: string; english?: string } | null
   shareToken: string
@@ -30,54 +33,46 @@ export interface ServerLetter {
   updatedAt: number
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = `${API_BASE}${path}`
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(init?.headers || {}),
-    },
-  })
-  if (!res.ok) {
-    let detail: unknown
-    try {
-      detail = await res.json()
-    } catch {
-      detail = await res.text()
-    }
-    throw new Error(`API ${res.status}: ${JSON.stringify(detail)}`)
-  }
-  return res.json() as Promise<T>
+export interface ServerUser {
+  id: string
+  email: string | null
+  phone: string | null
+  nickname: string
+  createdAt: number
+  updatedAt: number
+}
+
+export interface InboxResponse {
+  ok: boolean
+  user: ServerUser
+  letters: ServerLetter[]
 }
 
 export const lettersApi = {
-  /** POST /api/letters — 创建一张纸条,返回 shareToken */
+  /** POST /letters — 创建,带 token 时 author = 用户 nickname */
   async create(args: {
     content: string
     author?: string
     bgKey?: 'ivory' | 'midnight' | 'kraft'
     translations?: { classicalChinese?: string; english?: string }
   }): Promise<ServerLetter> {
-    const data = await request<{ ok: boolean; letter: ServerLetter }>('/letters', {
+    const data = await apiFetch<{ ok: boolean; letter: ServerLetter }>('/letters', {
       method: 'POST',
       body: JSON.stringify(args),
     })
     return data.letter
   },
 
-  /** GET /api/letters?limit=20 — 列表 */
+  /** GET /letters?limit=20 */
   async list(limit = 20): Promise<ServerLetter[]> {
-    const data = await request<{ ok: boolean; letters: ServerLetter[] }>(
-      `/letters?limit=${limit}`
-    )
+    const data = await apiFetch<{ ok: boolean; letters: ServerLetter[] }>(`/letters?limit=${limit}`)
     return data.letters
   },
 
-  /** GET /api/letters/:id — 按 id 读 */
+  /** GET /letters/:id */
   async getById(id: string): Promise<ServerLetter | null> {
     try {
-      const data = await request<{ ok: boolean; letter: ServerLetter }>(`/letters/${id}`)
+      const data = await apiFetch<{ ok: boolean; letter: ServerLetter }>(`/letters/${id}`)
       return data.letter
     } catch (e) {
       if (String(e).includes('404')) return null
@@ -85,10 +80,10 @@ export const lettersApi = {
     }
   },
 
-  /** GET /api/letters/by-token/:token — 按分享 token 读 */
+  /** GET /letters/by-token/:token */
   async getByToken(token: string): Promise<ServerLetter | null> {
     try {
-      const data = await request<{ ok: boolean; letter: ServerLetter }>(
+      const data = await apiFetch<{ ok: boolean; letter: ServerLetter }>(
         `/letters/by-token/${token}`
       )
       return data.letter
@@ -98,17 +93,26 @@ export const lettersApi = {
     }
   },
 
-  /** POST /api/letters/:id/collect — 收藏(全局计数) */
+  /** POST /letters/:id/collect — 收藏(全局计数) */
   async collect(id: string): Promise<number> {
-    const data = await request<{ ok: boolean; collectCount: number }>(
-      `/letters/${id}/collect`,
-      { method: 'POST' }
-    )
+    const data = await apiFetch<{ ok: boolean; collectCount: number }>(`/letters/${id}/collect`, {
+      method: 'POST',
+    })
     return data.collectCount
   },
 
-  /** GET /api/health — 健康检查 */
-  async health(): Promise<{ ok: boolean; ts: number }> {
-    return request('/health')
+  /** POST /letters/:id/star — 收藏到"时空纸条"(需登录) */
+  async star(id: string): Promise<{ userId: string; letterId: string }> {
+    return apiFetch(`/letters/${id}/star`, { method: 'POST' })
+  },
+
+  /** GET /me/inbox?limit=20 — 收件箱(需登录) */
+  async inbox(limit = 20): Promise<InboxResponse> {
+    return apiFetch<InboxResponse>(`/me/inbox?limit=${limit}`)
+  },
+
+  /** GET /health */
+  async health(): Promise<{ ok: boolean; ts: number; version?: string }> {
+    return apiFetch('/health')
   },
 }

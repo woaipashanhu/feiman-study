@@ -813,8 +813,39 @@ getDailyQuote()                          ← dailyQuotes.ts(扩展 dynasty/bgKey
 **部署脚本**: `server/deploy-server.sh` (类似 `deploy.sh`)
 - TS 编译 → 打包(dist + package*.json) → scp 上传 → ssh 解压 → `npm ci` (npmmirror) → nginx 配反代 → 重启进程 → health check
 
-**踩过的坑(已修复,写到 agent memory)**:
-1. `npm ci` 走 npmjs.org 超时 → 服务器 `.npmrc` 写 `registry=https://registry.npmmirror.com/`
-2. better-sqlite3 prebuild 从 `github.com/WiseLibs/better-sqlite3/releases/...` 下载超时 → `better_sqlite3_binary_host_mirror=https://npmmirror.com/mirrors/better-sqlite3/`
-3. node-gyp 11.5.0 的 `gyp/__init__.py` 用了 walrus operator (`:=`),Python 3.6.8 不支持 → sed 改兼容语法
+### 12.9 后端 V3 (登录注册 + 用户系统)
+
+V3 新加表:
+- `users` (id, email, phone, password_hash, nickname, created_at, updated_at)
+- `user_letter_actions` (user_id, letter_id, is_starred, is_read) — 记录登录用户对纸条的动作
+- `letters.author_user_id` (FK → users.id, ON DELETE SET NULL)
+
+V3 新加 API(共 6 个 + 1 个 star):
+- `POST /api/auth/register` — 邮箱 + 密码 + 昵称(409 邮箱已存在)
+- `POST /api/auth/login` — 邮箱 + 密码(401 错)
+- `GET  /api/auth/me` — 当前用户(需 Authorization)
+- `POST /api/auth/refresh` — 用 refresh_token 换新 access_token
+- `POST /api/auth/logout` — 客户端丢 token(V1 无黑名单)
+- `POST /api/letters/:id/star` — 收藏到时空纸条(需登录)
+- `GET  /api/me/inbox?limit=20` — 收件箱(我写的 + 我 star 的)
+
+**Token 设计**:
+- access_token  TTL 2h, 用于 API 鉴权
+- refresh_token TTL 30d, 用于换新 access_token
+- 两 token 都是 JWT, 但 secret 不同
+- 密钥从环境变量 `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` 注入(开发期 default,生产必须改)
+
+**前端集成**:
+- `src/shared/hooks/useAuth.ts` — `useAuth()` hook,状态在 module 级,多个组件共享
+- `src/shared/hooks/apiClient.ts` — `apiFetch()` 自动加 Authorization + 401 自动 refresh + 重试
+- `src/pages/AuthPage.tsx` — `/auth` 路由,iOS Segmented 切登录/注册,登录成功跳 /profile
+- `src/pages/ProfilePage.tsx` — 顶部 AuthCard,未登录显示"去登录",已登录显示昵称 + 登出
+
+**Schema Migration** (db.ts 启动时跑):
+- `hasTable('letters') && !hasColumn('letters', 'author_user_id')` → `ALTER TABLE ADD COLUMN`
+- 幂等:重复启动不会报错
+
+**踩过的坑(已 append agent memory)**:
+1. 老库没 `author_user_id` 列,`CREATE TABLE IF NOT EXISTS` 不会加列 → 加 ALTER TABLE migration
+2. 旧 `routes-letters.ts` 用了 `req.params.id`(string | string[]),TS strict 失败 → sed 改 `String(...)`
 

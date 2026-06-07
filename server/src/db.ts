@@ -5,23 +5,38 @@
  * 路径:  /var/lib/feiman-letters/letters.db (生产)
  *         ./data/letters.db (开发)
  *
- * 表设计 (V1 无登录,只做匿名分享 + 公开浏览):
- *   letters
- *     - id           TEXT  PK  (lt_xxx 格式)
- *     - content      TEXT  原文
- *     - author       TEXT  写信人(可选,匿名)
- *     - bg_key       TEXT  信纸底色
- *     - translations TEXT  JSON ({classicalChinese?, english?})
- *     - share_token  TEXT  唯一分享 token (sl_xxx)
- *     - collect_count INT  被收藏次数(V1 全局计数)
- *     - view_count   INT  被查看次数
- *     - created_at   INT  timestamp
- *     - updated_at   INT  timestamp
+ * 表设计 (V2.5+ 加 users):
+ *   users
+ *     - id            TEXT PK (usr_xxx 格式)
+ *     - email         TEXT 唯一
+ *     - phone         TEXT 唯一(可选)
+ *     - password_hash TEXT  bcrypt
+ *     - nickname      TEXT  显示名
+ *     - created_at    INT   timestamp
+ *     - updated_at    INT   timestamp
  *
- * V2 加 users / letter_recipients:
- *   users(id, phone?, email?, password_hash, nickname, created_at)
- *   letter_recipients(id, letter_id, user_id, read_at, is_starred)
- *   letter_replies(id, parent_id, from_user_id, content, ...)
+ *   letters
+ *     - id            TEXT PK (lt_xxx 格式)
+ *     - content       TEXT  原文
+ *     - author        TEXT  写信人(显示用)
+ *     - author_user_id TEXT 关联 users.id(可选,登录用户才有)
+ *     - bg_key        TEXT  信纸底色
+ *     - translations  TEXT  JSON
+ *     - share_token   TEXT  唯一分享 token
+ *     - collect_count INT
+ *     - view_count    INT
+ *     - created_at    INT
+ *     - updated_at    INT
+ *
+ *   user_letter_actions (V3 加,记录登录用户对纸条的收藏/已读)
+ *     - id            INTEGER PK auto
+ *     - user_id       TEXT 关联 users.id
+ *     - letter_id     TEXT 关联 letters.id
+ *     - is_starred    INT  0/1
+ *     - is_read       INT  0/1
+ *     - created_at    INT
+ *     - updated_at    INT
+ *     - UNIQUE(user_id, letter_id)
  */
 import Database from 'better-sqlite3'
 import { mkdirSync } from 'node:fs'
@@ -34,37 +49,115 @@ mkdirSync(dirname(DB_PATH), { recursive: true })
 
 export const db = new Database(DB_PATH)
 
-// 启用 WAL 模式(性能 + 并发读)
+// 启用 WAL 模式
 db.pragma('journal_mode = WAL')
 db.pragma('synchronous = NORMAL')
 db.pragma('foreign_keys = ON')
 
+// =============== Migration ===============
+// V3 增量: 给老库加 author_user_id 列 + 新表(users / user_letter_actions)
+// 幂等: 不存在才加
+
+function safeExec(sql: string) {
+  try { db.exec(sql) } catch (e) { /* 列已存在,忽略 */ }
+}
+
+function hasColumn(table: string, col: string): boolean {
+  const rows = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]
+  return rows.some((r) => r.name === col)
+}
+
+function hasTable(table: string): boolean {
+  const rows = db.prepare(
+    `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
+  ).all(table) as { name: string }[]
+  return rows.length > 0
+}
+
+// V3 加: letters.author_user_id
+if (hasTable('letters') && !hasColumn('letters', 'author_user_id')) {
+  safeExec(`ALTER TABLE letters ADD COLUMN author_user_id TEXT REFERENCES users(id) ON DELETE SET NULL`)
+  safeExec(`CREATE INDEX IF NOT EXISTS idx_letters_author_user ON letters(author_user_id)`)
+}
+
 // =============== Schema ===============
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS letters (
+  CREATE TABLE IF NOT EXISTS users (
     id            TEXT PRIMARY KEY,
-    content       TEXT NOT NULL,
-    author        TEXT,
-    bg_key        TEXT NOT NULL DEFAULT 'ivory',
-    translations  TEXT,  -- JSON
-    share_token   TEXT NOT NULL UNIQUE,
-    collect_count INTEGER NOT NULL DEFAULT 0,
-    view_count    INTEGER NOT NULL DEFAULT 0,
+    email         TEXT UNIQUE,
+    phone         TEXT UNIQUE,
+    password_hash TEXT NOT NULL,
+    nickname      TEXT NOT NULL,
     created_at    INTEGER NOT NULL,
     updated_at    INTEGER NOT NULL
   );
 
+  CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+  CREATE INDEX IF NOT EXISTS idx_users_phone ON users(phone);
+
+  CREATE TABLE IF NOT EXISTS letters (
+    id              TEXT PRIMARY KEY,
+    content         TEXT NOT NULL,
+    author          TEXT,
+    author_user_id  TEXT,
+    bg_key          TEXT NOT NULL DEFAULT 'ivory',
+    translations    TEXT,
+    share_token     TEXT NOT NULL UNIQUE,
+    collect_count   INTEGER NOT NULL DEFAULT 0,
+    view_count      INTEGER NOT NULL DEFAULT 0,
+    created_at      INTEGER NOT NULL,
+    updated_at      INTEGER NOT NULL,
+    FOREIGN KEY (author_user_id) REFERENCES users(id) ON DELETE SET NULL
+  );
+
   CREATE INDEX IF NOT EXISTS idx_letters_created_at ON letters(created_at DESC);
   CREATE INDEX IF NOT EXISTS idx_letters_share_token ON letters(share_token);
+  CREATE INDEX IF NOT EXISTS idx_letters_author_user ON letters(author_user_id);
+
+  CREATE TABLE IF NOT EXISTS user_letter_actions (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id     TEXT NOT NULL,
+    letter_id   TEXT NOT NULL,
+    is_starred  INTEGER NOT NULL DEFAULT 0,
+    is_read     INTEGER NOT NULL DEFAULT 0,
+    created_at  INTEGER NOT NULL,
+    updated_at  INTEGER NOT NULL,
+    UNIQUE(user_id, letter_id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (letter_id) REFERENCES letters(id) ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_actions_user ON user_letter_actions(user_id);
+  CREATE INDEX IF NOT EXISTS idx_actions_letter ON user_letter_actions(letter_id);
 `)
 
 // =============== 类型 ===============
+
+export interface UserRow {
+  id: string
+  email: string | null
+  phone: string | null
+  password_hash: string
+  nickname: string
+  created_at: number
+  updated_at: number
+}
+
+export interface User {
+  id: string
+  email: string | null
+  phone: string | null
+  nickname: string
+  createdAt: number
+  updatedAt: number
+}
 
 export interface LetterRow {
   id: string
   content: string
   author: string | null
+  author_user_id: string | null
   bg_key: string
   translations: string | null
   share_token: string
@@ -78,6 +171,7 @@ export interface Letter {
   id: string
   content: string
   author: string | null
+  authorUserId: string | null
   bgKey: string
   translations: { classicalChinese?: string; english?: string } | null
   shareToken: string
@@ -87,12 +181,25 @@ export interface Letter {
   updatedAt: number
 }
 
+/** row → API DTO(剥离 password_hash) */
+export function rowToUser(r: UserRow): User {
+  return {
+    id: r.id,
+    email: r.email,
+    phone: r.phone,
+    nickname: r.nickname,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }
+}
+
 /** row → API DTO */
 export function rowToLetter(r: LetterRow): Letter {
   return {
     id: r.id,
     content: r.content,
     author: r.author,
+    authorUserId: r.author_user_id,
     bgKey: r.bg_key,
     translations: r.translations ? JSON.parse(r.translations) : null,
     shareToken: r.share_token,

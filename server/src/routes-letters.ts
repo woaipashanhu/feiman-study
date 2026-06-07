@@ -1,16 +1,19 @@
 /**
  * ============================================================
- *  /api/letters 路由 — 小纸条 5 个核心 API
+ *  /api/letters 路由 — 小纸条 5 个核心 API + V3 加 1 个 star
  *
- *  V1 (无登录) 范围:
+ *  V1 范围(无登录):
  *    POST   /api/letters                  创建一张纸条
  *    GET    /api/letters/:id              通过 id 读取
  *    GET    /api/letters/by-token/:token  通过分享 token 读取
  *    GET    /api/letters?limit=20        最近 N 张公开纸条
  *    POST   /api/letters/:id/collect     收藏(全局计数)
  *
- *  V2 加:
- *    POST   /api/letters/:id/star        收藏到当前用户的"时空纸条"(需登录)
+ *  V3 加(需登录):
+ *    POST   /api/letters/:id/star        收藏到"时空纸条"(关联 user)
+ *    GET    /api/me/inbox?limit=20       当前用户的收件箱(分享给我的 + 公开)
+ *
+ *  V2 计划(未做):
  *    POST   /api/auth/register           注册
  *    POST   /api/auth/login              登录
  *    GET    /api/me/inbox                我的收到的纸条
@@ -18,7 +21,8 @@
  */
 import { Router, type Request, type Response } from 'express'
 import { z } from 'zod'
-import { db, rowToLetter, type LetterRow } from './db.js'
+import { db, rowToLetter, type LetterRow, rowToUser, type UserRow } from './db.js'
+import { requireAuth, optionalAuth, getCurrentUser } from './auth.js'
 
 export const lettersRouter = Router()
 
@@ -49,8 +53,8 @@ function genShareToken(): string {
 // =============== Prepared statements ===============
 
 const stmtInsert = db.prepare(`
-  INSERT INTO letters (id, content, author, bg_key, translations, share_token, created_at, updated_at)
-  VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  INSERT INTO letters (id, content, author, author_user_id, bg_key, translations, share_token, created_at, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 `)
 
 const stmtGetById = db.prepare(`SELECT * FROM letters WHERE id = ?`)
@@ -60,16 +64,30 @@ const stmtGetRecent = db.prepare(`
   ORDER BY created_at DESC
   LIMIT ?
 `)
+const stmtGetInbox = db.prepare(`
+  SELECT l.* FROM letters l
+  LEFT JOIN user_letter_actions a ON a.letter_id = l.id AND a.user_id = ?
+  WHERE l.author_user_id = ? OR a.is_starred = 1
+  ORDER BY l.created_at DESC
+  LIMIT ?
+`)
 const stmtIncrementView = db.prepare(`
   UPDATE letters SET view_count = view_count + 1 WHERE id = ?
 `)
 const stmtIncrementCollect = db.prepare(`
   UPDATE letters SET collect_count = collect_count + 1, updated_at = ? WHERE id = ?
 `)
+const stmtUpsertAction = db.prepare(`
+  INSERT INTO user_letter_actions (user_id, letter_id, is_starred, is_read, created_at, updated_at)
+  VALUES (?, ?, 1, 0, ?, ?)
+  ON CONFLICT(user_id, letter_id) DO UPDATE SET
+    is_starred = 1,
+    updated_at = excluded.updated_at
+`)
 
 // =============== POST /api/letters ===============
 
-lettersRouter.post('/', (req: Request, res: Response) => {
+lettersRouter.post('/', optionalAuth, (req: Request, res: Response) => {
   const parsed = CreateLetterBody.safeParse(req.body)
   if (!parsed.success) {
     return res.status(400).json({
@@ -82,10 +100,16 @@ lettersRouter.post('/', (req: Request, res: Response) => {
   const now = Date.now()
   const id = genId('lt')
   const shareToken = genShareToken()
+
+  // 登录用户用 nickname 作为 author(若 body 没传 author)
+  const finalAuthor = author ?? (req.user ? req.user.nickname : null)
+  const authorUserId = req.userId ?? null
+
   stmtInsert.run(
     id,
     content,
-    author ?? null,
+    finalAuthor,
+    authorUserId,
     bgKey,
     translations ? JSON.stringify(translations) : null,
     shareToken,
@@ -164,5 +188,39 @@ lettersRouter.post('/:id/collect', (req: Request, res: Response) => {
   return res.json({
     ok: true,
     collectCount: row.collect_count + 1,
+  })
+})
+
+// =============== POST /api/letters/:id/star (V3 需登录) ===============
+
+lettersRouter.post('/:id/star', requireAuth, (req: Request, res: Response) => {
+  const id = String(req.params.id)
+  if (!id || !/^lt_[a-z0-9]+$/i.test(id)) {
+    return res.status(400).json({ error: 'invalid_id_format' })
+  }
+  const row = stmtGetById.get(id) as LetterRow | undefined
+  if (!row) {
+    return res.status(404).json({ error: 'not_found' })
+  }
+  const now = Date.now()
+  stmtUpsertAction.run(req.userId, id, now, now)
+  return res.json({
+    ok: true,
+    userId: req.userId,
+    letterId: id,
+    isStarred: true,
+  })
+})
+
+// =============== GET /api/me/inbox (V3 需登录) ===============
+
+lettersRouter.get('/_/inbox', requireAuth, (req: Request, res: Response) => {
+  // 临时把 /_/inbox 路由放在这里(/me/inbox 应该在主路由,这里是简化)
+  const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? '20')), 1), 100)
+  const rows = stmtGetInbox.all(req.userId, req.userId, limit) as LetterRow[]
+  return res.json({
+    ok: true,
+    user: getCurrentUser(req),
+    letters: rows.map(rowToLetter),
   })
 })

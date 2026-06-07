@@ -7,17 +7,27 @@
  *  健康:    GET /api/health
  *
  *  路由:
- *    /api/health          GET   存活探针
- *    /api/letters         POST  创建纸条
- *    /api/letters         GET   列表(默认 20, max 100)
- *    /api/letters/:id     GET   按 id 读
- *    /api/letters/:id/collect POST  收藏(全局计数)
- *    /api/letters/by-token/:token GET  按分享 token 读
+ *    /api/health                 GET   存活探针
+ *    /api/auth/register          POST  注册
+ *    /api/auth/login             POST  登录
+ *    /api/auth/me                GET   当前用户(需登录)
+ *    /api/auth/refresh           POST  换新 access_token
+ *    /api/auth/logout            POST  登出
+ *    /api/letters                POST  创建纸条
+ *    /api/letters                GET   列表(默认 20, max 100)
+ *    /api/letters/:id            GET   按 id 读
+ *    /api/letters/:id/collect    POST  收藏(全局计数)
+ *    /api/letters/:id/star       POST  收藏到"时空纸条"(需登录)
+ *    /api/letters/by-token/:t    GET   按分享 token 读
+ *    /api/me/inbox               GET   当前用户的收件箱(需登录)
  * ============================================================
  */
 import express, { type Request, type Response, type NextFunction } from 'express'
 import cors from 'cors'
 import { lettersRouter } from './routes-letters.js'
+import { authRouter } from './routes-auth.js'
+import { db, rowToLetter, type LetterRow } from './db.js'
+import { requireAuth, getCurrentUser } from './auth.js'
 
 const PORT = parseInt(process.env.PORT || '3000', 10)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -42,14 +52,34 @@ app.use((req, _res, next) => {
 })
 
 // 路由
+app.use('/api/auth', authRouter)
 app.use('/api/letters', lettersRouter)
+
+// 收件箱(V3 需登录,放主路由用 /api/me/inbox)
+app.get('/api/me/inbox', requireAuth, (req: Request, res: Response) => {
+  const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? '20')), 1), 100)
+  // "我写的" 或 "我 star 过的" 都会进收件箱
+  const stmtGetInbox = db.prepare(`
+    SELECT l.* FROM letters l
+    LEFT JOIN user_letter_actions a ON a.letter_id = l.id AND a.user_id = ?
+    WHERE l.author_user_id = ? OR a.is_starred = 1
+    ORDER BY l.created_at DESC
+    LIMIT ?
+  `)
+  const rows = stmtGetInbox.all(req.userId, req.userId, limit) as LetterRow[]
+  return res.json({
+    ok: true,
+    user: getCurrentUser(req),
+    letters: rows.map(rowToLetter),
+  })
+})
 
 // 健康检查
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({
     ok: true,
     service: 'feiman-letters-server',
-    version: '0.1.0',
+    version: '0.2.0',
     uptime: process.uptime(),
     ts: Date.now(),
   })
@@ -60,13 +90,14 @@ app.get('/', (_req: Request, res: Response) => {
   res.json({
     ok: true,
     service: 'feiman-letters-server',
+    version: '0.2.0',
     docs: 'https://47.99.101.168:8890/letters',
   })
 })
 
 // 404
-app.use((_req: Request, res: Response) => {
-  res.status(404).json({ error: 'not_found', path: _req.url })
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ error: 'not_found', path: req.url })
 })
 
 // 错误兜底
@@ -82,4 +113,5 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] listening on http://${HOST}:${PORT}`)
   console.log(`[feiman-letters] CORS origin: ${CORS_ORIGIN}`)
+  console.log(`[feiman-letters] version 0.2.0 (auth + letters v3)`)
 })

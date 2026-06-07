@@ -45,6 +45,8 @@ const LetterTodayPage = lazy(() => import('@/pages/LetterTodayPage').then(m => (
 const LetterDetailPage = lazy(() => import('@/pages/LetterDetailPage').then(m => ({ default: m.default })))
 const LetterComposePage = lazy(() => import('@/pages/LetterComposePage').then(m => ({ default: m.default })))
 const LetterInboxPage = lazy(() => import('@/pages/LetterInboxPage').then(m => ({ default: m.default })))
+// 登录注册页
+const AuthPage = lazy(() => import('@/pages/AuthPage').then(m => ({ default: m.default })))
 
 /** 带错误边界的 Suspense 包裹器 */
 function SafeLazy({ children, location }: { children: React.ReactNode; location: string }) {
@@ -227,6 +229,16 @@ export function AppRouter() {
           <PageTransition>
             <SafeLazy location="LetterInboxPage">
               <LetterInboxPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/auth"
+        element={
+          <PageTransition>
+            <SafeLazy location="AuthPage">
+              <AuthPage />
             </SafeLazy>
           </PageTransition>
         }

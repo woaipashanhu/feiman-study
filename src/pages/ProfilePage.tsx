@@ -20,6 +20,7 @@ import { useMoodTracker, type MoodEmoji } from '@/shared/hooks/useMoodTracker'
 import { useFeedback, type FeedbackCategory } from '@/shared/hooks/useFeedback'
 import { useTheme } from '@/shared/hooks/useTheme'
 import { useFavorites } from '@/shared/hooks/useFavorites'
+import { useAuth } from '@/shared/hooks/useAuth'
 import { VideoPreview } from '@/shared/components/VideoPreview'
 
 const BOARD_NAMES: Record<string, string> = {
@@ -147,6 +148,9 @@ function ProfileContent({
 
       {/* 内容区 */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        {/* 账号卡 — 未登录显示"去登录",已登录显示昵称 + 登出 */}
+        <AuthCard />
+
         {/* 今日学习 */}
         <section className="bg-brand-light rounded-xl p-4 border border-brand/10">
           <h3 className="text-xs font-semibold text-brand uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -554,6 +558,73 @@ function ProfileContent({
 }
 
 // ==================== 子组件 ====================
+
+/** 账号卡 — 未登录显示"去登录",已登录显示昵称 + 登出 */
+function AuthCard() {
+  const navigate = useNavigate()
+  const { user, isAuthenticated, logout } = useAuth()
+
+  if (!isAuthenticated || !user) {
+    return (
+      <section
+        onClick={() => navigate('/auth')}
+        className="relative rounded-2xl p-4 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ring-1 ring-black/5 bg-surface"
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: 'rgba(200,56,32,0.1)' }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C83820" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base font-semibold text-text">登录 / 注册</h3>
+            <p className="text-[12px] text-text-secondary mt-0.5">
+              登录后,你写的信会留在这里
+            </p>
+          </div>
+          <CaretRight size={16} className="text-text-tertiary shrink-0" />
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section
+      className="relative rounded-2xl p-4 shadow-sm overflow-hidden ring-1 ring-black/5"
+      style={{ backgroundColor: '#FAF7F2' }}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className="w-11 h-11 rounded-2xl flex items-center justify-center text-white text-base font-bold shrink-0 shadow-sm"
+          style={{ backgroundColor: '#C83820' }}
+        >
+          {user.nickname.slice(0, 1)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3
+            className="text-base font-semibold text-text truncate"
+            style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}
+          >
+            {user.nickname}
+          </h3>
+          <p className="text-[12px] text-text-tertiary truncate">{user.email}</p>
+        </div>
+        <button
+          onClick={() => {
+            if (confirm('确定登出?')) logout()
+          }}
+          className="text-[12px] text-text-tertiary px-2.5 py-1.5 rounded-lg hover:bg-black/5"
+        >
+          登出
+        </button>
+      </div>
+    </section>
+  )
+}
 
 function StatBox({ value, label }: { value: number; label: string }) {
   return (
