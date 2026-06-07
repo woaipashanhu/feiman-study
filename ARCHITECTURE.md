@@ -618,9 +618,10 @@ export async function generatePoster(params: {
 | 26 | App推送通知 | 第三阶段 |
 | 27 | 微信小程序 | 第三阶段 |
 | 28 | iframe→react-three-fiber | 第三阶段 |
-| 29 | **小纸条模块 V1**(本次完成) | ✅ |
-| 30 | **小纸条模块 V2**(跨用户 + DeepSeek + 语音) | 第三阶段 |
-| 31 | 主页 TabBar 6th(小纸条入口?讨论中) | 待定 |
+| 29 | **小纸条模块 V1**(数据层+视觉+5 页面+AI+长图+分享) | ✅ (commit d9322cd) |
+| 30 | **小纸条模块 V2.5**(自建后端 5 API + 落地页接真 API) | ✅ (本次完成) |
+| 31 | **小纸条模块 V3**(用户注册/登录 + 收件箱 + DeepSeek 真实 API) | 下一波 |
+| 32 | 主页 TabBar 6th(小纸条入口?讨论中) | 待定 |
 
 ---
 
@@ -766,11 +767,54 @@ getDailyQuote()                          ← dailyQuotes.ts(扩展 dynasty/bgKey
 
 ### 12.7 V1 vs V2 边界
 
-| 能力 | V1 (本次交付) | V2 (待做) |
-|---|---|---|
-| 数据 | localStorage + Base64 | 后端 API + IndexedDB 缓存 |
-| 跨用户 | Web Share 分享长图/链接(无登录) | 真实账号 + 收件箱 |
-| AI | Mock 8-10 模板 + 启发式 | DeepSeek 真实 API |
-| 语音 | 不做(Web Speech 中文差) | 接入讯飞/Whisper |
-| 信纸底色 | ivory 一种 | midnight + kraft 启用 |
-| token 解析 | 占位(显示 token 字符串) | 后端查询 letter + 渲染 |
+| 能力 | V1 (本次交付) | V2.5 (后端已上线) | V3 (待做) |
+|---|---|---|---|
+| 数据 | localStorage + Base64 | + 后端 SQLite (`/var/lib/feiman-letters/letters.db`) | + 用户系统 + 收件箱 |
+| 跨用户 | Web Share 分享长图/链接(无登录) | ✅ 落地页 `/letters/inbox/:token` 接真 API,带 view/collect 计数 | 真实账号 + 收件箱 |
+| AI | Mock 8-10 模板 + 启发式 | 同 V1 | DeepSeek 真实 API |
+| 语音 | 不做(Web Speech 中文差) | 同 V1 | 接入讯飞/Whisper |
+| 信纸底色 | ivory 一种 | 同 V1 | midnight + kraft 启用 |
+| token 解析 | 占位(显示 token 字符串) | ✅ 后端 `GET /api/letters/by-token/:token` 查询 + 渲染 + collect 计数 | — |
+
+### 12.8 后端 V1 (自建,Node.js + Express + SQLite)
+
+**部署位置**: `47.99.101.168:3000`(直接监听),通过 nginx `/api/*` 反代到 8890
+**代码位置**: `server/`(跟前端同 repo,方便统一部署)
+**数据库**: `better-sqlite3` + WAL 模式,本地文件 `/var/lib/feiman-letters/letters.db`
+
+**端口分配**:
+- `:3000` — 后端服务(localhost,无对外)
+- `:8890` — nginx 8890 公开:`/api/*` 反代 `:3000`,`/*` SPA fallback
+
+**5 个核心 API**(V1 范围,无登录):
+
+| 方法 | 路径 | 用途 | 状态码 |
+|---|---|---|---|
+| GET  | `/api/health` | 健康检查 | 200 |
+| POST | `/api/letters` | 创建纸条(返回 shareToken) | 201 / 400 |
+| GET  | `/api/letters?limit=20` | 列表(默认 20, max 100) | 200 |
+| GET  | `/api/letters/:id` | 按 id 读 | 200 / 400 / 404 |
+| GET  | `/api/letters/by-token/:token` | 按分享 token 读(view +1) | 200 / 400 / 404 |
+| POST | `/api/letters/:id/collect` | 收藏(collect_count +1) | 200 / 400 / 404 |
+
+**前端集成**(`src/shared/hooks/useLettersServer.ts`):
+- `lettersApi.create({ content, author, bgKey, translations })` → `ServerLetter` (含 shareToken)
+- `lettersApi.getByToken(token)` → `ServerLetter | null` (404 → null)
+- `lettersApi.collect(id)` → `collectCount`
+- `lettersApi.list(limit)` → `ServerLetter[]`
+- 失败降级:try/catch + 本地 localStorage 双写
+
+**V2 计划加 API**:
+- `POST /api/auth/register` 注册
+- `POST /api/auth/login` 登录(JWT)
+- `GET /api/me/inbox` 我的收到的纸条(需登录)
+- `POST /api/letters/:id/star` 收藏到"时空纸条"(关联到当前用户)
+
+**部署脚本**: `server/deploy-server.sh` (类似 `deploy.sh`)
+- TS 编译 → 打包(dist + package*.json) → scp 上传 → ssh 解压 → `npm ci` (npmmirror) → nginx 配反代 → 重启进程 → health check
+
+**踩过的坑(已修复,写到 agent memory)**:
+1. `npm ci` 走 npmjs.org 超时 → 服务器 `.npmrc` 写 `registry=https://registry.npmmirror.com/`
+2. better-sqlite3 prebuild 从 `github.com/WiseLibs/better-sqlite3/releases/...` 下载超时 → `better_sqlite3_binary_host_mirror=https://npmmirror.com/mirrors/better-sqlite3/`
+3. node-gyp 11.5.0 的 `gyp/__init__.py` 用了 walrus operator (`:=`),Python 3.6.8 不支持 → sed 改兼容语法
+

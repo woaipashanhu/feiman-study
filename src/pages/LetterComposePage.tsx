@@ -14,6 +14,7 @@
  * ============================================================
  */
 import { useRef, useState } from 'react'
+// useState also used in saving/shareUrl below
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import html2canvas from 'html2canvas-pro'
@@ -31,6 +32,7 @@ import {
 } from 'phosphor-react'
 import { LETTER_PALETTE } from '@/shared/components/LetterPaper/palette'
 import { useLetters } from '@/shared/hooks/useLetters'
+import { lettersApi } from '@/shared/hooks/useLettersServer'
 import { useAITransform } from '@/shared/hooks/useAITransform'
 import { getDailyQuote } from '@/shared/utils/dailyQuotes'
 import { FONT_STACK } from '@/shared/components/LetterPaper/palette'
@@ -66,25 +68,40 @@ export default function LetterComposePage() {
   const allQuotes = getByKind('quote')
   const starredQuotes = allQuotes.slice(0, 6)
 
-  // 选中并写入
-  const handleSave = () => {
-    if (!text.trim() || overLimit) return
+  // 选中并写入(同步发到后端,失败降级到本地)
+  const [saving, setSaving] = useState(false)
+  const handleSave = async () => {
+    if (!text.trim() || overLimit || saving) return
+    setSaving(true)
+    let shareToken: string | undefined
+    try {
+      const created = await lettersApi.create({
+        content: text.trim(),
+        author: '我',
+        bgKey,
+        translations: aiData
+          ? { classicalChinese: aiData.classicalChinese, english: aiData.english }
+          : undefined,
+      })
+      shareToken = created.shareToken
+    } catch (e) {
+      console.warn('同步到云端失败,降级到本地保存', e)
+    }
     const id = addCompose({
       content: text.trim(),
       bgKey,
       translations: aiData
-        ? {
-            classicalChinese: aiData.classicalChinese,
-            english: aiData.english,
-          }
+        ? { classicalChinese: aiData.classicalChinese, english: aiData.english }
         : undefined,
-      refQuoteId: undefined, // V1 不回写,只是 UI 展示
+      refQuoteId: undefined,
+      shareToken, // V1 后端返回的 token,V2 才能让本地"写过的"关联到云端分享
     })
     setSavedFlash(true)
     setTimeout(() => {
       setSavedFlash(false)
       navigate(`/letters/letter/${id}`)
     }, 700)
+    setSaving(false)
   }
 
   // AI 转换
@@ -121,9 +138,25 @@ export default function LetterComposePage() {
     }
   }
 
-  // 分享(Web Share API)
+  // 分享(Web Share API + 云端落地页链接)
   const handleShare = async () => {
     if (!paperRef.current) return
+    // 1. 同步创建云端记录,获取 shareToken → 落地页 URL
+    let shareUrlLocal: string | null = null
+    try {
+      const created = await lettersApi.create({
+        content: text.trim(),
+        author: '我',
+        bgKey,
+        translations: aiData
+          ? { classicalChinese: aiData.classicalChinese, english: aiData.english }
+          : undefined,
+      })
+      shareUrlLocal = `${window.location.origin}/letters/inbox/${created.shareToken}`
+    } catch (e) {
+      console.warn('云端同步失败,降级为纯图片分享', e)
+    }
+    // 2. 长图
     let file: File | null = null
     try {
       const canvas = await html2canvas(paperRef.current, {
@@ -142,9 +175,12 @@ export default function LetterComposePage() {
       console.error('分享图生成失败', e)
     }
 
+    // 3. 优先分享链接(对方点开能进"收到的纸条")
+    const preview = text.trim().slice(0, 60) + (text.length > 60 ? '…' : '')
     const shareData: ShareData = {
       title: '一张来自小纸条的信',
-      text: text.trim().slice(0, 60) + (text.length > 60 ? '…' : ''),
+      text: shareUrlLocal ? `${preview}
+${shareUrlLocal}` : preview,
     }
     if (file) {
       // @ts-ignore - navigator.canShare 接受 File

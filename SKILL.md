@@ -1,6 +1,6 @@
 ---
 name: 费曼科学课 V3 (feiman-v3-new)
-description: 维护「刘费曼的科学课」V3 STEM 教育平台（React 19 + TypeScript + Vite 6 + Tailwind CSS v4 + Framer Motion）。五大板块：1.数学课（视频播放）2.科学可视化（Three.js 3D交互页面）3.社交技能训练（小狐狸学堂儿童互动绘本）4.童画廊（世界名画鉴赏+音频讲解）5.内功养生法（八卦掌绘本）+ 小纸条模块（苹果风全屏子页面，从 ProfilePage 入口卡进入）。React SPA 单体架构，原生组件渲染，服务器部署。触发条件：用户提到'添加视频''加个视频''更新网站''加课''科学可视化''交互页面''社交训练''童画廊''内功养生法''综合网站''板块整合''更新日志''小纸条''时空纸条''收到的纸条''写过的纸条''今日纸条''写一张纸条''信纸''名言收藏''AI 转换''长图分享'或提供视频文件路径。
+description: 维护「刘费曼的科学课」V3 STEM 教育平台（React 19 + TypeScript + Vite 6 + Tailwind CSS v4 + Framer Motion）。五大板块：1.数学课（视频播放）2.科学可视化（Three.js 3D交互页面）3.社交技能训练（小狐狸学堂儿童互动绘本）4.童画廊（世界名画鉴赏+音频讲解）5.内功养生法（八卦掌绘本）+ 小纸条模块（苹果风全屏子页面，从 ProfilePage 入口卡进入；自建 Node.js + Express + SQLite 后端部署在 47.99.101.168:3000 反代到 8890/api/*）。React SPA 单体架构，原生组件渲染，服务器部署。触发条件：用户提到'添加视频''加个视频''更新网站''加课''科学可视化''交互页面''社交训练''童画廊''内功养生法''综合网站''板块整合''更新日志''小纸条''时空纸条''收到的纸条''写过的纸条''今日纸条''写一张纸条''信纸''名言收藏''AI 转换''长图分享''后端''API''sqlite''Express''自建后端''部署后端'或提供视频文件路径。
 ---
 
 # 费曼科学课 V3 — Agent 操作手册
@@ -206,6 +206,7 @@ npm run predeploy
 | 版本 | 日期 | 更新内容 |
 |------|------|---------|
 | v14 | 2026-06-06 | 小纸条模块 V1(数据层+视觉+5 页面+路由+ProfilePage 入口+AI+长图+分享) |
+| v15 | 2026-06-07 | 小纸条后端 V1(自建 Node + Express + SQLite,5 API 部署到 47.99.101.168:3000) |
 | v13 | 2026-05-31 | 科学板块交互架构改造（原型） |
 | v12 | 2026-05-31 | 部署防错体系 + 错误监控系统 |
 | v11 | 2026-05-30 | PWA + 骨架屏 + 下拉刷新等体验优化 |
@@ -288,8 +289,71 @@ src/shared/components/LetterPaper/
 
 - **V1 不做语音输入**:Web Speech 中文支持差,V2 接入讯飞/Whisper
 - **V1 不接真实 DeepSeek**:mock 实现,接口签名与 V2 一致
-- **V1 跨用户方案**:Web Share 分享长图/链接(无登录),V2 接账号 + 后端
+- **V2.5 跨用户方案已上线**:自建后端(5 API + 落地页接真 API),`/letters/inbox/:token` 真解析
 - **midnight / kraft 底色**:types 里有,视觉上 V1 默认都走 ivory
-- **小纸条不进 TabBar**:P2 #31 待定;当前从 ProfilePage 入口卡进
+- **小纸条不进 TabBar**:P2 #32 待定;当前从 ProfilePage 入口卡进
 - **系统欢迎信**:isSystem=true,用户不可删(removeLetter 保护)
 - **修过的坑**:useLetters 跨实例同步,CustomEvent 自身触发时直接 return,防 localStorage reload 覆盖新 state(2026-06-06)
+
+---
+
+## 小纸条后端 V1(自建,Node.js + Express + SQLite)
+
+### 部署位置
+
+- **代码**: `server/`(跟前端同 repo,统一 deploy)
+- **进程**: `47.99.101.168:3000`(localhost only,无对外)
+- **对外入口**: nginx `8890/api/*` 反代到 `:3000`
+- **数据库**: better-sqlite3 + WAL,文件 `/var/lib/feiman-letters/letters.db`
+- **日志**: `/var/log/feiman-letters.log`
+
+### 5 个核心 API
+
+| 方法 | 路径 | 用途 | 状态码 |
+|---|---|---|---|
+| GET  | `/api/health` | 健康检查 | 200 |
+| POST | `/api/letters` | 创建纸条(返回 shareToken) | 201 / 400 |
+| GET  | `/api/letters?limit=20` | 列表(默认 20, max 100) | 200 |
+| GET  | `/api/letters/:id` | 按 id 读 | 200 / 400 / 404 |
+| GET  | `/api/letters/by-token/:token` | 按分享 token 读(view +1) | 200 / 400 / 404 |
+| POST | `/api/letters/:id/collect` | 收藏(collect_count +1) | 200 / 400 / 404 |
+
+### 前端调用
+
+- `src/shared/hooks/useLettersServer.ts` — `lettersApi.{create, getById, getByToken, list, collect, health}`
+- 默认 base = `/api`(由 nginx 反代)
+- 环境变量覆盖: `VITE_API_BASE` (V2 多环境用)
+
+### 部署与运维
+
+```bash
+# 本地起 + 跑 smoke test
+cd server && DB_PATH=./data/letters.db node dist/index.js &
+PORT=3000 bash scripts/smoke-test.sh
+
+# 部署到生产
+cd server && ./deploy-server.sh
+# = TypeScript 构建 → 打包 → scp 上传 → ssh 解压 → npm ci(npmmirror)→
+#   nginx 配反代 → 重启进程 → health check
+```
+
+### 踩过的坑(已修,deploy 时注意)
+
+1. `npm ci` 走 npmjs.org 超时 → 服务器 `.npmrc` 写 `registry=https://registry.npmmirror.com/`
+2. better-sqlite3 prebuild 从 `github.com/WiseLibs/...` 下载超时 → `better_sqlite3_binary_host_mirror=https://npmmirror.com/mirrors/better-sqlite3/`
+3. node-gyp 11.5.0 的 `gyp/__init__.py` 用了 walrus operator (`:=`),Python 3.6.8 不支持 → 已 sed 改兼容语法(在服务器上 hack 过一次,deploy 时若重装 node-gyp 要重做)
+
+### 进程管理
+
+- 用 nohup 后台跑: `nohup node dist/index.js >> /var/log/feiman-letters.log 2>&1 &`
+- 重启: `pkill -f "node dist/index.js" && cd /var/www/feiman-letters-server && DB_PATH=... nohup node dist/index.js >> ... &`
+- 不用 PM2 / systemd(简单场景够用,要换 PM2 也很容易)
+
+### V3 计划加 API(用户系统)
+
+- `POST /api/auth/register` 注册(邮箱 + 密码 / 手机号)
+- `POST /api/auth/login` 登录(JWT 颁发)
+- `GET /api/me/inbox` 我的收到的纸条(分页)
+- `POST /api/letters/:id/star` 收藏到"时空纸条"(关联 user)
+- `DELETE /api/me/letters/:id` 删除我写的
+- DB 加表: `users` / `letter_recipients` / `letter_replies`
