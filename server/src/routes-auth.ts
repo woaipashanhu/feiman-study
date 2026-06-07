@@ -31,6 +31,7 @@ import {
   getCurrentUser,
 } from './auth.js'
 import { sendVerificationCode, verifyCode, findOrCreatePhoneUser } from './sms-provider.js'
+import { getStorageProvider } from './storage-provider.js'
 import { registry, RegisterRequest, LoginRequest, AuthSuccessResponse, RefreshRequest, RefreshResponse, ErrorResponse } from './openapi-registry.js'
 
 export const authRouter = Router()
@@ -399,24 +400,11 @@ authRouter.post('/phone-login', async (req: Request, res: Response) => {
   })
 })
 
-// =============== POST /api/auth/avatar (V3.5 头像上传) ===============
+// =============== POST /api/auth/avatar (V3.5 头像上传,V3.8 改用 StorageProvider) ===============
 
-// 头像存储目录
-const AVATAR_DIR = process.env.AVATAR_DIR || '/var/lib/feiman-letters/avatars'
-mkdirSync(AVATAR_DIR, { recursive: true })
-
-// multer 配: 限 2MB,只接受图片
+// multer 配: memory storage(文件先到 buffer)+ 2MB 限 + 图片类型
 const avatarUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, AVATAR_DIR),
-    filename: (req, file, cb) => {
-      // 名字: <userId>_<random>.jpg
-      const userId = (req as any).userId || 'anon'
-      const ext = extname(file.originalname).toLowerCase() || '.jpg'
-      const name = `${userId}_${randomBytes(4).toString('hex')}${ext}`
-      cb(null, name)
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 2 * 1024 * 1024 },  // 2MB
   fileFilter: (_req, file, cb) => {
     const allowed = /^image\/(jpeg|jpg|png|webp|gif)$/i
@@ -431,45 +419,93 @@ authRouter.post(
   '/avatar',
   requireAuth,
   avatarUpload.single('avatar'),
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     if (!req.file) {
       return res.status(400).json({ error: 'no_file', message: '请提供 avatar 文件' })
     }
     const userId = (req as any).userId
-    const fileName = req.file.filename
-    const url = `/avatars/${fileName}`
+    const storage = getStorageProvider()
+    const result = await storage.uploadFile(
+      req.file.originalname,
+      req.file.buffer,
+      req.file.mimetype
+    )
+    if (!result.ok) {
+      return res.status(500).json({ error: 'upload_failed', message: result.error })
+    }
 
     // 更新 DB
     const now = Date.now()
     db.prepare('UPDATE users SET avatar_url = ?, updated_at = ? WHERE id = ?')
-      .run(url, now, userId)
+      .run(result.url, now, userId)
 
     return res.json({
       ok: true,
-      avatarUrl: url,
-      size: req.file.size,
+      avatarUrl: result.url,
+      size: result.size,
+      provider: result.provider,
+    })
+  }
+)
+
+// =============== POST /api/upload/image (V3.8 通用图片上传,供写信插图) ===============
+
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },  // 5MB(头像 2MB,插图可大点)
+  fileFilter: (_req, file, cb) => {
+    const allowed = /^image\/(jpeg|jpg|png|webp|gif)$/i
+    if (!allowed.test(file.mimetype)) {
+      return cb(new Error('只支持 jpg/png/webp/gif 图片'))
+    }
+    cb(null, true)
+  },
+})
+
+export const uploadRouter = Router()
+uploadRouter.post(
+  '/image',
+  requireAuth,
+  imageUpload.single('file'),
+  async (req: Request, res: Response) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'no_file', message: '请提供文件' })
+    }
+    const storage = getStorageProvider()
+    const result = await storage.uploadFile(
+      req.file.originalname,
+      req.file.buffer,
+      req.file.mimetype
+    )
+    if (!result.ok) {
+      return res.status(500).json({ error: 'upload_failed', message: result.error })
+    }
+    return res.json({
+      ok: true,
+      url: result.url,
+      key: result.key,
+      size: result.size,
+      provider: result.provider,
     })
   }
 )
 
 // 删除头像
-authRouter.delete('/avatar', requireAuth, (req: Request, res: Response) => {
+authRouter.delete('/avatar', requireAuth, async (req: Request, res: Response) => {
   const userId = (req as any).userId
   const row = db.prepare('SELECT avatar_url FROM users WHERE id = ?').get(userId) as { avatar_url: string | null } | undefined
   if (row?.avatar_url) {
-    // 物理删除文件(忽略错误,文件可能已被删)
-    const filename = row.avatar_url.split('/').pop()
-    if (filename) {
-      const filepath = resolve(AVATAR_DIR, filename)
-      if (existsSync(filepath)) {
-        try {
-          // 动态 fs.unlinkSync
-          require('node:fs').unlinkSync(filepath)
-        } catch (e) { /* ignore */ }
-      }
+    // 抽 key(URL 最后一段)
+    const key = row.avatar_url.split('/').pop() || ''
+    if (key) {
+      const storage = getStorageProvider()
+      await storage.deleteFile(key)
     }
     db.prepare('UPDATE users SET avatar_url = NULL, updated_at = ? WHERE id = ?')
       .run(Date.now(), userId)
   }
   return res.json({ ok: true, avatarUrl: null })
 })
+
+// Export upload router(给 index.ts 用)
+// export { uploadRouter } // moved to top-level declaration

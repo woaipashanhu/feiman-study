@@ -27,13 +27,14 @@ import cors from 'cors'
 import * as Sentry from '@sentry/node'
 import swaggerUi from 'swagger-ui-express'
 import { lettersRouter } from './routes-letters.js'
-import { authRouter } from './routes-auth.js'
+import { authRouter, uploadRouter } from './routes-auth.js'
 import { aiRouter } from './routes-ai.js'
 import { attachWebSocketServer } from './ws.js'
 import { startBlacklistCleanup } from './auth.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
 import { ensureSmsTables } from './sms-provider.js'
+import { getStorageProvider } from './storage-provider.js'
 import { generateOpenAPIDocument, registry, InboxResponse, ErrorResponse } from './openapi-registry.js'
 import { z } from 'zod'
 
@@ -61,6 +62,31 @@ registry.registerPath({
   summary: '健康检查(给 nginx / 阿里云监控)',
   responses: {
     200: { description: 'ok' },
+  },
+})
+
+// V3.8 Storage Upload 注解
+registry.registerPath({
+  method: 'post',
+  path: '/api/upload/image',
+  tags: ['Upload'],
+  summary: '上传图片(供写信插图/其他场景,5MB 限,返回 URL)',
+  security: [{ bearerAuth: [] }],
+  request: {
+    body: {
+      content: {
+        'multipart/form-data': {
+          schema: z.object({
+            file: z.any().openapi({ description: '图片文件(jpg/png/webp/gif,≤5MB)', type: 'string', format: 'binary' }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: { description: '上传成功,返回 url + key + provider', content: { 'application/json': { schema: z.object({ ok: z.boolean(), url: z.string(), key: z.string(), size: z.number().int(), provider: z.enum(['local', 'oss']) }) } } },
+    400: { description: '无文件/类型错', content: { 'application/json': { schema: ErrorResponse } } },
+    401: { description: '未登录', content: { 'application/json': { schema: ErrorResponse } } },
   },
 })
 
@@ -122,6 +148,7 @@ app.use((req, _res, next) => {
 app.use('/api/auth', authRouter)
 app.use('/api/letters', lettersRouter)
 app.use('/api/ai', aiRouter)
+app.use('/api/upload', uploadRouter)
 
 // 收件箱(V3 需登录,放主路由用 /api/me/inbox)
 app.get('/api/me/inbox', requireAuth, (req: Request, res: Response) => {
@@ -198,6 +225,8 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] version 0.3.1 (auth + letters + AI + WS)`)
   console.log(`[feiman-letters] LONGCAT_API_KEY: ${process.env.LONGCAT_API_KEY ? '✓ set' : '✗ not set (will use mock)'}`)
   console.log(`[feiman-letters] SMS provider: ${process.env.SMS_PROVIDER || 'mock'}`)
+  // V3.8 主动初始化 storage provider 以打日志
+  getStorageProvider()
 })
 
 // V3.8 SMS 表启动时建
