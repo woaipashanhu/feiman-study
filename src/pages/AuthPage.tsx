@@ -153,6 +153,9 @@ export default function AuthPage() {
         setPhoneError(data.message || '登录失败')
         return
       }
+      // 存 token 到 localStorage(跟 apiClient.ts 一致)
+      if (data.accessToken) localStorage.setItem('feiman_auth_access', data.accessToken)
+      if (data.refreshToken) localStorage.setItem('feiman_auth_refresh', data.refreshToken)
       // 登录成功:刷新页面让 useAuth 拿到新 token
       setJustOK(true)
       setTimeout(() => window.location.href = '/profile', 600)

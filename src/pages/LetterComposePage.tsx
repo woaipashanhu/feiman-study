@@ -87,7 +87,7 @@ export default function LetterComposePage() {
     } catch (e) {
       console.warn('同步到云端失败,降级到本地保存', e)
     }
-    const id = addCompose({
+    const letter = addCompose({
       content: text.trim(),
       bgKey,
       translations: aiData
@@ -99,8 +99,10 @@ export default function LetterComposePage() {
     setSavedFlash(true)
     setTimeout(() => {
       setSavedFlash(false)
-      navigate(`/letters/letter/${id}`)
+      navigate(`/letters/letter/${letter.id}`)
     }, 700)
+    // 同步存个"我刚写了 N 封信"的提示,让 /letters 默认切到"写过的" tab
+    try { localStorage.setItem('feiman_last_compose_ts', String(Date.now())) } catch {}
     setSaving(false)
   }
 

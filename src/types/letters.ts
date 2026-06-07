@@ -75,7 +75,7 @@ export const LettersStateSchema = z.object({
 export type LettersState = z.infer<typeof LettersStateSchema>
 
 /** localStorage key */
-export const LETTERS_KEY = 'feiman_letters'
+export const LETTERS_KEY = 'letters'  // 双前缀 bug 修复:saveSecure 会自动加 'feiman_' 前缀,这里只用裸 key
 
 /** 当前 schema 版本(以后破坏性变更时用) */
 export const LETTERS_VERSION = '1.0.0'

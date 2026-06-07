@@ -36,7 +36,16 @@ const TABS: { key: Tab; label: string; icon: typeof Quotes }[] = [
 export default function LettersPage() {
   const navigate = useNavigate()
   const { getByKind, countByKind } = useLetters()
-  const [active, setActive] = useState<Tab>('quote')
+  // 默认 tab:URL 有 ?tab= 就用,否则看 feiman_last_compose_ts(刚写过信)→ compose,否则 quote
+  const initialTab: Tab = (() => {
+    const params = new URLSearchParams(window.location.search)
+    const urlTab = params.get('tab') as Tab | null
+    if (urlTab === 'quote' || urlTab === 'compose' || urlTab === 'personal') return urlTab
+    const lastCompose = Number(localStorage.getItem('feiman_last_compose_ts') || 0)
+    if (Date.now() - lastCompose < 60_000) return 'compose'  // 1 分钟内写过 → 切到写过的
+    return 'quote'
+  })()
+  const [active, setActive] = useState<Tab>(initialTab)
   const counts = countByKind()
   const items = getByKind(active)
 

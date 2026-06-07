@@ -60,4 +60,22 @@ export default defineConfig({
       '@': __dirname + '/src',
     },
   },
+  // 开发期 / preview 反代 /api 到后端(仅 dev server 生效,production build 不变)
+  // 目标地址从 VITE_API_TARGET env 读,默认 47.99.101.168:8890
+  server: {
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_TARGET || 'http://47.99.101.168:8890',
+        changeOrigin: true,
+      },
+    },
+  },
+  preview: {
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_TARGET || 'http://47.99.101.168:8890',
+        changeOrigin: true,
+      },
+    },
+  },
 })

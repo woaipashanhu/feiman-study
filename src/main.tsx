@@ -9,9 +9,16 @@ import { initGlobalErrorListeners } from '@/shared/utils/error-reporter'
 // 初始化 Sentry 错误监控(仅生产环境)
 // V3.6: DSN 从 env 拿,占位 DSN 时静默(SDK fail-safe)
 // 上线前用户填真实 DSN 即可激活
-if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
+const SENTRY_DSN = import.meta.env.VITE_SENTRY_DSN
+// 占位 DSN 检测: placeholder / 000000 / 空值 都不 init,避免 400 噪声
+const SENTRY_DSN_IS_PLACEHOLDER =
+  !SENTRY_DSN ||
+  SENTRY_DSN.includes('placeholder') ||
+  /\/000000(\b|\/)/.test(SENTRY_DSN)
+
+if (import.meta.env.PROD && !SENTRY_DSN_IS_PLACEHOLDER) {
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
+    dsn: SENTRY_DSN,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration(),
