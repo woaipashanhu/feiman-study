@@ -336,11 +336,38 @@ export default function AhaPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="h-full flex flex-col items-center justify-center px-6" style={{ backgroundColor: LETTER_PALETTE.ivory }}>
-        <p className="text-text-secondary text-sm mb-4">登录后才能记录啊哈时刻</p>
-        <button onClick={() => navigate('/auth')} className="px-5 py-2.5 rounded-2xl bg-brand text-white text-sm font-semibold">
-          去登录
-        </button>
+      <div className="h-full flex flex-col" style={{ backgroundColor: LETTER_PALETTE.ivory }}>
+        {/* NavBar — 跟登录态保持一致 */}
+        <header className="flex items-center gap-3 px-4 pt-4 pb-3 shrink-0">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-full bg-white/80 border border-black/5 flex items-center justify-center shadow-sm"
+          >
+            <ArrowLeft size={18} weight="regular" className="text-text" />
+          </motion.button>
+          <h1 className="font-semibold text-text text-base" style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}>
+            啊哈时刻
+          </h1>
+          <div className="flex-1" />
+          <LanguageSwitcher />
+        </header>
+        {/* 空状态: 居中 + 充足留白 */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+          <div className="w-20 h-20 rounded-3xl bg-brand-soft flex items-center justify-center mb-6">
+            <Microphone size={32} weight="regular" className="text-brand" />
+          </div>
+          <p className="text-text text-base font-medium mb-2">记录你每一次"啊哈"</p>
+          <p className="text-text-secondary text-sm mb-6 max-w-[280px]">
+            登录后,你可以用文字或录音抓住每一个闪现的灵感,云端或本地,任你选。
+          </p>
+          <button
+            onClick={() => navigate('/auth')}
+            className="px-6 py-3 rounded-2xl bg-brand text-white text-sm font-semibold shadow-warm active:scale-95 transition-transform"
+          >
+            去登录
+          </button>
+        </div>
       </div>
     )
   }

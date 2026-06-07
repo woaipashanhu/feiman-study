@@ -171,7 +171,7 @@ export default function FavoritesPage() {
                       收藏夹
                     </h2>
                     <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed line-clamp-2">
-                      数学课、科学探索、社交故事、名画鉴赏、内功功法
+                      你的小纸条 + 啊哈时刻,纸短情长
                     </p>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ function EmptyState({ onExplore }: { onExplore: () => void }) {
       </div>
       <h3 className="text-base font-semibold text-text mb-1">还没有收藏内容</h3>
       <p className="text-xs text-text-tertiary mb-5 max-w-[240px]">
-        打开任何视频、绘本、名画或功法卡片,点击右下角 ❤ 就能收藏到这里
+        打开任意一封信或啊哈时刻,点击右下角 ❤ 就能收藏到这里
       </p>
       <button
         onClick={onExplore}

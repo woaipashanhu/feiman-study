@@ -10,12 +10,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  ChartBar, PencilSimpleLine, Medal, BookOpen,
+  PencilSimpleLine, Medal,
   ArrowLeft, FloppyDisk, CheckCircle, ChatCircleText,
-  Sun, Moon, PaperPlaneRight, Heart, Quotes, CaretRight
+  Sun, Moon, PaperPlaneRight, Heart, CaretRight
 } from 'phosphor-react'
-import { useLearningTracker, type AchievementState, type LearningRecord } from '@/shared/hooks/useLearningTracker'
-import { getDailyQuote, type DailyQuote } from '@/shared/utils/dailyQuotes'
+import { useLearningTracker, type AchievementState } from '@/shared/hooks/useLearningTracker'
 import { useMoodTracker, type MoodEmoji } from '@/shared/hooks/useMoodTracker'
 import { useFeedback, type FeedbackCategory } from '@/shared/hooks/useFeedback'
 import { useTheme } from '@/shared/hooks/useTheme'
@@ -23,22 +22,12 @@ import { useFavorites } from '@/shared/hooks/useFavorites'
 import { useAuth } from '@/shared/hooks/useAuth'
 import { VideoPreview } from '@/shared/components/VideoPreview'
 
-const BOARD_NAMES: Record<string, string> = {
-  math: '数学课',
-  science: '科学',
-  social: '社交训练',
-  gallery: '画廊',
-  neimen: '内功养生',
-}
-
 export default function ProfilePage() {
   const navigate = useNavigate()
   const { getAchievement, getRecords } = useLearningTracker()
 
   const achievement = getAchievement()
   const records = getRecords()
-  const dailyQuote = getDailyQuote()
-
   const todayStr = new Date().toISOString().split('T')[0]
   const todayRecords = records.filter((r) => r.lastVisitAt && new Date(r.lastVisitAt).toISOString().split('T')[0] === todayStr)
   const todayStats = {
@@ -51,8 +40,6 @@ export default function ProfilePage() {
     <ProfileContent
       todayStats={todayStats}
       achievement={achievement}
-      dailyQuote={dailyQuote}
-      recentRecords={records}
       onBack={() => navigate(-1)}
     />
   )
@@ -65,16 +52,11 @@ interface ProfileContentProps {
     streakDays: number
   }
   achievement?: AchievementState
-  dailyQuote?: DailyQuote
-  recentRecords?: LearningRecord[]
   onBack: () => void
 }
 
 function ProfileContent({
-  todayStats,
   achievement,
-  dailyQuote,
-  recentRecords = [],
   onBack,
 }: ProfileContentProps) {
   const navigate = useNavigate()
@@ -101,12 +83,10 @@ function ProfileContent({
     }
   }, [getTodayMood])
 
-  const stats = todayStats || { contentCount: 0, totalDuration: 0, streakDays: 0 }
   const ach = achievement || {
     totalLearned: 0, totalDuration: 0, streakDays: 0,
     stars: 0, badges: [], lastLearnDate: '',
   }
-  const currentQuote = dailyQuote || { text: '每天进步一点点，一年后你会感谢今天的自己。', author: '' }
 
   const handleSaveMood = () => {
     if (!moodText.trim() || !selectedEmoji) return
@@ -116,10 +96,6 @@ function ProfileContent({
   }
 
   const recentMoods = getRecentMoods(5)
-  const recentList = recentRecords
-    .slice()
-    .sort((a, b) => b.lastVisitAt - a.lastVisitAt)
-    .slice(0, 5)
   const recentFavorites = getRecentFavorites(6)
   const totalFavorites = countFavorites()
 
@@ -141,7 +117,7 @@ function ProfileContent({
           </div>
           <div>
             <span className="font-semibold text-text text-sm">个人中心</span>
-            <p className="text-[10px] text-text-tertiary">费曼科学课</p>
+            <p className="text-[10px] text-text-tertiary">小纸条 · Letters</p>
           </div>
         </div>
       </header>
@@ -150,19 +126,6 @@ function ProfileContent({
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {/* 账号卡 — 未登录显示"去登录",已登录显示昵称 + 登出 */}
         <AuthCard />
-
-        {/* 今日学习 */}
-        <section className="bg-brand-light rounded-xl p-4 border border-brand/10">
-          <h3 className="text-xs font-semibold text-brand uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <ChartBar size={14} weight="bold" />
-            今日学习
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            <StatBox value={stats.contentCount} label="已学内容" />
-            <StatBox value={stats.totalDuration} label="学习分钟" />
-            <StatBox value={stats.streakDays} label="连续天数" />
-          </div>
-        </section>
 
         {/* 我的收藏 — App Store Today 大卡片 */}
         {totalFavorites === 0 ? (
@@ -177,7 +140,7 @@ function ProfileContent({
               <div className="flex-1">
                 <h3 className="text-base font-semibold text-text">我的收藏</h3>
                 <p className="text-[13px] text-text-secondary mt-0.5">
-                  打开视频/绘本/名画/功法,点右下角 ❤ 就能收藏
+                  打开任意一封信或啊哈时刻,点右下角 ❤ 就能收藏
                 </p>
               </div>
               <CaretRight size={18} className="text-text-tertiary shrink-0" />
@@ -265,7 +228,7 @@ function ProfileContent({
                   收藏夹
                 </h2>
                 <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
-                  数学课、科学探索、社交故事、名画鉴赏、内功功法
+                  你的小纸条 + 啊哈时刻,纸短情长
                 </p>
               </div>
             </div>
@@ -304,37 +267,6 @@ function ProfileContent({
             <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
               写一封信,收一句名言。每日一句,纸短情长。
             </p>
-          </div>
-        </section>
-
-        {/* 树洞入口 - 每日名言 */}
-        <section
-          onClick={() => navigate('/tree-hole')}
-          className="relative rounded-xl p-4 border border-amber-300/20 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
-          style={{
-            background: 'linear-gradient(135deg, #4a2c5e 0%, #2d1b4e 50%, #1a0f33 100%)',
-          }}
-        >
-          {/* 装饰光斑 */}
-          <div
-            className="absolute -top-8 -right-8 w-24 h-24 rounded-full opacity-40 blur-2xl"
-            style={{ background: 'radial-gradient(circle, #fbbf24 0%, transparent 70%)' }}
-          />
-          <div className="relative">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-xs font-semibold text-amber-200 uppercase tracking-wider flex items-center gap-1.5">
-                <Quotes size={14} weight="fill" />
-                树洞 · 每日一言
-              </h3>
-              <CaretRight size={14} className="text-amber-200/60" />
-            </div>
-            <blockquote className="text-sm text-white/95 italic leading-relaxed">
-              「{currentQuote.text}」
-            </blockquote>
-            {currentQuote.author && (
-              <p className="text-[10px] text-amber-200/60 mt-1.5 text-right">— {currentQuote.author}</p>
-            )}
-            <p className="text-[10px] text-amber-200/40 mt-2 text-center">点进来听我念给你听 ↓</p>
           </div>
         </section>
 
@@ -439,23 +371,6 @@ function ProfileContent({
                 >
                   {badge}
                 </span>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* 最近学习 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <BookOpen size={14} weight="bold" />
-            最近学习
-          </h3>
-          {recentList.length === 0 ? (
-            <p className="text-xs text-text-tertiary py-2">还没有学习记录，快去探索吧！</p>
-          ) : (
-            <div className="space-y-2">
-              {recentList.map((record) => (
-                <RecordItem key={record.contentId} record={record} />
               ))}
             </div>
           )}
@@ -675,45 +590,12 @@ function AuthCard() {
   )
 }
 
-function StatBox({ value, label }: { value: number; label: string }) {
-  return (
-    <div className="text-center">
-      <p className="text-xl font-bold text-brand">{value}</p>
-      <p className="text-[10px] text-text-secondary mt-0.5">{label}</p>
-    </div>
-  )
-}
-
 function AchievementItem({ icon, value, label }: { icon: string; value: number; label: string }) {
   return (
     <div className="text-center">
       <span className="text-lg">{icon}</span>
       <p className="text-sm font-bold text-text mt-0.5">{value}</p>
       <p className="text-[10px] text-text-secondary">{label}</p>
-    </div>
-  )
-}
-
-function RecordItem({ record }: { record: LearningRecord }) {
-  const boardName = BOARD_NAMES[record.boardId] || record.boardId
-  const timeStr = record.lastVisitAt
-    ? new Date(record.lastVisitAt).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
-    : ''
-
-  return (
-    <div className="flex items-center gap-2.5 py-1.5">
-      <div className="w-7 h-7 rounded-lg bg-brand/10 flex items-center justify-center text-xs shrink-0">
-        {boardName[0]}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs text-text truncate">{record.contentTitle}</p>
-        <p className="text-[10px] text-text-tertiary mt-0.5">
-          {boardName} · {timeStr}
-        </p>
-      </div>
-      {record.completed && (
-        <span className="text-xs text-success shrink-0">✓</span>
-      )}
     </div>
   )
 }

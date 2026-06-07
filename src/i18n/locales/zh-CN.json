@@ -23,6 +23,8 @@
     "registerSuccess": "注册成功",
     "phoneLogin": "手机号登录",
     "phoneLoginHint": "没注册过会自动创建账号,验证码 5 分钟内有效",
+    "emailLoginHint": "你写的信会留在这里,跨设备同步。",
+    "registerHint": "邮箱 + 昵称,30 秒搞定。",
     "wechatLogin": "微信登录",
     "agreementHint": "登录即表示你同意做一个温暖的小纸条用户 🤝",
     "smsNotReceived": "没收到短信?请检查手机号是否正确,或稍后重试"
