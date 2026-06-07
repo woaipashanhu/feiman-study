@@ -929,7 +929,7 @@ V3 新加 API(共 6 个 + 1 个 star):
 > - P1-2 头像上传 ✅ (commit 57bd0d3)
 > - P1-3 WebSocket 实时推送 ✅ (commit 412390a)
 > - P1-4 信纸底色 midnight/kraft ✅ (commit 1b1899a)
-> - P1-5 TabBar 6th 决策 ⏳ (产品决策,等用户拍板)
+> - P1-5 TabBar 6th 决策 ✅ 决策为"不加" — 维持 ProfilePage 入口卡定位 (2026-06-07)
 
 #### P1-1 · 真实 DeepSeek AI 替换 mock(高 ROI,45 分钟)
 
@@ -968,7 +968,7 @@ V3 新加 API(共 6 个 + 1 个 star):
   - 用 LetterComposePage 切到底色,截图看是否够美,微调
 - **不做后果**: 用户写信只能用 ivory 底色,有点单调(但功能上不影响)
 
-#### P1-5 · 主页 TabBar 6th 决策(产品决策,不是技术)
+#### P1-5 · 主页 TabBar 6th 决策 ✅ (决策:不加)
 
 - **现状**: 小纸条从 ProfilePage 入口卡进,**不**在底部 TabBar
 - **做多少**: 跟用户讨论 → 如果小纸条活跃度高,加底部 TabBar;否则维持现状
