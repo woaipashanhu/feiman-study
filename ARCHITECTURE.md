@@ -849,3 +849,228 @@ V3 新加 API(共 6 个 + 1 个 star):
 1. 老库没 `author_user_id` 列,`CREATE TABLE IF NOT EXISTS` 不会加列 → 加 ALTER TABLE migration
 2. 旧 `routes-letters.ts` 用了 `req.params.id`(string | string[]),TS strict 失败 → sed 改 `String(...)`
 
+
+---
+
+## 十三、后续 Roadmap(2026-06-07 整理,只留痕不做)
+
+> 这是根据当前项目状态梳理的"**必做 vs 可做 vs 做了更好**"清单。
+> **这一节是参考文档,不是任务表**。每次新会话前先扫一眼,有 P0 立即做,有 P1 找时间做。
+> 最后更新: 2026-06-07 (会话 #38 末尾)
+
+### 13.1 优先级速查(贴桌面用)
+
+| 优先级 | 数量 | 一句话 |
+|---|---|---|
+| 🟥 **P0 不做会出事** | 4 项 | 数据丢了 / 服务挂了 / 升级出错 / 安全隐患 |
+| 🟧 **P1 不做会失用户** | 5 项 | AI 假 / 头像缺 / 推送无 / 视觉平 / TabBar 决策 |
+| 🟨 **P2 做了更好** | 6 项 | 注册多样 / 增长工程 / 性能优化 |
+| 🟦 **P3 监控工程化** | 4 项 | Sentry / CI / 文档 / 测试 |
+
+---
+
+### 13.2 🟥 P0 — 不做会出事(必做,优先做)
+
+#### P0-1 · 数据备份 cron(必做,30 分钟)
+
+- **为啥紧急**: `/var/lib/feiman-letters/letters.db` 是单点。阿里云磁盘抽风 / 误 `rm -rf` / 系统升级失败 → 所有用户数据全丢。用户已经问过这事。
+- **做多少**:
+  - 写 `server/scripts/backup.sh`:`tar -czf /var/backups/letters-$(date +%Y%m%d).tar.gz /var/lib/feiman-letters/letters.db`
+  - `crontab -e` 加 `0 3 * * * /var/www/feiman-letters-server/scripts/backup.sh`
+  - 保留 7 天自动 `rm`:`find /var/backups -name 'letters-*.tar.gz' -mtime +7 -delete`
+  - 写 `server/scripts/restore.sh`(手动恢复用)
+- **验收**: 跑一次,看 `/var/backups/letters-YYYYMMDD.tar.gz` 存在 + 解压能恢复
+- **不做后果**: 数据丢 0 恢复
+
+#### P0-2 · PM2 守护进程(必做,20 分钟)
+
+- **为啥紧急**: 当前 `nohup node dist/index.js` 进程死了不会自启。某天阿里云重启 / 部署 npm 报错 / 内存泄漏,后端进程悄无声息挂掉,前端 502,**用户写信都写不进去没人知道**。
+- **做多少**:
+  - 服务器 `npm i -g pm2`
+  - `cd /var/www/feiman-letters-server && pm2 start dist/index.js --name letters-server --time`
+  - `pm2 save` + `pm2 startup`(开机自启)
+  - 替换 deploy-server.sh 里的 `pkill + nohup` 为 `pm2 restart letters-server`
+- **验收**: `pm2 status` 显示 online;`pm2 logs letters-server` 看实时日志;`kill -9 <pid>` 后 pm2 自动拉起
+- **不做后果**: 服务挂了 0 报警 0 自愈
+
+#### P0-3 · PWA Service Worker 升级策略(必做,15 分钟)
+
+- **为啥紧急**: 用户已经亲历 — 部署新 dist 后,旧 SW 没被替换,iOS PWA 缓存顽固,前端白屏。当前 vite-plugin-pwa 默认 `skipWaiting` 行为不够强。
+- **做多少**:
+  - `vite.config.ts` 加 `registerType: 'autoUpdate'` + `workbox.skipWaiting = true` + `workbox.clientsClaim = true`
+  - UI 加"新版本可用,点刷新"提示(自定义 SW `controllerchange` 事件)
+- **验收**: 部署后用户收到更新提示,点刷新切到新版本不再白屏
+- **不做后果**: 每次部署用户都得手动清缓存
+
+#### P0-4 · JWT secret 改生产值(必做,5 分钟)
+
+- **为啥紧急**: 当前 `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` 没设 env,后端用 dev default `dev-access-secret-please-change-in-production`。任何拿到源码的人都能伪造 admin token。**安全漏洞**。
+- **做多少**:
+  - 服务器 `openssl rand -hex 64` 生成两个随机 secret
+  - 写 `/etc/feiman-letters.env`(权限 600)
+  - deploy-server.sh 加 `EnvironmentFile=/etc/feiman-letters.env` 到 systemd / pm2
+  - 重启服务
+- **验收**: 启动日志显示用了 env 中的 secret(不是 default)
+- **不做后果**: **安全漏洞**,源码泄露 = 全员身份伪造
+
+---
+
+### 13.3 🟧 P1 — 不做会失用户(产品/体验,找时间做)
+
+#### P1-1 · 真实 DeepSeek AI 替换 mock(高 ROI,45 分钟)
+
+- **现状**: `useAITransform.ts` 用 8 个古文模板 + 8 个英文模板随机抽。用户写 3 次"保持好奇"输出几乎一样,体验明显是模板。
+- **做多少**:
+  - 去 deepseek.com 注册账号,拿 API key(¥10 充值够用半年)
+  - 服务器 `/etc/feiman-letters.env` 加 `DEEPSEEK_API_KEY=sk-xxx`
+  - `useAITransform.ts` 取消注释 V2 DeepSeek fetch 代码
+  - 加 fallback:API 挂 → 用 mock,不报错
+- **ROI**: 一次投入,所有写信用户体验升级
+- **不做后果**: 用户写信时感觉 AI 是假的,流失
+
+#### P1-2 · 用户头像上传(中 ROI,2-3 小时)
+
+- **现状**: AuthCard 只显示昵称首字,无真实头像
+- **做多少**:
+  - DB `users` 加 `avatar_url` 字段(同样 migration)
+  - 后端 `POST /api/auth/avatar` (multipart, multer, 存 `/var/lib/feiman-letters/avatars/`)
+  - 前端 AuthCard 加"上传头像"按钮 + 预览裁剪
+- **不做后果**: 社交元素弱,跟其他有头像的产品对比明显简陋
+
+#### P1-3 · WebSocket 实时推送(中 ROI,半天)
+
+- **现状**: 收件箱要手动刷新才知道有新信
+- **做多少**:
+  - 后端 `ws` 包,`/ws` 端点,登录用户订阅自己的 channel
+  - `POST /api/letters` 时给收件人推 `{ type: 'new_letter', letter }`
+  - 前端 `useLettersSocket` hook,收件箱页有实时提示
+- **不做后果**: 收信体验弱(可接受),但用户写信后等不到回响会冷
+
+#### P1-4 · midnight / kraft 信纸底色视觉稿(低 ROI,2 小时)
+
+- **现状**: types 里有 `bgKey: 'midnight' | 'kraft'`,LetterPaper 视觉稿只有 ivory
+- **做多少**:
+  - palette.ts 已配 3 套 PAPER_BG_STYLE,只缺实际渲染验证
+  - 用 LetterComposePage 切到底色,截图看是否够美,微调
+- **不做后果**: 用户写信只能用 ivory 底色,有点单调(但功能上不影响)
+
+#### P1-5 · 主页 TabBar 6th 决策(产品决策,不是技术)
+
+- **现状**: 小纸条从 ProfilePage 入口卡进,**不**在底部 TabBar
+- **做多少**: 跟用户讨论 → 如果小纸条活跃度高,加底部 TabBar;否则维持现状
+- **技术**: 加只是 1 行 `TabBar` 配置 + `react-router` 一个 route
+- **不做后果**: 持续走 ProfilePage 入口(可接受,不是技术债)
+
+---
+
+### 13.4 🟨 P2 — 增长(用户多了再做)
+
+#### P2-1 · 手机号注册 / 短信验证码
+
+- **场景**: 邮箱注册对国内用户门槛高
+- **做多少**: 接入阿里云短信 / 腾讯云短信,DB users 加 `phone_verified` 字段
+- **估时**: 1-2 天
+- **不做理由**: 邮箱+密码够用,等用户反馈说"我不会用邮箱"再上
+
+#### P2-2 · 微信 OAuth
+
+- **场景**: 国内最常见的注册方式
+- **做多少**: 接入微信公众号 OAuth 或开放平台
+- **估时**: 2-3 天(资质申请 + 接入)
+- **不做理由**: 个人项目,没必要为"转化"花这么多
+
+#### P2-3 · 登出 token 黑名单
+
+- **场景**: 防止泄露的 access_token 还能用到 2h 过期
+- **做多少**: 加 jti 到 Redis 黑名单(或者直接 in-memory Set,单进程够用)
+- **估时**: 半天
+- **不做理由**: 2h 风险可接受,token 泄露本来也不常见
+
+#### P2-4 · SQLite → PostgreSQL
+
+- **场景**: 数据量到几万封信,SQLite 写并发会变慢
+- **做多少**: better-sqlite3 换 pg(API 类似)+ 写迁移脚本
+- **估时**: 1 天
+- **不做理由**: 你 1 年内不会到几万封,SQLite 单机 1 万封毫无压力
+
+#### P2-5 · 静态资源走 CDN / OSS
+
+- **场景**: 用户量大了,89 阿里云带宽不够
+- **做多少**: 静态文件(图片/视频/manifest)迁移到阿里云 OSS + CDN
+- **估时**: 2-3 天(主要是配置)
+- **不做理由**: 你现在一个用户,带宽根本不是瓶颈
+
+#### P2-6 · PM2 cluster 多核
+
+- **场景**: 单进程 Node.js 用不满多核
+- **做多少**: `pm2 start dist/index.js -i max`
+- **估时**: 5 分钟
+- **不做理由**: 单进程 QPS 几十一百够用,等你 QPS 上 1000 再上
+
+---
+
+### 13.5 🟦 P3 — 监控/工程化(等基础稳了再补)
+
+#### P3-1 · 错误监控 Sentry
+
+- **场景**: 用户报"页面打不开"你看不到栈
+- **做多少**: `@sentry/react` + `@sentry/node` + DSN 配置
+- **估时**: 2 小时
+- **不做理由**: 个人项目,你自己能复现就不需要 Sentry
+
+#### P3-2 · CI/CD GitHub Actions
+
+- **场景**: 每次 push 自动跑 build + test + deploy
+- **做多少**: `.github/workflows/deploy.yml`
+- **估时**: 半天
+- **不做理由**: 你手动 deploy 也才 5 分钟,加 CI 是为了多 PR 工作流
+
+#### P3-3 · OpenAPI 接口文档
+
+- **场景**: 前后端联调,后端 API 怎么用不清楚
+- **做多少**: zod schema → zod-to-openapi → swagger UI
+- **估时**: 1 天
+- **不做理由**: 当前后端只有 5+5=10 个接口,arch 文档够用
+
+#### P3-4 · 单元测试覆盖
+
+- **场景**: 重构时怕改坏老逻辑
+- **做多少**: vitest,关键 hook + 后端 API 写测试
+- **估时**: 持续
+- **不做理由**: 个人项目,改一处 test 一遍,心智覆盖够
+
+---
+
+### 13.6 关于"必做"的判定标准
+
+每次新会话开始前,问自己 3 句话:
+1. **P0 里有没有新冒出来的事?**(数据 / 服务 / 升级 / 安全)
+2. **P1 里有没有用户已经在抱怨的?**(AI 假 / 没头像 / 收信慢)
+3. **P2/P3 我今天有时间就做,没时间就放过。**
+
+不要为 P2/P3 焦虑,个人项目能跑稳 P0 + 1-2 个 P1 就很好了。
+
+---
+
+### 13.7 关联 §十二.7 V1/V2.5/V3 边界
+
+| 能力 | V1 (done) | V2.5 (done) | V3 (done) | V3.5+ (P1) | V4+ (P2) |
+|---|---|---|---|---|---|
+| 数据 | localStorage | + 后端 SQLite | + users + actions | + avatar 字段 | → postgres |
+| 跨用户 | Web Share | + 落地页接 API | + 登录 + star + inbox | + WS 推送 | 推送增强 |
+| AI | Mock | Mock | Mock | **接 DeepSeek** | 持续微调 |
+| 头像 | 无 | 无 | 昵称首字 | **上传头像** | 表情包 |
+| 守护 | 无 | nohup | nohup | **PM2** | PM2 cluster |
+| 备份 | 无 | 无 | 无 | **cron 备份** | 异地 OSS |
+
+---
+
+### 13.8 时间预算建议(给"人在干"的自己)
+
+每周可投入 ~5 小时,优先级建议:
+- **这周**: P0-1(数据备份)+ P0-2(PM2) = 50 分钟,一次性把基础设施兜底
+- **下周**: P1-1(DeepSeek) = 45 分钟,产品体验升级
+- **本月**: P1-2(头像)+ P1-3(WS) = 2-3 天
+- **下月**: 自由,看用户反馈决定
+
+**总投入**: 第 1 周 50 分钟解决 80% 的"半夜被叫醒"风险,之后按周节奏渐进改进。
