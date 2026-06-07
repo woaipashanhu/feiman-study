@@ -50,6 +50,8 @@ const AuthPage = lazy(() => import('@/pages/AuthPage').then(m => ({ default: m.d
 // V3.8 静态法律页
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage').then(m => ({ default: m.default })))
 const TermsPage = lazy(() => import('@/pages/TermsPage').then(m => ({ default: m.default })))
+// V4 啊哈时刻
+const AhaPage = lazy(() => import('@/pages/AhaPage').then(m => ({ default: m.default })))
 
 /** 带错误边界的 Suspense 包裹器 */
 function SafeLazy({ children, location }: { children: React.ReactNode; location: string }) {
@@ -264,6 +266,18 @@ export function AppRouter() {
           <PageTransition>
             <SafeLazy location="TermsPage">
               <TermsPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+
+      {/* V4 啊哈时刻 - 个人灵感/录音 */}
+      <Route
+        path="/aha"
+        element={
+          <PageTransition>
+            <SafeLazy location="AhaPage">
+              <AhaPage />
             </SafeLazy>
           </PageTransition>
         }
