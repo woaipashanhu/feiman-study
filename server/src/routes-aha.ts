@@ -276,10 +276,9 @@ ahaRouter.patch('/moments/:id', requireAuth, (req: Request, res: Response) => {
     return res.status(400).json({ error: 'invalid_body', message: '参数错误', details: parsed.error.issues })
   }
 
-  // 校验权限
-  const existing = db.prepare(`SELECT user_id FROM aha_moments WHERE id = ?`).get(id) as { user_id: string } | undefined
+  // 校验权限: 查的时候用 id + user_id,别人的 aha 查不到 → 404(隐藏存在,更安全)
+  const existing = db.prepare(`SELECT user_id FROM aha_moments WHERE id = ? AND user_id = ?`).get(id, userId) as { user_id: string } | undefined
   if (!existing) return res.status(404).json({ error: 'not_found' })
-  if (existing.user_id !== userId) return res.status(403).json({ error: 'forbidden' })
 
   const updates: string[] = []
   const params: any[] = []
@@ -474,7 +473,7 @@ ahaRouter.post('/moments/:id/promote', requireAuth, (req: Request, res: Response
   }
 
   // 在内容前加个标识,方便溯源
-  const taggedContent = `${row.content}\n\n— 来自啊哈时刻 [${row.mood || '💡'}]`
+  const taggedContent = `${row.content}\n\n[aha:${ahaId}] — 来自啊哈时刻 [${row.mood || '💡'}]`
 
   const newLetterId = `lt_${randomBytes(8).toString('hex')}`
   const shareToken = `sl_${randomBytes(8).toString('hex')}`
