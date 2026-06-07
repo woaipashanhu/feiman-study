@@ -17,6 +17,7 @@
  */
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { randomUUID } from 'node:crypto'
 import type { Request, Response, NextFunction } from 'express'
 import { db, rowToUser, type UserRow } from './db.js'
 
@@ -40,6 +41,7 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 export interface AccessTokenPayload {
   sub: string  // user id
   type: 'access'
+  jti: string  // token 唯一 id(登出后入黑名单)
 }
 
 export interface RefreshTokenPayload {
@@ -48,9 +50,12 @@ export interface RefreshTokenPayload {
 }
 
 export function signAccessToken(userId: string): string {
-  return jwt.sign({ sub: userId, type: 'access' } as AccessTokenPayload, ACCESS_SECRET, {
-    expiresIn: ACCESS_TTL,
-  })
+  const jti = randomUUID()
+  return jwt.sign(
+    { sub: userId, type: 'access', jti } as AccessTokenPayload,
+    ACCESS_SECRET,
+    { expiresIn: ACCESS_TTL }
+  )
 }
 
 export function signRefreshToken(userId: string): string {
@@ -90,6 +95,20 @@ declare global {
   }
 }
 
+/** 黑名单查 token 是否被登出 */
+export function isTokenBlacklisted(jti: string): boolean {
+  if (!jti) return false
+  const row = db.prepare('SELECT 1 FROM token_blacklist WHERE jti = ? LIMIT 1').get(jti)
+  return !!row
+}
+
+/** 清理过期黑名单条目(> 2h 全部清掉,因为 access_token 2h 就过期) */
+export function cleanExpiredBlacklist(): number {
+  const twoHoursAgo = Date.now() - 2 * 60 * 60 * 1000
+  const result = db.prepare('DELETE FROM token_blacklist WHERE expires_at < ?').run(twoHoursAgo)
+  return result.changes
+}
+
 /** 要求 Authorization: Bearer <access_token> — 把 user 挂到 req.user */
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const header = req.header('authorization') || req.header('Authorization')
@@ -101,12 +120,18 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!payload) {
     return res.status(401).json({ error: 'invalid_token', message: 'token 无效或已过期' })
   }
+  // 检查黑名单(登出后的 token 失效)
+  if (payload.jti && isTokenBlacklisted(payload.jti)) {
+    return res.status(401).json({ error: 'token_revoked', message: 'token 已登出,请重新登录' })
+  }
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(payload.sub) as UserRow | undefined
   if (!user) {
     return res.status(401).json({ error: 'user_not_found', message: '用户不存在' })
   }
   req.user = user
   req.userId = user.id
+  // 顺便把 jti 挂到 req,登出端点用
+  ;(req as any).tokenJti = payload.jti
   next()
 }
 
@@ -130,4 +155,16 @@ export function optionalAuth(req: Request, _res: Response, next: NextFunction) {
 /** 当前 user 的安全 DTO(无 password_hash) */
 export function getCurrentUser(req: Request) {
   return req.user ? rowToUser(req.user) : null
+}
+
+// 启动时 + 每小时清一次过期黑名单
+let cleanupTimer: NodeJS.Timeout | null = null
+export function startBlacklistCleanup() {
+  // 启动跑一次
+  cleanExpiredBlacklist()
+  if (cleanupTimer) return
+  cleanupTimer = setInterval(() => {
+    const n = cleanExpiredBlacklist()
+    if (n > 0) console.log(`[auth] 清理了 ${n} 条过期黑名单条目`)
+  }, 60 * 60 * 1000)  // 1h
 }

@@ -170,10 +170,24 @@ authRouter.post('/refresh', (req: Request, res: Response) => {
 
 // =============== POST /api/auth/logout ===============
 
-authRouter.post('/logout', (_req: Request, res: Response) => {
-  // V1: 客户端丢 token 即可,服务端不维护黑名单
-  // V2: 加 jti 黑名单(redis 或 DB)
-  return res.json({ ok: true, message: '已登出(请客户端删除 token)' })
+authRouter.post('/logout', requireAuth, (req: Request, res: Response) => {
+  const user = (req as any).user
+  const jti = (req as any).tokenJti
+  if (!user || !jti) {
+    // 没拿到 jti(可能 token 来自老版本),只做客户端清除
+    return res.json({ ok: true, message: '已登出(老版本 token,服务端未记录)' })
+  }
+  // 把 jti 写进黑名单(expires_at = token 过期时间,V1 简化用 2h 后)
+  const now = Date.now()
+  const expiresAt = now + 2 * 60 * 60 * 1000  // 2h(跟 access_token TTL 一致)
+  try {
+    db.prepare(
+      'INSERT INTO token_blacklist (jti, user_id, expires_at, created_at) VALUES (?, ?, ?, ?)'
+    ).run(jti, user.id, expiresAt, now)
+  } catch (e) {
+    // jti 已存在(重复登出) — 忽略
+  }
+  return res.json({ ok: true, message: '已登出,token 已失效' })
 })
 
 // =============== POST /api/auth/avatar (V3.5 头像上传) ===============

@@ -74,6 +74,18 @@ function hasTable(table: string): boolean {
   return rows.length > 0
 }
 
+// V3.6 加: token_blacklist 表(token 登出后失效)
+if (!hasTable("token_blacklist")) {
+  safeExec(`CREATE TABLE token_blacklist (
+    jti TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    expires_at INTEGER NOT NULL,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`)
+  safeExec(`CREATE INDEX IF NOT EXISTS idx_blacklist_expires ON token_blacklist(expires_at)`)
+}
+
 // V3.5 加: users.avatar_url
 if (hasTable("users") && !hasColumn("users", "avatar_url")) {
   safeExec("ALTER TABLE users ADD COLUMN avatar_url TEXT")
@@ -120,6 +132,16 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_letters_created_at ON letters(created_at DESC);
   CREATE INDEX IF NOT EXISTS idx_letters_share_token ON letters(share_token);
   CREATE INDEX IF NOT EXISTS idx_letters_author_user ON letters(author_user_id);
+
+  CREATE TABLE IF NOT EXISTS token_blacklist (
+    jti         TEXT PRIMARY KEY,
+    user_id     TEXT NOT NULL,
+    expires_at  INTEGER NOT NULL,
+    created_at  INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_blacklist_expires ON token_blacklist(expires_at);
 
   CREATE TABLE IF NOT EXISTS user_letter_actions (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
