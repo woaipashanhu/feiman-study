@@ -33,6 +33,7 @@ import { attachWebSocketServer } from './ws.js'
 import { startBlacklistCleanup } from './auth.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
+import { ensureSmsTables } from './sms-provider.js'
 import { generateOpenAPIDocument, registry, InboxResponse, ErrorResponse } from './openapi-registry.js'
 import { z } from 'zod'
 
@@ -196,7 +197,11 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] CORS origin: ${CORS_ORIGIN}`)
   console.log(`[feiman-letters] version 0.3.1 (auth + letters + AI + WS)`)
   console.log(`[feiman-letters] LONGCAT_API_KEY: ${process.env.LONGCAT_API_KEY ? '✓ set' : '✗ not set (will use mock)'}`)
+  console.log(`[feiman-letters] SMS provider: ${process.env.SMS_PROVIDER || 'mock'}`)
 })
+
+// V3.8 SMS 表启动时建
+ensureSmsTables()
 
 // 启动黑名单定期清理
 startBlacklistCleanup()

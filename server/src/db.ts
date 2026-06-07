@@ -62,7 +62,7 @@ function safeExec(sql: string) {
   try { db.exec(sql) } catch (e) { /* 列已存在,忽略 */ }
 }
 
-function hasColumn(table: string, col: string): boolean {
+export function hasColumn(table: string, col: string): boolean {
   const rows = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[]
   return rows.some((r) => r.name === col)
 }

@@ -30,6 +30,7 @@ import {
   requireAuth,
   getCurrentUser,
 } from './auth.js'
+import { sendVerificationCode, verifyCode, findOrCreatePhoneUser } from './sms-provider.js'
 import { registry, RegisterRequest, LoginRequest, AuthSuccessResponse, RefreshRequest, RefreshResponse, ErrorResponse } from './openapi-registry.js'
 
 export const authRouter = Router()
@@ -110,6 +111,52 @@ registry.registerComponent('securitySchemes', 'bearerAuth', {
   scheme: 'bearer',
   bearerFormat: 'JWT',
   description: '从 /api/auth/login 或 /api/auth/refresh 获取 accessToken,放 Authorization 头',
+})
+
+// =============== V3.8 手机号验证码 OpenAPI 注解 ===============
+
+const SendCodeRequest = z.object({
+  phone: z.string().regex(/^1[3-9]\d{9}$/).openapi({ example: '13800138000' }),
+  purpose: z.enum(['login', 'register']).default('login'),
+}).openapi('SendCodeRequest')
+
+const SendCodeResponse = z.object({
+  ok: z.boolean(),
+  provider: z.enum(['aliyun', 'mock']),
+  message: z.string(),
+  devCode: z.string().optional().openapi({ description: '仅 mock 模式返回,真实环境无此字段' }),
+}).openapi('SendCodeResponse')
+
+const PhoneLoginRequest = z.object({
+  phone: z.string().regex(/^1[3-9]\d{9}$/),
+  code: z.string().regex(/^\d{5}$/),
+  nickname: z.string().max(40).optional(),
+}).openapi('PhoneLoginRequest')
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/send-code',
+  tags: ['Auth'],
+  summary: '发送手机验证码(60s cooldown, 1h 限 10 条)',
+  request: { body: { content: { 'application/json': { schema: SendCodeRequest } } } },
+  responses: {
+    200: { description: '发送成功', content: { 'application/json': { schema: SendCodeResponse } } },
+    400: { description: '手机号格式错误', content: { 'application/json': { schema: ErrorResponse } } },
+    429: { description: 'cooldown / rate limit', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/phone-login',
+  tags: ['Auth'],
+  summary: '手机号 + 验证码登录/注册(无该用户则自动注册)',
+  request: { body: { content: { 'application/json': { schema: PhoneLoginRequest } } } },
+  responses: {
+    200: { description: '登录成功', content: { 'application/json': { schema: AuthSuccessResponse } } },
+    400: { description: '参数错误', content: { 'application/json': { schema: ErrorResponse } } },
+    401: { description: '验证码错误或过期', content: { 'application/json': { schema: ErrorResponse } } },
+  },
 })
 
 // =============== Zod ===============
@@ -267,6 +314,89 @@ authRouter.post('/logout', requireAuth, (req: Request, res: Response) => {
     // jti 已存在(重复登出) — 忽略
   }
   return res.json({ ok: true, message: '已登出,token 已失效' })
+})
+
+// =============== V3.8 手机号验证码登录/注册 ===============
+
+const SendCodeBody = z.object({
+  phone: z.string().regex(/^1[3-9]\d{9}$/, '手机号格式不正确'),
+  purpose: z.enum(['login', 'register']).default('login'),
+})
+
+authRouter.post('/send-code', async (req: Request, res: Response) => {
+  const parsed = SendCodeBody.safeParse(req.body)
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: 'invalid_body',
+      message: '请求体不合法',
+      details: parsed.error.issues,
+    })
+  }
+  const { phone, purpose } = parsed.data
+
+  const result = await sendVerificationCode(phone, purpose)
+  if (!result.ok) {
+    if (result.error === 'cooldown') {
+      return res.status(429).json({ error: 'cooldown', message: `请 ${result.cooldownSec} 秒后再试`, cooldownSec: result.cooldownSec })
+    }
+    if (result.error === 'rate_limit_exceeded') {
+      return res.status(429).json({ error: 'rate_limit', message: '1 小时内最多 10 条验证码' })
+    }
+    return res.status(500).json({ error: 'send_failed', message: result.error })
+  }
+
+  return res.json({
+    ok: true,
+    provider: result.provider,
+    message: result.provider === 'mock' ? '验证码已生成(开发模式,见后端日志)' : '验证码已发送',
+    // mock 模式回传验证码(仅开发)
+    ...(result.provider === 'mock' && { devCode: result.mockCode }),
+  })
+})
+
+const PhoneLoginBody = z.object({
+  phone: z.string().regex(/^1[3-9]\d{9}$/, '手机号格式不正确'),
+  code: z.string().regex(/^\d{5}$/, '验证码必须 5 位数字'),
+  nickname: z.string().max(40).optional(),
+})
+
+authRouter.post('/phone-login', async (req: Request, res: Response) => {
+  const parsed = PhoneLoginBody.safeParse(req.body)
+  if (!parsed.success) {
+    return res.status(400).json({
+      error: 'invalid_body',
+      message: '请求体不合法',
+      details: parsed.error.issues,
+    })
+  }
+  const { phone, code, nickname } = parsed.data
+
+  // 1. 校验验证码
+  const codeResult = verifyCode(phone, code, 'login')
+  if (!codeResult.ok) {
+    return res.status(401).json({ error: codeResult.error || 'invalid_code', message: '验证码错误或已过期' })
+  }
+
+  // 2. 找或建用户
+  const user = findOrCreatePhoneUser(phone, nickname || '')
+
+  // 3. 签 token
+  const accessToken = signAccessToken(user.id)
+  const refreshToken = signRefreshToken(user.id)
+
+  return res.json({
+    ok: true,
+    accessToken,
+    refreshToken,
+    user: {
+      id: user.id,
+      email: user.email,
+      nickname: user.nickname,
+      avatarUrl: user.avatarUrl,
+      phone: user.phone,
+      createdAt: user.createdAt,
+    },
+  })
 })
 
 // =============== POST /api/auth/avatar (V3.5 头像上传) ===============
