@@ -39,16 +39,17 @@ export default defineConfig({
         // (PWA 插件内部已经按 dist hash 处理,但显式加更稳)
       },
       manifest: {
-        name: '费曼科学课',
-        short_name: '费曼科学',
-        description: '探索数学、科学与社会的奇妙世界',
-        theme_color: '#F8FAFC',
-        background_color: '#F8FAFC',
+        name: '小纸条',
+        short_name: '小纸条',
+        description: '一个温暖的角落,收下每封写给你的信',
+        theme_color: '#F8F1E7',
+        background_color: '#F8F1E7',
         display: 'standalone',
-        start_url: '/math',
+        start_url: '/letters',
         icons: [
-          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
       includeAssets: ['*.png']
