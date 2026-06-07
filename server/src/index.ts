@@ -31,6 +31,7 @@ import swaggerUi from 'swagger-ui-express'
 import { lettersRouter } from './routes-letters.js'
 import { authRouter, uploadRouter } from './routes-auth.js'
 import { aiRouter } from './routes-ai.js'
+import { ahaRouter } from './routes-aha.js'
 import { attachWebSocketServer } from './ws.js'
 import { startBlacklistCleanup } from './auth.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
@@ -193,6 +194,7 @@ app.use((req, _res, next) => {
 app.use('/api/auth', authRouter)
 app.use('/api/letters', lettersRouter)
 app.use('/api/ai', aiRouter)
+app.use('/api/aha', ahaRouter)
 app.use('/api/upload', uploadRouter)
 
 // 收件箱(V3 需登录,放主路由用 /api/me/inbox)

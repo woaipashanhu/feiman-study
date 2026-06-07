@@ -97,6 +97,29 @@ if (hasTable('letters') && !hasColumn('letters', 'author_user_id')) {
   safeExec(`CREATE INDEX IF NOT EXISTS idx_letters_author_user ON letters(author_user_id)`)
 }
 
+// V4 加: aha_moments 表(啊哈时刻 - 个人灵感/录音/短文本)
+if (!hasTable("aha_moments")) {
+  safeExec(`
+    CREATE TABLE aha_moments (
+      id          TEXT PRIMARY KEY,
+      user_id     TEXT NOT NULL,
+      type        TEXT NOT NULL,        -- 'text' | 'audio'
+      content     TEXT,                  -- 文本内容(type=text)
+      audio_url   TEXT,                  -- 音频文件 URL(type=audio)
+      audio_duration_ms INTEGER,         -- 音频时长 ms
+      storage     TEXT NOT NULL,         -- 'cloud' | 'local'(用户选)
+      tags        TEXT,                  -- 逗号分隔的标签
+      mood        TEXT,                  -- 心情 emoji (可选)
+      created_at  INTEGER NOT NULL,
+      updated_at  INTEGER NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+  `)
+  safeExec(`CREATE INDEX IF NOT EXISTS idx_aha_user_created ON aha_moments(user_id, created_at)`)
+  safeExec(`CREATE INDEX IF NOT EXISTS idx_aha_user_storage ON aha_moments(user_id, storage)`)
+  console.log('[aha] aha_moments table created')
+}
+
 // =============== Schema ===============
 
 db.exec(`

@@ -143,23 +143,41 @@ ssh_cmd bash -s <<REMOTE_SCRIPT
 
   cd "${REMOTE_DIR}"
 
+  # ⚠️ V3.8 教训: 必须在每次 deploy 都把 DB_PATH 传给 pm2
+  # 因为 pm2 进程 cwd 是 /root,db.ts 的 process.env.DB_PATH || resolve('./data/letters.db')
+  # 如果 DB_PATH env 不在 pm2 env 里,会落到 /root/data/letters.db(空文件)
+  # 之前所有 phone-login / send-code / create letter 都没写到生产 db!
+  # 修复: deploy 时强制 set -a 把 /etc/feiman-letters.env 注入 + 显式 DB_PATH 传给 pm2
+  EXPORT_VARS="DB_PATH=${DB_DIR}/letters.db AVATAR_DIR=${DB_DIR}/avatars PORT=${APP_PORT} NODE_ENV=production"
+
   # 检查 pm2 是否已管 letters-server
   if pm2 describe letters-server > /dev/null 2>&1; then
-    echo "PM2 进程已存在,reload"
-    DB_PATH="${DB_DIR}/letters.db" PORT="${APP_PORT}" NODE_ENV=production \
-      pm2 reload letters-server --update-env
+    echo "PM2 进程已存在,reload with env"
+    # 显式 set -a + 读 env + 传 env,确保 DB_PATH 生效
+    set -a; . /etc/feiman-letters.env; set +a
+    env \$EXPORT_VARS pm2 reload letters-server --update-env
   else
     echo "PM2 启动新进程"
-    DB_PATH="${DB_DIR}/letters.db" PORT="${APP_PORT}" NODE_ENV=production \
-      pm2 start dist/index.js --name letters-server --time
+    set -a; . /etc/feiman-letters.env; set +a
+    env \$EXPORT_VARS pm2 start dist/index.js --name letters-server --time
+  fi
+
+  # 验证: 等 1.5s,确认 pm2 进程 env 里有 DB_PATH
+  sleep 1.5
+  ACTUAL_DB_PATH=\$(pm2 jlist 2>/dev/null | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['pm2_env']['env'].get('DB_PATH', 'MISSING'))" 2>/dev/null)
+  if [ "\$ACTUAL_DB_PATH" = "${DB_DIR}/letters.db" ]; then
+    echo "✅ PM2 reload 成功,DB_PATH 正确: \$ACTUAL_DB_PATH"
+  else
+    echo "❌ DB_PATH 错!实际:\$ACTUAL_DB_PATH 应:${DB_DIR}/letters.db"
+    pm2 logs letters-server --lines 30 --nostream --raw
+    exit 1
   fi
 
   # 健康检查
-  sleep 1.5
   if curl -sf http://127.0.0.1:${APP_PORT}/api/health > /dev/null; then
-    echo "✅ PM2 reload 成功,健康检查通过"
+    echo "✅ 健康检查通过"
   else
-    echo "❌ 健康检查失败,日志:"
+    echo "❌ 健康检查失败"
     pm2 logs letters-server --lines 30 --nostream --raw
     exit 1
   fi
