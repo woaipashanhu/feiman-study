@@ -1271,3 +1271,43 @@ V3 新加 API(共 6 个 + 1 个 star):
 | V3.8 App Store 文案 | ✅ | 29f2828 |
 
 **10 段全 ✅ + 1 段评估回退,共 12 个新 commit**。
+
+---
+
+### 14.1 V3.8 性能基线(2026-06-07)
+
+**测试环境**: 阿里云 ECS + nginx 代理 + 生产 build
+**测试工具**: Puppeteer Performance API
+
+| 指标 | 值 | 评级 |
+|---|---|---|
+| 总加载时间 | 1.16s | 🟢 优秀 |
+| First Paint | 376ms | 🟢 优秀 (<500ms) |
+| First Contentful Paint | 512ms | 🟢 良好 (<1.8s) |
+| DOMContentLoaded | 433ms | 🟢 优秀 |
+| loadComplete | 433ms | 🟢 优秀 |
+| 资源数 | 18 | 🟡 偏多 |
+| 资源总大小 | 948KB | 🟡 偏大 |
+| 其中 .js | 869KB | 🟡 大(react+router+zustand+i18n) |
+| 其中 .css | 74KB | 🟢 正常 |
+
+**Lighthouse 目标**(已在 `.lighthouserc.json` 配置):
+- Performance ≥ 0.85
+- Accessibility ≥ 0.9
+- Best Practices ≥ 0.85
+- PWA ≥ 0.85
+
+**已知优化点**:
+1. HTML2Canvas 大依赖(写信长图功能, ~150KB)
+2. Phosphor-react icons 全量打包(可按需 import,~50KB 节省)
+3. dayjs 替代 moment(当前无,如加时间格式)
+
+**短期不优化**(用户量小,没必要):
+- 图片压缩(几乎无图)
+- Service Worker 高级缓存策略
+- HTTP/2 push
+
+**V4 触发优化**:
+- 用户 > 500 RPS
+- 移动端首屏 > 2s
+- SEO 流量 > 50%
