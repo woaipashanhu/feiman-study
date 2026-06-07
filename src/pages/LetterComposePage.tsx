@@ -270,16 +270,14 @@ ${shareUrlLocal}` : preview,
               swatch="#FAF7F2"
             />
             <ToolChip
-              active={false}
-              disabled
+              active={bgKey === 'midnight'}
+              onClick={() => setBgKey('midnight')}
               swatch="#0E1014"
-              hint="V2"
             />
             <ToolChip
-              active={false}
-              disabled
+              active={bgKey === 'kraft'}
+              onClick={() => setBgKey('kraft')}
               swatch="#D4B895"
-              hint="V2"
             />
           </ToolGroup>
         </div>
