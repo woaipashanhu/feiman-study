@@ -15,6 +15,10 @@
  * ============================================================
  */
 import { Router, type Request, type Response } from 'express'
+import multer from 'multer'
+import { mkdirSync, existsSync } from 'node:fs'
+import { resolve, extname } from 'node:path'
+import { randomBytes } from 'node:crypto'
 import { z } from 'zod'
 import { db, rowToUser, type UserRow } from './db.js'
 import {
@@ -170,4 +174,79 @@ authRouter.post('/logout', (_req: Request, res: Response) => {
   // V1: 客户端丢 token 即可,服务端不维护黑名单
   // V2: 加 jti 黑名单(redis 或 DB)
   return res.json({ ok: true, message: '已登出(请客户端删除 token)' })
+})
+
+// =============== POST /api/auth/avatar (V3.5 头像上传) ===============
+
+// 头像存储目录
+const AVATAR_DIR = process.env.AVATAR_DIR || '/var/lib/feiman-letters/avatars'
+mkdirSync(AVATAR_DIR, { recursive: true })
+
+// multer 配: 限 2MB,只接受图片
+const avatarUpload = multer({
+  storage: multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, AVATAR_DIR),
+    filename: (req, file, cb) => {
+      // 名字: <userId>_<random>.jpg
+      const userId = (req as any).userId || 'anon'
+      const ext = extname(file.originalname).toLowerCase() || '.jpg'
+      const name = `${userId}_${randomBytes(4).toString('hex')}${ext}`
+      cb(null, name)
+    },
+  }),
+  limits: { fileSize: 2 * 1024 * 1024 },  // 2MB
+  fileFilter: (_req, file, cb) => {
+    const allowed = /^image\/(jpeg|jpg|png|webp|gif)$/i
+    if (!allowed.test(file.mimetype)) {
+      return cb(new Error('只支持 jpg/png/webp/gif 图片'))
+    }
+    cb(null, true)
+  },
+})
+
+authRouter.post(
+  '/avatar',
+  requireAuth,
+  avatarUpload.single('avatar'),
+  (req: Request, res: Response) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'no_file', message: '请提供 avatar 文件' })
+    }
+    const userId = (req as any).userId
+    const fileName = req.file.filename
+    const url = `/avatars/${fileName}`
+
+    // 更新 DB
+    const now = Date.now()
+    db.prepare('UPDATE users SET avatar_url = ?, updated_at = ? WHERE id = ?')
+      .run(url, now, userId)
+
+    return res.json({
+      ok: true,
+      avatarUrl: url,
+      size: req.file.size,
+    })
+  }
+)
+
+// 删除头像
+authRouter.delete('/avatar', requireAuth, (req: Request, res: Response) => {
+  const userId = (req as any).userId
+  const row = db.prepare('SELECT avatar_url FROM users WHERE id = ?').get(userId) as { avatar_url: string | null } | undefined
+  if (row?.avatar_url) {
+    // 物理删除文件(忽略错误,文件可能已被删)
+    const filename = row.avatar_url.split('/').pop()
+    if (filename) {
+      const filepath = resolve(AVATAR_DIR, filename)
+      if (existsSync(filepath)) {
+        try {
+          // 动态 fs.unlinkSync
+          require('node:fs').unlinkSync(filepath)
+        } catch (e) { /* ignore */ }
+      }
+    }
+    db.prepare('UPDATE users SET avatar_url = NULL, updated_at = ? WHERE id = ?')
+      .run(Date.now(), userId)
+  }
+  return res.json({ ok: true, avatarUrl: null })
 })

@@ -6,7 +6,7 @@
  *  顶部用返回按钮，不用关闭按钮
  * ============================================================
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
@@ -559,10 +559,12 @@ function ProfileContent({
 
 // ==================== 子组件 ====================
 
-/** 账号卡 — 未登录显示"去登录",已登录显示昵称 + 登出 */
+/** 账号卡 — 未登录显示"去登录",已登录显示昵称 + 头像 + 登出 */
 function AuthCard() {
   const navigate = useNavigate()
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, logout, uploadAvatar, deleteAvatar } = useAuth()
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   if (!isAuthenticated || !user) {
     return (
@@ -592,18 +594,54 @@ function AuthCard() {
     )
   }
 
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    await uploadAvatar(file)
+    setUploading(false)
+    e.target.value = ''  // 清掉,允许重复选同一文件
+  }
+
   return (
     <section
       className="relative rounded-2xl p-4 shadow-sm overflow-hidden ring-1 ring-black/5"
       style={{ backgroundColor: '#FAF7F2' }}
     >
       <div className="flex items-center gap-3">
-        <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center text-white text-base font-bold shrink-0 shadow-sm"
+        {/* 头像 — 点击换头像 */}
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="relative w-12 h-12 rounded-2xl overflow-hidden flex items-center justify-center shrink-0 shadow-sm group"
           style={{ backgroundColor: '#C83820' }}
+          aria-label="上传头像"
         >
-          {user.nickname.slice(0, 1)}
-        </div>
+          {user.avatarUrl ? (
+            <img
+              src={user.avatarUrl}
+              alt="avatar"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-white text-base font-bold">
+              {user.nickname.slice(0, 1)}
+            </span>
+          )}
+          {/* hover 提示 */}
+          <div
+            className="absolute inset-0 flex items-center justify-center text-[9px] font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+          >
+            {uploading ? '上传中' : '换头像'}
+          </div>
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleFile}
+          className="hidden"
+        />
         <div className="flex-1 min-w-0">
           <h3
             className="text-base font-semibold text-text truncate"
@@ -613,14 +651,25 @@ function AuthCard() {
           </h3>
           <p className="text-[12px] text-text-tertiary truncate">{user.email}</p>
         </div>
-        <button
-          onClick={() => {
-            if (confirm('确定登出?')) logout()
-          }}
-          className="text-[12px] text-text-tertiary px-2.5 py-1.5 rounded-lg hover:bg-black/5"
-        >
-          登出
-        </button>
+        <div className="flex items-center gap-1">
+          {user.avatarUrl && (
+            <button
+              onClick={() => deleteAvatar()}
+              className="text-[11px] text-text-tertiary px-2 py-1 rounded-lg hover:bg-black/5"
+              title="删除头像"
+            >
+              移除
+            </button>
+          )}
+          <button
+            onClick={() => {
+              if (confirm('确定登出?')) logout()
+            }}
+            className="text-[12px] text-text-tertiary px-2.5 py-1.5 rounded-lg hover:bg-black/5"
+          >
+            登出
+          </button>
+        </div>
       </div>
     </section>
   )

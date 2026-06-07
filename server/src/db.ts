@@ -74,6 +74,11 @@ function hasTable(table: string): boolean {
   return rows.length > 0
 }
 
+// V3.5 加: users.avatar_url
+if (hasTable("users") && !hasColumn("users", "avatar_url")) {
+  safeExec("ALTER TABLE users ADD COLUMN avatar_url TEXT")
+}
+
 // V3 加: letters.author_user_id
 if (hasTable('letters') && !hasColumn('letters', 'author_user_id')) {
   safeExec(`ALTER TABLE letters ADD COLUMN author_user_id TEXT REFERENCES users(id) ON DELETE SET NULL`)
@@ -89,6 +94,7 @@ db.exec(`
     phone         TEXT UNIQUE,
     password_hash TEXT NOT NULL,
     nickname      TEXT NOT NULL,
+    avatar_url    TEXT,
     created_at    INTEGER NOT NULL,
     updated_at    INTEGER NOT NULL
   );
@@ -140,6 +146,7 @@ export interface UserRow {
   phone: string | null
   password_hash: string
   nickname: string
+  avatar_url: string | null
   created_at: number
   updated_at: number
 }
@@ -149,6 +156,7 @@ export interface User {
   email: string | null
   phone: string | null
   nickname: string
+  avatarUrl: string | null
   createdAt: number
   updatedAt: number
 }
@@ -188,6 +196,7 @@ export function rowToUser(r: UserRow): User {
     email: r.email,
     phone: r.phone,
     nickname: r.nickname,
+    avatarUrl: r.avatar_url,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   }

@@ -45,6 +45,18 @@ app.use(
 )
 app.use(express.json({ limit: '64kb' }))
 
+// 静态服务 — 头像图片
+import { existsSync, mkdirSync } from 'node:fs'
+const AVATAR_DIR = process.env.AVATAR_DIR || '/var/lib/feiman-letters/avatars'
+if (!existsSync(AVATAR_DIR)) mkdirSync(AVATAR_DIR, { recursive: true })
+app.use(
+  '/avatars',
+  express.static(AVATAR_DIR, {
+    maxAge: '7d',
+    fallthrough: true,
+  })
+)
+
 // 请求日志(开发期)
 app.use((req, _res, next) => {
   const ts = new Date().toISOString().slice(11, 19)

@@ -26,6 +26,7 @@ export interface AuthUser {
   email: string | null
   phone: string | null
   nickname: string
+  avatarUrl: string | null
   createdAt: number
   updatedAt: number
 }
@@ -147,6 +148,64 @@ export function useAuth() {
     []
   )
 
+  // 上传头像(返回新 user 或 null)
+  const uploadAvatar = useCallback(async (file: File): Promise<AuthUser | null> => {
+    if (!globalState.accessToken) {
+      setState({ error: '请先登录' })
+      return null
+    }
+    setState({ loading: true, error: null })
+    try {
+      const form = new FormData()
+      form.append('avatar', file)
+      const res = await fetch(`${API}/auth/avatar`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${globalState.accessToken}` },
+        body: form,
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setState({ loading: false, error: data.message || '上传失败' })
+        return null
+      }
+      // 重新拉 /me 拿最新 user
+      const meRes = await fetch(`${API}/auth/me`, {
+        headers: { Authorization: `Bearer ${globalState.accessToken}` },
+      })
+      if (meRes.ok) {
+        const meData = await meRes.json()
+        setState({ loading: false, user: meData.user })
+        return meData.user
+      }
+      // fallback: 用 data.avatarUrl 更新
+      const newUser = globalState.user
+        ? { ...globalState.user, avatarUrl: data.avatarUrl }
+        : null
+      setState({ loading: false, user: newUser })
+      return newUser
+    } catch (e) {
+      setState({ loading: false, error: String(e) })
+      return null
+    }
+  }, [])
+
+  // 删除头像
+  const deleteAvatar = useCallback(async (): Promise<boolean> => {
+    if (!globalState.accessToken) return false
+    try {
+      const res = await fetch(`${API}/auth/avatar`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${globalState.accessToken}` },
+      })
+      if (!res.ok) return false
+      const newUser = globalState.user ? { ...globalState.user, avatarUrl: null } : null
+      setState({ user: newUser })
+      return true
+    } catch {
+      return false
+    }
+  }, [])
+
   const login = useCallback(async (email: string, password: string) => {
     setState({ loading: true, error: null })
     try {
@@ -196,5 +255,7 @@ export function useAuth() {
     register,
     login,
     logout,
+    uploadAvatar,
+    deleteAvatar,
   }
 }
