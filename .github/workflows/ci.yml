@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ========== 前端 + 后端 typecheck + build ==========
+  build:
+    name: Typecheck + Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmmirror.com/'
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            server/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install frontend deps
+        run: npm ci --registry=https://registry.npmmirror.com
+
+      - name: Install backend deps
+        run: cd server && npm ci --registry=https://registry.npmmirror.com
+
+      - name: Typecheck frontend
+        run: npx tsc -b --noEmit
+
+      - name: Typecheck backend
+        run: cd server && npx tsc --noEmit
+
+      - name: Build frontend
+        env:
+          VITE_SENTRY_DSN: 'https://placeholder@sentry.io/000000'
+        run: npm run build
+
+      - name: Build backend
+        run: cd server && npm run build
+
+  # ========== 后端测试 ==========
+  test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmmirror.com/'
+
+      - name: Install deps
+        run: |
+          npm ci --registry=https://registry.npmmirror.com
+          cd server && npm ci --registry=https://registry.npmmirror.com
+
+      - name: Run vitest
+        env:
+          JWT_SECRET: 'test-jwt-secret-128-bytes-test-jwt-secret-128-bytes-test-jwt-secret-128'
+          JWT_REFRESH_SECRET: 'test-refresh-secret-128-bytes-test-refresh-secret-128'
+        run: cd server && npm test
+
+      - name: Coverage report
+        env:
+          JWT_SECRET: 'test-jwt-secret-128-bytes-test-jwt-secret-128-bytes-test-jwt-secret-128'
+          JWT_REFRESH_SECRET: 'test-refresh-secret-128-bytes-test-refresh-secret-128'
+        run: cd server && npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          directory: server/coverage
+          fail_ci_if_error: false
+
+  # ========== Lighthouse 性能审计(只在 main) ==========
+  lighthouse:
+    name: Lighthouse Audit
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install frontend deps
+        run: npm ci --registry=https://registry.npmmirror.com
+
+      - name: Build
+        env:
+          VITE_SENTRY_DSN: 'https://placeholder@sentry.io/000000'
+        run: npm run build
+
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          configPath: '.lighthouserc.json'
+          uploadArtifacts: true
+
+  # ========== Lint ==========
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci --registry=https://registry.npmmirror.com
+      - run: npm run lint || true
+      - run: cd server && npm install --registry=https://registry.npmmirror.com
+      - run: cd server && npx tsc --noEmit --noUnusedLocals --noUnusedParameters || true

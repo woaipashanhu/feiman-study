@@ -25,6 +25,7 @@
 import express, { type Request, type Response, type NextFunction } from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import helmet from 'helmet'
 import * as Sentry from '@sentry/node'
 import swaggerUi from 'swagger-ui-express'
 import { lettersRouter } from './routes-letters.js'
@@ -149,6 +150,15 @@ if (process.env.SENTRY_DSN) {
 }
 
 const app = express()
+
+// V3.8 安全头(Helmet)
+app.use(helmet({
+  // Swagger UI 需 inline style + script
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  // 跨域图片(头像)允许
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}))
 
 // 基础中间件
 app.use(

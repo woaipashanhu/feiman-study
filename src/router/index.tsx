@@ -47,6 +47,9 @@ const LetterComposePage = lazy(() => import('@/pages/LetterComposePage').then(m 
 const LetterInboxPage = lazy(() => import('@/pages/LetterInboxPage').then(m => ({ default: m.default })))
 // 登录注册页
 const AuthPage = lazy(() => import('@/pages/AuthPage').then(m => ({ default: m.default })))
+// V3.8 静态法律页
+const PrivacyPage = lazy(() => import('@/pages/PrivacyPage').then(m => ({ default: m.default })))
+const TermsPage = lazy(() => import('@/pages/TermsPage').then(m => ({ default: m.default })))
 
 /** 带错误边界的 Suspense 包裹器 */
 function SafeLazy({ children, location }: { children: React.ReactNode; location: string }) {
@@ -239,6 +242,28 @@ export function AppRouter() {
           <PageTransition>
             <SafeLazy location="AuthPage">
               <AuthPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+
+      {/* V3.8 静态法律页(App Store 必填) */}
+      <Route
+        path="/privacy"
+        element={
+          <PageTransition>
+            <SafeLazy location="PrivacyPage">
+              <PrivacyPage />
+            </SafeLazy>
+          </PageTransition>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <PageTransition>
+            <SafeLazy location="TermsPage">
+              <TermsPage />
             </SafeLazy>
           </PageTransition>
         }

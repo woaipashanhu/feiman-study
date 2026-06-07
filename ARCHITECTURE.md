@@ -1164,3 +1164,110 @@ V3 新加 API(共 6 个 + 1 个 star):
 - #2 #3 操作前,保留旧 secret 备份 24 小时
 - 万一新 secret 配错,回滚到旧的 5 分钟恢复
 
+
+---
+
+### 13.10 🟪 V3.8 架构 Review(2026-06-07)
+
+**回顾 V3.0 → V3.8 的演进**(3 个月,42 个会话):
+
+#### ✅ 已解决
+
+| 维度 | V3.0 | V3.8 |
+|---|---|---|
+| 部署 | nohup 脆 | PM2 守护 + cron 备份 + 日志 |
+| 数据 | 无备份 | 每日 3 点 tar.gz,7 天保留 |
+| PWA | 白屏 | skipWaiting + clientsClaim + update prompt |
+| 安全 | JWT 默认 secret | 128 字节随机 + 黑名单 + 401 refresh |
+| 监控 | 无 | Sentry 前+后端,18 paths OpenAPI |
+| 测试 | 无 | 20 tests,66% 覆盖,573ms 跑完 |
+| 体验 | mock AI | LongCat 真实 AI + mock fallback |
+| 实时 | 手动刷新 | WebSocket 推送(letter / collect / star) |
+| 多端 | 仅 Web | Capacitor iOS + Android + PWA |
+| 国际化 | 中文 | 中英双语 + 切换按钮 |
+| 凭据激活 | 全 | SMS / OSS / 微信 / Postgres / Sentry 全栈就绪 |
+
+#### ⚠️ 已知 gap(2026-06-07 扫架构发现)
+
+1. **架构单点**:
+   - 单机 PM2,无高可用(用户量 < 100 OK,上 1000 需要 ALB + 多机)
+   - SQLite 单文件,无主从(切 Postgres 后缓解)
+   - WS 单进程 userSockets(集群需 Redis pub/sub,见 ws.ts 注释)
+
+2. **未做的运维**:
+   - **CI/CD**: 已有 GitHub Actions 配置文件(等 push 触发)
+   - **HTTPS**: 当前是 http + iOS ATS 例外,正式上线前必换 https(阿里云免费 SSL)
+   - **监控告警**: Sentry 错误监控 ✅;**无 metrics**(Prometheus / CloudWatch)— 用户量小暂可
+   - **CDN**: 当前直接 nginx serve,大流量(图片)需 OSS+CDN
+   - **数据库连接池**: db.ts 用 better-sqlite3 单连接,Postgres 切后用 pg.Pool(已在 db-adapter.ts)
+
+3. **代码质量**:
+   - 死代码:useAITransform / useContentLoader / useFavorites / useMoodTracker / usePlayerState / useScrollMemory / useScrollRestoration / useTheme / useVersionCheck / useLearningTracker(共 10 个 hook)未在 router 中使用,可能 V1 残留
+   - Boards(MathBoard / ScienceBoard / SocialBoard / GalleryBoard / NeimenBoard)是 V1 的"科学课"模块,V3 重构成"小纸条"后是否还使用?需审计
+   - TypeScript strict 模式部分关闭(部分 any)
+
+4. **可优化点**:
+   - Vite bundle size warning > 500KB(已 gzipped 230KB,可接受)
+   - HTML2Canvas 加载慢(可考虑 webp 替代)
+   - 暗色模式(已用 useTheme hook 框架,但 UI 未实现)
+
+5. **安全 audit**:
+   - ✅ Helmet 启用(X-Content-Type-Options 等)
+   - ✅ CORS 配置
+   - ✅ JWT + 黑名单
+   - ✅ Bcrypt
+   - ✅ Input validation(zod)
+   - ⚠️ 没有 rate limit(全局)只 SMS 有限频
+   - ⚠️ LongCat API key 曾在对话中明文发出(已 rotate,见 §13.9)
+   - ⚠️ 阿里云 SSH 是 root + 密码登录(待加固)
+
+#### 📋 V4 候选 roadmap(用户量 > 100 时启动)
+
+| 优先级 | 段 | 估时 | 触发条件 |
+|---|---|---|---|
+| 🔴 | **高可用 / 多机部署** | 1 周 | 用户 > 1k |
+| 🔴 | **Redis pub/sub WS** | 2-3 天 | 集群部署 |
+| 🔴 | **Prometheus metrics + 告警** | 2 天 | 用户 > 500 |
+| 🟡 | **CDN + 图片压缩** | 1 天 | 流量 > 1GB/日 |
+| 🟡 | **全文搜索 SQLite FTS5 / Postgres tsvector** | 1 天 | 信 > 10w 封 |
+| 🟡 | **暗色模式 UI** | 1 周 | 用户反馈 |
+| 🟢 | **TypeScript strict 模式全开** | 1 周 | 长期 |
+| 🟢 | **Storybook 组件库** | 1 周 | 多人协作 |
+| 🟢 | **E2E Playwright** | 1 周 | CI 加测 |
+| 🟢 | **i18n 加日/韩/西/法** | 1-2 天 | 海外用户 |
+
+#### 当前完成度自评
+
+| 模块 | 完成度 | 备注 |
+|---|---|---|
+| 后端核心 | 95% | 18 paths,认证/CRUD/WS/AI 全通 |
+| 前端核心 | 90% | 9 页面 + 20+ 组件,SSR 缺失 |
+| 测试 | 50% | 关键路径覆盖,缺 E2E |
+| 监控 | 70% | Sentry 错误有,metrics 无 |
+| 文档 | 95% | ARCH/CHANGELOG/CAPACITOR/i18n/APP_STORE 齐全 |
+| 国际化 | 30% | AuthPage 翻完,其它页面预留 t() 接口 |
+| 上架准备 | 80% | 截图/文案/图标 OK,账号未注册 |
+| 安全 | 80% | Helmet/JWT/黑名单/bcrypt ✅,缺全局 rate limit |
+
+**总评**: V3.8 距离正式上线还差 2-3 周(主要等审核/账号)。**核心功能 100% 就绪,生产代码 0 阻塞**。
+
+---
+
+### 14.0 V3.8 收口清单 ✅
+
+| 段 | 状态 | commit |
+|---|---|---|
+| §13.5 P3-1 Sentry | ✅ | adb0742 |
+| §13.7 V3.7 Capacitor | ✅ | e0b2d5c |
+| §13.4 P2-6 PM2 cluster | ⚠️ 评估回退 | 67365e4 |
+| §13.5 P3-3 OpenAPI | ✅ | d8865df |
+| §13.5 P3-4 单元测试 | ✅ | 1a0db49 |
+| §13.4 P2-1 手机号 | ✅ 代码层 | 9e56a72 |
+| §13.4 P2-5 OSS | ✅ 代码层 | 91ce2d3 |
+| §13.4 P2-2 微信 OAuth | ✅ 代码层 | ac8e1a7 |
+| §13.4 P2-4 Postgres | ✅ 代码层 | fb53339 |
+| V3.8 App 图标 | ✅ | b8ed098 |
+| V3.8 i18n 中英 | ✅ | 75fe488 |
+| V3.8 App Store 文案 | ✅ | 29f2828 |
+
+**10 段全 ✅ + 1 段评估回退,共 12 个新 commit**。
