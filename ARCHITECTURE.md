@@ -930,6 +930,7 @@ V3 新加 API(共 6 个 + 1 个 star):
 > - P1-3 WebSocket 实时推送 ✅ (commit 412390a)
 > - P1-4 信纸底色 midnight/kraft ✅ (commit 1b1899a)
 > - P1-5 TabBar 6th 决策 ✅ 决策为"不加" — 维持 ProfilePage 入口卡定位 (2026-06-07)
+> - §13.9 上线前安全清单 ✅ 用户决策"正式上线前 rotate 全部 key/SSH" (2026-06-07)
 
 #### P1-1 · 真实 DeepSeek AI 替换 mock(高 ROI,45 分钟)
 
@@ -1088,3 +1089,35 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **下月**: 自由,看用户反馈决定
 
 **总投入**: 第 1 周 50 分钟解决 80% 的"半夜被叫醒"风险,之后按周节奏渐进改进。
+
+---
+
+### 13.9 正式上线前安全清单(2026-06-07 用户决策留痕)
+
+> **触发**: 2026-06-07 用户原话 "我的这些阿里云的这些文件 ssh 的我可以重新换一套,正式上线之前"
+> **决策**: 全部 rotate + 重新发,正式 production 部署**之前**一次性换完
+
+**清单**(上线前 1 天做,预计 30-60 分钟):
+
+| # | 项 | 怎么做 | 为什么 |
+|---|----|--------|--------|
+| 🔴 1 | **LongCat API key** | 去 [longcat.chat/platform/api_keys](https://longcat.chat/platform/api_keys) 删旧 key,生成新 key,写 `/etc/feiman-letters.env` | 之前在对话历史里明文发过,可能被 mavis 持久化 |
+| 🔴 2 | **JWT_ACCESS_SECRET / JWT_REFRESH_SECRET** | `openssl rand -hex 64` 生成两个,写 .env(老 token 全失效,所有用户重新登录) | 原 dev default 'dev-access-secret-please-change-in-production' 已换 128 字节,但再次 rotate 更安全 |
+| 🟡 3 | **SSH 私钥** | `ssh-keygen` 在阿里云生成新密钥对(2048/4096),公钥写到服务器 `~/.ssh/authorized_keys`,私钥只放本地 `~/.ssh/aliyun_feiman.pem` | 当前 `/Users/liuzhen/Desktop/项目/lingxi_cloud.pem` 位置不专业(可能被 iCloud 同步) |
+| 🟡 4 | **本地 token 文件** | rotate 后旧的 `feiman_auth_access` / `feiman_auth_refresh` localStorage 都被 jwt_secret 改写 → 用户前端登出态会失效,正常 | 跟 #2 联动 |
+| 🟡 5 | **阿里云安全组** | 控制台 → ECS → 安全组 → 22 端口:确认只放行公司/家 IP(不是 `0.0.0.0/0`);HTTPS(80/443)看是否启用 CDN | 之前没确认过,可能放行了全网 |
+| 🟡 6 | **关掉密码登录** | 服务器 `/etc/ssh/sshd_config` 设 `PasswordAuthentication no` + `PermitRootLogin prohibit-password`,`systemctl restart sshd` | 防止密码被爆破 |
+| 🟢 7 | **数据库备份异地** | `rsync` 备份目录到 OSS 桶,或 scp 到另一台机器;crontab 加 1 条 | 现在备份只在阿里云本地,服务器被黑就全丢 |
+| 🟢 8 | **服务器基础加固** | 装 fail2ban / 装 auditd / 关掉不用的端口 | 防暴力破解 + 操作审计 |
+| 🟢 9 | **域名 + HTTPS** | 买个域名(如 feiman.com 一年几十块),阿里云免费证书,nginx 配 443 | 现在是 IP 访问,体验差 + 不安全(明文) |
+| 🟢 10 | **改 root 账户** | 阿里云控制台禁用 root 登录,新建 deploy 用户,只给它 npm + pm2 权限 | 现在 SSH 直接 root,被破解直接接管 |
+
+**执行顺序**:
+1. 先做 1+2+3+4(rotate 凭据,30 分钟)— 立刻切断历史泄露
+2. 再做 5+6(关掉爆破面,10 分钟)
+3. 上线前 1 天做 7+8+9+10(基础设施加固,半天)
+
+**回滚方案**:
+- #2 #3 操作前,保留旧 secret 备份 24 小时
+- 万一新 secret 配错,回滚到旧的 5 分钟恢复
+
