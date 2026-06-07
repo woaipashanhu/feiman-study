@@ -26,6 +26,7 @@ import express, { type Request, type Response, type NextFunction } from 'express
 import cors from 'cors'
 import { lettersRouter } from './routes-letters.js'
 import { authRouter } from './routes-auth.js'
+import { aiRouter } from './routes-ai.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
 
@@ -54,6 +55,7 @@ app.use((req, _res, next) => {
 // 路由
 app.use('/api/auth', authRouter)
 app.use('/api/letters', lettersRouter)
+app.use('/api/ai', aiRouter)
 
 // 收件箱(V3 需登录,放主路由用 /api/me/inbox)
 app.get('/api/me/inbox', requireAuth, (req: Request, res: Response) => {
@@ -114,4 +116,5 @@ app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] listening on http://${HOST}:${PORT}`)
   console.log(`[feiman-letters] CORS origin: ${CORS_ORIGIN}`)
   console.log(`[feiman-letters] version 0.2.0 (auth + letters v3)`)
+  console.log(`[feiman-letters] LONGCAT_API_KEY: ${process.env.LONGCAT_API_KEY ? '✓ set' : '✗ not set (will use mock)'}`)
 })
