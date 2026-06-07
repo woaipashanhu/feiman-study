@@ -1311,3 +1311,121 @@ V3 新加 API(共 6 个 + 1 个 star):
 - 用户 > 500 RPS
 - 移动端首屏 > 2s
 - SEO 流量 > 50%
+
+---
+
+### 14.2 V4 啊哈时刻模块(2026-06-07)
+
+**新增独立模块** — 与小纸条并列,定位于"私人灵感/念头/顿悟的快速记录"。
+
+#### 产品定位
+
+| 维度 | 小纸条 (V1-V3) | 啊哈时刻 (V4) |
+|---|---|---|
+| 受众 | 写给别人 | 只给自己 |
+| 公开 | 默认可分享 | 永远私密 |
+| 形式 | 信件(长文 + AI 润色) | 灵感(短句/语音) |
+| 频率 | 偶尔 | 频繁(每天 N 次) |
+| 存储 | 纯云 | **云 OR 本地**(用户选) |
+
+#### 后端 (V4)
+
+**`server/src/routes-aha.ts`**: 10 个 endpoint
+- `POST /api/aha/moments` 创建
+- `GET /api/aha/moments?` 列表 + 过滤(q/type/mood/tag/storage/limit/offset)
+- `GET /api/aha/moments/:id` 详情
+- `PATCH /api/aha/moments/:id` 更新(content/tags/mood)
+- `DELETE /api/aha/moments/:id` 删除(级联删 audio)
+- `POST /api/aha/upload-audio` 音频上传
+- `GET /api/aha/tags` 用户所有 tag
+- `GET /api/aha/stats` 统计(总数/按情绪/类型/存储/30天分布)
+- `POST /api/aha/moments/:id/promote` aha → letter 一键转公开
+
+**DB schema** (`db.ts`):
+```sql
+CREATE TABLE aha_moments (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  type TEXT NOT NULL,        -- 'text' | 'audio'
+  content TEXT,
+  audio_url TEXT,
+  audio_duration_ms INTEGER,
+  storage TEXT NOT NULL,     -- 'cloud' | 'local'
+  tags TEXT,                 -- 逗号分隔
+  mood TEXT,                 -- 8 种 emoji
+  created_at INTEGER, updated_at INTEGER,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+#### 前端 (V4)
+
+**`src/pages/AhaPage.tsx`**: 1 个完整页面
+- 写/录 Tab(MediaRecorder + 60s 上限 + 倒计时 + 音量可视化)
+- 实时波形(Canvas + AnalyserNode)
+- 静态波形(录音完回看)
+- 9 个 FilterChip(全部/文字/录音 + 8 心情)
+- 搜索框(content + tags 模糊)
+- 列表(emoji + 内容 + 时间 + 标签 + 删除 + 转公开)
+- 统计面板(全屏抽屉,4 卡片 + 心情饼图 + 30天柱状)
+- 每日 PWA 提醒(iOS 风格开关 + time input + 立即测试)
+- 导入/导出 JSON 备份
+- i18n 中英文切换
+
+**`src/shared/hooks/useAudioRecorder.ts`**: 录音 hook
+- MediaRecorder + AudioContext
+- 60s 上限 + 自动停
+- peaks 累积(用于波形)
+- IndexedDB 本地音频存/取
+
+**`src/shared/hooks/useReminder.ts`**: 提醒 hook
+- 浏览器 Notification API
+- setInterval 每分钟检查
+- 拒绝授权时自动关
+- 防同分钟重弹
+
+#### 集成入口
+
+- **LettersPage** 右上角闪电图标 → /aha
+- **LettersPage** Segmented Control 下方"今日灵感"卡片
+- **AhaMomentCard** 转公开按钮(仅 text)→ promote → 跳新小纸条详情
+
+#### iOS Capacitor 配套
+
+`ios/App/App/Info.plist` 加 3 个权限描述:
+- NSMicrophoneUsageDescription(录音)
+- NSPhotoLibraryUsageDescription(头像)
+- NSCameraUsageDescription(拍照)
+
+#### V4 commits(本 session 后段)
+
+| commit | 内容 |
+|---|---|
+| `7c08dc7` | aha_moments 表 + 6 API |
+| `5152056` | aha 前端 + DB bug 修复(关键) |
+| `15d662d` | A1 入口 + B1 iOS 权限 |
+| `a7c72e4` | V1.0 完整(搜索/波形/导入导出) |
+| `80e1e33` | B2 aha → letter 转公开 |
+| `ae44c6f` | B3 统计面板 |
+| `6d05744` | B4 每日提醒 |
+
+#### 关键 Bug 修复(2026-06-07)
+
+`/root/data/letters.db` 空文件 vs `/var/lib/feiman-letters/letters.db` 生产 db:
+- PM2 cwd 是 /root,`process.env.DB_PATH` 没设 → fallback `./data/letters.db` → 解析为 `/root/data/`
+- 修复:`/etc/feiman-letters.env` 加 `DB_PATH=...`,deploy 脚本加固验证
+- 详见 `~/.mavis/memory/MEMORY.md` "Node/PM2 服务环境变量 + DB 路径部署陷阱"
+
+#### V4 总览
+
+| 维度 | V3.8 | V4 |
+|---|---|---|
+| 模块 | 1(小纸条) | 2(小纸条 + 啊哈) |
+| API paths | 18 | 28(+10) |
+| DB 表 | 5 | 6 |
+| 用户场景 | 给别人写信 | + 给自己记灵感 |
+| 录音 | ❌ | ✅(MediaRecorder) |
+| 本地存储 | ❌ | ✅(IndexedDB) |
+| PWA entries | 93 | 96 |
+| 导入/导出 | ❌ | ✅ JSON 备份 |
+| 每日提醒 | ❌ | ✅ PWA Notification |

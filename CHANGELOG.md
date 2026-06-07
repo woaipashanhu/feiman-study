@@ -1,3 +1,183 @@
+### 2026-06-07 会话 #46 — V4 P0 aha 时刻后端 + 修复 pm2 DB path 灾难性 bug
+
+#### 本次会话目标
+
+用户新增"啊哈时刻"模块需求(录音 + 写字 + 存云/本地)。先做后端 + DB schema,顺手做 V3.x 整体收口。
+
+#### 完成的工作
+
+**1. DB schema (V4) ✅**
+- `aha_moments` 表(11 字段,11 索引)
+- 支持 text + audio + cloud + local + tags + mood(emoji) + duration
+
+**2. 后端 6 API 端点 ✅**
+- `POST /api/aha/moments` 创建
+- `GET /api/aha/moments?` 列表
+- `GET /api/aha/moments/:id` 详情
+- `PATCH /api/aha/moments/:id` 更新
+- `DELETE /api/aha/moments/:id` 删除(级联删 audio)
+- `POST /api/aha/upload-audio` 音频上传(走 StorageProvider)
+- 4 OpenAPI 注解 → /api/docs 自动更新
+
+**3. ⚠️ 重大 Bug 修复**
+- 发现 pm2 服务 cwd=/root + DB_PATH env 未设 → 所有写入都到 `/root/data/letters.db` 空文件
+- 生产 db `/var/lib/feiman-letters/letters.db` 真实数据:仅 10 个 V1 时代老 users + 5 个老 letters
+- 修复:env 加 `DB_PATH=...` + set -a 注入 + pm2 delete+start
+- deploy-server.sh 加固:显式 set -a + 验证 `pm2 jlist` 中 DB_PATH
+- 教训写入 agent memory(防再犯)
+
+**4. E2E 验证**
+- create text moment → list 1 row ✅
+- 修复后,新写入正确进生产 db ✅
+
+#### 关键判断
+
+- **aha 时刻核心是录音 + 写**,录音是 PWA 用户最大痛点(没空打字时)
+- **DB_PATH 静默错位是 3 个月最严重 bug**,E2E 全"通过"但数据全错
+- **健康检查 200 ≠ 数据正确**,必须看实际 DB
+
+---
+
+### 2026-06-07 会话 #47 — V4 aha 前端 + iOS 权限 + 首页集成
+
+#### 本次会话目标
+
+aha 时刻前端 + 集成到主页 + iOS 上架权限。
+
+#### 完成的工作
+
+**1. AhaPage 主页 ✅**
+- 写/录 Tab(MediaRecorder + 60s 上限 + 倒计时)
+- IndexedDB 本地音频存/取
+- 录音中:大麦克风按钮 + 倒计时 + 音量可视化
+- 录音完:重录 + 标签 + 心情 + 云/本地 + 保存
+- 列表:emoji + 内容 + 时间 + 标签 + 删除
+- 录音播放(云直放 / 本地从 IndexedDB)
+- 不登录友好降级(显示"去登录"按钮)
+
+**2. A1 首页集成 ✅**
+- LettersPage 右上角闪电按钮 → /aha
+- LettersPage Segmented 下方"今日灵感"卡片(自动 fetch 最近 1 个 aha)
+- AhaTodayCard 组件(自动 fetch + 优雅降级)
+
+**3. B1 iOS 权限 ✅**
+- Info.plist 加 NSMicrophoneUsageDescription(啊哈录音)
+- 加 NSPhotoLibraryUsageDescription(头像相册)
+- 加 NSCameraUsageDescription(头像拍照)
+- App Store 上架硬性要求,免审被拒
+
+**4. useAudioRecorder hook ✅**
+- MediaRecorder + AudioContext 集成
+- 音量分析(用于可视化)
+- 60s 自动停
+- Blob + duration 暴露
+
+#### 关键判断
+
+- **AhaTodayCard 走 useEffect 自动 fetch** 而非 prop drilling,组件自包含
+- **闪电按钮 + 卡片双入口** 让发现性 100%
+- **iOS 权限描述文案直白** "用于在啊哈时刻中录制你的灵感语音" — 苹果审核友好
+
+---
+
+### 2026-06-07 会话 #48 — V4 aha V1.0 完整(搜索/波形/导入导出) + 统计
+
+#### 本次会话目标
+
+把 aha 时刻做成 V1.0 完整版(用户量 < 100 但要做基础 UX)。
+
+#### 完成的工作
+
+**1. A2 搜索 + 标签筛选(1.5h)**
+- 后端 `/api/aha/moments` 加 `q` `type` `mood` `tag` 4 个 query 参数
+- 后端 `/api/aha/tags` 返回该用户所有 tag
+- 后端 `/api/aha/stats` 返回情绪/类型/存储/30天分布
+- 前端 AhaPage 加搜索框 + 9 个 FilterChip
+- 倒计时 + URLSearchParams + useEffect 依赖
+
+**2. A3 音频波形可视化(1h)**
+- useAudioRecorder 扩展 peaks 累积(每 200ms push)
+- Waveform 组件:Canvas 实时画 + AudioContext 解码静态柱状
+- 替换"简单音量条" → 体验升级
+
+**3. A4 导入/导出 JSON 备份(30min)**
+- exportJson:Blob 下载,带 version + exportedAt
+- importJson:FileReader + confirm 弹窗 + 逐条 POST
+- 列表头加导入/导出按钮
+
+**4. B3 统计面板(1h)**
+- AhaPage 头部加 ChartBar 按钮
+- StatsPanel 全屏抽屉(从底部弹出)
+- 4 个统计卡(总数/文字/录音/云端本地)
+- 心情分布(emoji + 水平条 + 数量 %)
+- 最近 30 天柱状图(div 高度比例)
+
+#### E2E 验证
+
+- q=V4 → 2 个结果 ✅
+- tag=react → 1 个 ✅
+- mood=💡 → 2 个 ✅
+- /api/aha/tags → 7 个 ✅
+- /api/aha/stats → 4 总数 + byMood + 30天分布 ✅
+- 截图确认搜索/筛选/卡片/统计/波形全部工作
+
+#### 关键判断
+
+- **/stats 在 V1.0 就准备好**,B3 周报可视化直接用,无需新后端
+- **录音 hooks 暴露 peaks** 让 Waveform 组件复用,无重复
+- **导入是后端已有 create endpoint** 的客户端 wrapper,不需要后端额外工作
+
+---
+
+### 2026-06-07 会话 #49 — V4 aha → 小纸条 一键转 + 每日提醒
+
+#### 本次会话目标
+
+aha 时刻产品闭环(转公开小纸条) + 每日提醒(增加粘性)。
+
+#### 完成的工作
+
+**1. B2 aha → 小纸条 一键转(1h)**
+- 后端 `POST /api/aha/moments/:id/promote`
+  - 仅 text 类型(录音暂不支持)
+  - 重复 promote 409(用 content 含 [aha:ID] 防重)
+  - 新 letter 末尾自动加 "— 来自啊哈时刻 [mood]"
+  - 作者用 user.nickname
+- 前端 AhaMomentCard 加 PaperPlaneTilt 红色按钮(仅 text)
+- 提示 → 确认 → promote → 跳新 letter 详情页
+- 删除按钮挪到下面(转公开 + 删除 二级菜单)
+
+**2. B4 每日 PWA 提醒(1h)**
+- useReminder hook
+  - enabled + time 状态,localStorage 持久
+  - requestPermission,拒绝时自动关
+  - setInterval 每分钟检查,到时间弹 Notification
+  - 防同分钟重弹(date+time 作 lastFiredKey)
+  - 点击通知跳 /aha
+  - testNow() 立即测试
+- StatsPanel 底部加 reminder section
+  - iOS 风格开关(灰/品牌色 + 圆点滑动)
+  - 开启后显示 time input
+  - 立即测试按钮
+
+**3. iOS 麦克风权限 + 头像权限(本 session 早些)**
+- Info.plist 配齐 3 个权限描述(免 App Store 拒审)
+
+#### E2E 验证
+
+- create aha → promote → 201 + letter 落库 ✅
+- 修复:aha_moments 表没 author_nickname 字段(改用 user.nickname)
+- 截图统计面板完整(4 卡片 + 心情饼图 + 30天柱状)
+- 截图 reminder section(开关 + time + 立即测试按钮)
+
+#### 关键判断
+
+- **aha → letter 转公开不重写内容** 而是在末尾加溯源标记,保留用户原文
+- **B4 限制**: PWA 关闭后不能弹,只活跃 tab。iOS Safari 16.4+ 装到主屏才完整支持
+- **本地 IndexedDB + 提醒** 是 PWA vs native app 的关键差异点
+
+---
+
 ### 2026-06-07 会话 #45 — P3-4 单元测试起步(20 tests + 66% 覆盖率)
 
 #### 本次会话目标

@@ -11,14 +11,22 @@
 
 ## 这是什么?
 
-小纸条是一个**慢社交**应用,让你认真写一封信给特定的人。
+**两个独立模块**:
 
+### 📜 小纸条 (V1-V3)— 写给别人的信
 - 匿名 / 署名都可以
 - AI 帮你润色、改写、翻译
 - 收件人收到后,信变成收藏进"时空纸条"
 - 跨端: Web (PWA) / iOS / Android
 
-> V1/V2/V3 演进了 3 年,V3 加入了用户系统、AI、实时推送、Capacitor 打包。
+### 💡 啊哈时刻 (V4) — 写给自己的灵感
+- 录音(MediaRecorder 60s 内)
+- 写字(短句/顿悟)
+- **云 OR 本地**(每条独立选,本地走 IndexedDB)
+- 一键转公开小纸条
+- 每日 PWA 提醒 + 心情统计
+
+> V1/V2/V3 演进了 3 年,V3 加入了用户系统、AI、实时推送、Capacitor 打包。V4 加 aha 时刻(私人灵感模块) + 产品闭环(转公开)。
 
 ---
 
@@ -219,6 +227,9 @@ npm test
 - openapi-registry:89%
 - routes-letters:69%
 - routes-auth:49%(没覆盖 avatar upload)
+- routes-aha:0%(V4 新增,未覆盖)
+
+---
 
 ---
 
@@ -255,13 +266,28 @@ npm test
 
 ## 文档索引
 
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — 完整架构(1166 行,Roadmap + 12 模块 + §14 review)
-- **[CHANGELOG.md](./CHANGELOG.md)** — 版本日志(3391 行,2026-04 → 2026-06,42 个会话)
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** — 完整架构(1431 行,Roadmap + 12 模块 + §13 review + §14 V3/V4 review)
+- **[CHANGELOG.md](./CHANGELOG.md)** — 版本日志(2026-04 → 2026-06,46 个会话)
 - **[CAPACITOR.md](./CAPACITOR.md)** — 打包上架指南
 - **[APP_STORE_METADATA.md](./APP_STORE_METADATA.md)** — 应用商店文案 + 截图脚本
 - **[server/POSTGRES_MIGRATION.md](./server/POSTGRES_MIGRATION.md)** — SQLite → Postgres 切换指南
 - **[.env.example](./.env.example)** — 部署环境变量参考
 - **[.github/SECURITY.md](./.github/SECURITY.md)** — 漏洞报告流程
+
+---
+
+## ⚠️ 重要警告(2026-06-07 修复)
+
+**历史 bug**: pm2 服务用 `process.env.DB_PATH || './data/letters.db'` fallback,
+在 PM2 cwd 是 `/root` 时,fallback 解析到 `/root/data/letters.db` 空文件 —
+**所有 E2E 看似成功但数据全进错位置**。
+
+**已修**:
+- `/etc/feiman-letters.env` 加 `DB_PATH=/var/lib/feiman-letters/letters.db`
+- `deploy-server.sh` 加固:显式 set -a + 验证 `pm2 jlist` 中 DB_PATH
+- 见 `~/.mavis/memory/MEMORY.md` "Node/PM2 服务环境变量 + DB 路径部署陷阱"
+
+**E2E 验证时永远要查生产 DB 实际数据,不能只看 API 返 200。**
 
 ---
 
