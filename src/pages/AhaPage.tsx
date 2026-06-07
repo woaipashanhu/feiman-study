@@ -15,7 +15,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Microphone, Stop, PaperPlaneTilt, FloppyDisk, Trash, CloudArrowUp, DeviceMobile, Play, Pause, PencilSimple } from 'phosphor-react'
+import { ArrowLeft, Microphone, Stop, PaperPlaneTilt, FloppyDisk, Trash, CloudArrowUp, DeviceMobile, Play, Pause, PencilSimple, MagnifyingGlass, X, DownloadSimple, UploadSimple } from 'phosphor-react'
 import { useAudioRecorder, saveAudioToLocalDB, getAudioFromLocalDB } from '@/shared/hooks/useAudioRecorder'
 import { useAuth } from '@/shared/hooks/useAuth'
 import { LETTER_PALETTE } from '@/shared/components/LetterPaper/palette'
@@ -49,6 +49,10 @@ export default function AhaPage() {
   const [mood, setMood] = useState('💡')
   const [moments, setMoments] = useState<AhaMoment[]>([])
   const [total, setTotal] = useState(0)
+  // V4.1: 搜索 + 筛选
+  const [searchQ, setSearchQ] = useState('')
+  const [filterType, setFilterType] = useState<'all' | 'text' | 'audio'>('all')
+  const [filterMood, setFilterMood] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [playingId, setPlayingId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -59,7 +63,11 @@ export default function AhaPage() {
   const loadMoments = async () => {
     if (!isAuthenticated) return
     try {
-      const res = await fetch('/api/aha/moments?limit=100', {
+      const params = new URLSearchParams({ limit: '200' })
+      if (searchQ.trim()) params.set('q', searchQ.trim())
+      if (filterType !== 'all') params.set('type', filterType)
+      if (filterMood) params.set('mood', filterMood)
+      const res = await fetch(`/api/aha/moments?${params}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('feiman_auth_access') || ''}` },
       })
       const data = await res.json()
@@ -74,7 +82,7 @@ export default function AhaPage() {
 
   useEffect(() => {
     loadMoments()
-  }, [isAuthenticated])
+  }, [isAuthenticated, searchQ, filterType, filterMood])
 
   // 保存文字
   const saveText = async () => {
@@ -221,6 +229,66 @@ export default function AhaPage() {
     const hh = String(d.getHours()).padStart(2, '0')
     const mm = String(d.getMinutes()).padStart(2, '0')
     return `${m}/${day} ${hh}:${mm}`
+  }
+
+  // V4.4: 导出 JSON 备份
+  const exportJson = () => {
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      total,
+      moments,
+    }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `aha-moments-${Date.now()}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  // V4.4: 导入 JSON 备份
+  const importJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = async (ev) => {
+      try {
+        const data = JSON.parse(ev.target?.result as string)
+        if (!data.moments || !Array.isArray(data.moments)) {
+          alert('JSON 格式错误:缺少 moments 数组')
+          return
+        }
+        if (!confirm(`导入 ${data.moments.length} 条记录?(重复 ID 会被跳过)`)) return
+        let imported = 0
+        for (const m of data.moments) {
+          const res = await fetch('/api/aha/moments', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('feiman_auth_access') || ''}`,
+            },
+            body: JSON.stringify({
+              type: m.type,
+              content: m.content,
+              audioUrl: m.audioUrl,
+              audioKey: m.audioKey,
+              audioDurationMs: m.audioDurationMs,
+              storage: m.storage || 'cloud',
+              tags: m.tags,
+              mood: m.mood,
+            }),
+          })
+          if (res.ok) imported++
+        }
+        alert(`导入完成:${imported}/${data.moments.length} 条`)
+        loadMoments()
+      } catch (err: any) {
+        alert('JSON 解析失败:' + err.message)
+      }
+    }
+    reader.readAsText(file)
   }
 
   if (!isAuthenticated) {
@@ -372,13 +440,9 @@ export default function AhaPage() {
                     <p className="text-sm text-text font-mono mt-3">
                       {Math.floor(recorder.state.durationMs / 1000)}s / {recorder.maxDurationMs / 1000}s
                     </p>
-                    {/* 音量条 */}
-                    <div className="w-32 h-1.5 bg-black/10 rounded-full overflow-hidden mt-2">
-                      <motion.div
-                        className="h-full bg-[#C73E3A]"
-                        animate={{ width: `${recorder.state.level * 100}%` }}
-                        transition={{ duration: 0.05 }}
-                      />
+                    {/* V4.3 实时波形 */}
+                    <div className="w-48 mt-2">
+                      <Waveform active peaks={recorder.peaks} />
                     </div>
                   </>
                 )}
@@ -396,6 +460,10 @@ export default function AhaPage() {
                       <span className="text-xs text-text-tertiary">
                         {Math.floor(recorder.result.durationMs / 1000)}s · {Math.round(recorder.result.blob.size / 1024)}KB
                       </span>
+                    </div>
+                    {/* V4.3 静态波形(录音完回看) */}
+                    <div className="w-full mb-3">
+                      <Waveform blob={recorder.result.blob} />
                     </div>
                     <div className="flex items-center gap-2">
                       <input
@@ -431,11 +499,71 @@ export default function AhaPage() {
         </AnimatePresence>
       </div>
 
+      {/* 搜索 + 筛选 */}
+      <div className="px-4 pb-3 space-y-2">
+        {/* 搜索框 */}
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/80 border border-black/5">
+          <MagnifyingGlass size={14} className="text-text-tertiary shrink-0" />
+          <input
+            value={searchQ}
+            onChange={(e) => setSearchQ(e.target.value)}
+            placeholder="搜索内容或标签…"
+            className="flex-1 bg-transparent outline-none text-[13px] text-text placeholder:text-text-tertiary"
+          />
+          {searchQ && (
+            <button onClick={() => setSearchQ('')} className="text-text-tertiary">
+              <X size={14} />
+            </button>
+          )}
+        </div>
+        {/* 筛选 chips: 全部/文字/录音 */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <FilterChip active={filterType === 'all'} onClick={() => setFilterType('all')} label="全部" />
+          <FilterChip active={filterType === 'text'} onClick={() => setFilterType('text')} label="文字" />
+          <FilterChip active={filterType === 'audio'} onClick={() => setFilterType('audio')} label="录音" />
+          <div className="w-px h-4 bg-black/10 mx-1" />
+          {/* 心情 emoji chips */}
+          {['💡', '❤️', '🌱', '⚡', '🔭', '🎯', '🌀', '✨'].map((emoji) => (
+            <FilterChip
+              key={emoji}
+              active={filterMood === emoji}
+              onClick={() => setFilterMood(filterMood === emoji ? null : emoji)}
+              label={emoji}
+            />
+          ))}
+          {(filterType !== 'all' || filterMood || searchQ) && (
+            <button
+              onClick={() => { setFilterType('all'); setFilterMood(null); setSearchQ('') }}
+              className="ml-1 text-[11px] text-text-tertiary underline shrink-0"
+            >
+              清空
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* 列表 */}
       <div className="flex-1 overflow-y-auto px-4 pb-6">
-        <h2 className="text-xs font-semibold text-text-tertiary mb-2 mt-2">
-          {total > 0 ? `${total} 条记录` : '还没有记录'}
-        </h2>
+        <div className="flex items-center justify-between mb-2 mt-2">
+          <h2 className="text-xs font-semibold text-text-tertiary">
+            {total > 0 ? `${total} 条记录` : '还没有记录'}
+          </h2>
+          {total > 0 && (
+            <div className="flex items-center gap-3">
+              <label className="text-[11px] text-text-tertiary inline-flex items-center gap-1 cursor-pointer">
+                <UploadSimple size={12} />导入
+                <input type="file" accept="application/json" onChange={importJson} className="hidden" />
+              </label>
+              <button
+                onClick={exportJson}
+                className="text-[11px] text-text-tertiary inline-flex items-center gap-1"
+                title="导出 JSON 备份"
+              >
+                <DownloadSimple size={12} />导出
+              </button>
+            </div>
+          )}
+        </div>
         {moments.map((m) => (
           <MomentCard
             key={m.id}
@@ -532,5 +660,108 @@ function MomentCard({ moment: m, isPlaying, onPlay, onDelete, formatTime }: {
         </motion.button>
       </div>
     </motion.div>
+  )
+}
+
+
+// =============== V4.1 FilterChip ===============
+function FilterChip({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  const cls = `px-2.5 py-1 rounded-full text-[12px] font-medium shrink-0 transition-colors ${
+    active ? 'bg-brand text-white' : 'bg-white/80 border border-black/5 text-text-secondary'
+  }`
+  return (
+    <button
+      onClick={onClick}
+      className={cls}
+    >
+      {label}
+    </button>
+  )
+}
+
+// =============== V4.1 波形可视化 ===============
+function Waveform({ active, blob, peaks: livePeaks, height = 32 }: { active?: boolean; blob?: Blob | null; peaks?: number[]; height?: number }) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [blobPeaks, setBlobPeaks] = useState<number[]>([])
+
+  // 录音停止后解码 blob 画静态波形
+  useEffect(() => {
+    if (!blob) {
+      setBlobPeaks([])
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const arrayBuf = await blob.arrayBuffer()
+        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+        const audioBuf = await audioCtx.decodeAudioData(arrayBuf.slice(0))
+        const data = audioBuf.getChannelData(0)
+        const samples = 80
+        const blockSize = Math.floor(data.length / samples)
+        const out: number[] = []
+        for (let i = 0; i < samples; i++) {
+          let max = 0
+          for (let j = 0; j < blockSize; j++) {
+            const v = Math.abs(data[i * blockSize + j] || 0)
+            if (v > max) max = v
+          }
+          out.push(max)
+        }
+        if (!cancelled) setBlobPeaks(out)
+        audioCtx.close()
+      } catch {}
+    })()
+    return () => { cancelled = true }
+  }, [blob])
+
+  // 录音中实时画波形(livePeaks 来自 recorder)
+  useEffect(() => {
+    if (!active) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    const w = canvas.width
+    const h = canvas.height
+    ctx.clearRect(0, 0, w, h)
+    ctx.fillStyle = '#C73E3A'
+    const p = livePeaks || []
+    const barWidth = w / Math.max(p.length, 1)
+    for (let i = 0; i < p.length; i++) {
+      const barH = p[i] * h * 0.8
+      const x = i * barWidth
+      ctx.fillRect(x, (h - barH) / 2, barWidth - 1, barH)
+    }
+  }, [active, livePeaks])
+
+  if (active) {
+    return (
+      <div className="w-full bg-black/5 rounded-lg overflow-hidden" style={{ height }}>
+        <canvas ref={canvasRef} width={300} height={height * 2} className="w-full h-full" />
+      </div>
+    )
+  }
+  if (blobPeaks.length > 0) {
+    return <StaticWaveform peaks={blobPeaks} height={height} />
+  }
+  return (
+    <div className="w-full bg-black/5 rounded-lg overflow-hidden flex items-center justify-center text-[10px] text-text-tertiary" style={{ height }}>
+      🎤
+    </div>
+  )
+}
+
+function StaticWaveform({ peaks, height }: { peaks: number[]; height: number }) {
+  return (
+    <div className="w-full h-full flex items-center justify-around px-1">
+      {peaks.map((p, i) => (
+        <div
+          key={i}
+          className="bg-[#C73E3A]/60 rounded-sm"
+          style={{ width: 2, height: Math.max(2, p * height * 0.85) }}
+        />
+      ))}
+    </div>
   )
 }

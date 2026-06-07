@@ -98,6 +98,10 @@ ahaRouter.get('/moments', requireAuth, (req: Request, res: Response) => {
   const limit = Math.min(Math.max(parseInt(String(req.query.limit ?? '50')), 1), 200)
   const offset = Math.max(parseInt(String(req.query.offset ?? '0')), 0)
   const storage = req.query.storage ? String(req.query.storage) : null
+  const type = req.query.type ? String(req.query.type) : null
+  const mood = req.query.mood ? String(req.query.mood) : null
+  const q = req.query.q ? String(req.query.q).trim() : null
+  const tag = req.query.tag ? String(req.query.tag).trim() : null
 
   let sql = `SELECT id, type, content, audio_url, audio_duration_ms, storage, tags, mood, created_at, updated_at
              FROM aha_moments WHERE user_id = ?`
@@ -106,11 +110,42 @@ ahaRouter.get('/moments', requireAuth, (req: Request, res: Response) => {
     sql += ` AND storage = ?`
     params.push(storage)
   }
+  if (type === 'text' || type === 'audio') {
+    sql += ` AND type = ?`
+    params.push(type)
+  }
+  if (mood) {
+    sql += ` AND mood = ?`
+    params.push(mood)
+  }
+  if (q) {
+    // 搜索 content 和 tags
+    sql += ` AND (content LIKE ? OR tags LIKE ?)`
+    const like = `%${q}%`
+    params.push(like, like)
+  }
+  if (tag) {
+    // tag 精确匹配(逗号分隔的 tags 字段)
+    sql += ` AND (tags = ? OR tags LIKE ? OR tags LIKE ? OR tags LIKE ?)`
+    params.push(tag, `${tag},%`, `%,${tag}`, `%,${tag},%`)
+  }
   sql += ` ORDER BY created_at DESC LIMIT ? OFFSET ?`
   params.push(limit, offset)
 
   const rows = db.prepare(sql).all(...params) as any[]
-  const total = (db.prepare(`SELECT COUNT(*) as c FROM aha_moments WHERE user_id = ?`).get(userId) as { c: number }).c
+
+  // 总数(用相同过滤条件)
+  let countSql = `SELECT COUNT(*) as c FROM aha_moments WHERE user_id = ?`
+  const countParams: any[] = [userId]
+  if (storage === 'cloud' || storage === 'local') { countSql += ` AND storage = ?`; countParams.push(storage) }
+  if (type === 'text' || type === 'audio') { countSql += ` AND type = ?`; countParams.push(type) }
+  if (mood) { countSql += ` AND mood = ?`; countParams.push(mood) }
+  if (q) { countSql += ` AND (content LIKE ? OR tags LIKE ?)`; countParams.push(`%${q}%`, `%${q}%`) }
+  if (tag) {
+    countSql += ` AND (tags = ? OR tags LIKE ? OR tags LIKE ? OR tags LIKE ?)`
+    countParams.push(tag, `${tag},%`, `%,${tag}`, `%,${tag},%`)
+  }
+  const total = (db.prepare(countSql).get(...countParams) as { c: number }).c
 
   return res.json({
     ok: true,
@@ -129,6 +164,77 @@ ahaRouter.get('/moments', requireAuth, (req: Request, res: Response) => {
     total,
     limit,
     offset,
+  })
+})
+
+/**
+ * GET /api/aha/tags — 列出该用户所有出现过的 tag(用于前端下拉/搜索建议)
+ */
+ahaRouter.get('/tags', requireAuth, (req: Request, res: Response) => {
+  const userId = (req as any).userId
+  const rows = db
+    .prepare(`SELECT tags FROM aha_moments WHERE user_id = ? AND tags IS NOT NULL AND tags != ''`)
+    .all(userId) as { tags: string }[]
+
+  const tagSet = new Set<string>()
+  for (const r of rows) {
+    for (const t of r.tags.split(',')) {
+      const tag = t.trim()
+      if (tag) tagSet.add(tag)
+    }
+  }
+  return res.json({ ok: true, tags: Array.from(tagSet).sort() })
+})
+
+/**
+ * GET /api/aha/stats — 统计(情绪 + 数量)
+ *   - total: 总数
+ *   - byMood: { '💡': 5, '❤️': 3, ... }
+ *   - byType: { text: 8, audio: 2 }
+ *   - byStorage: { cloud: 5, local: 5 }
+ *   - byDay: 最近 30 天每天的数量 [{ date: '2026-06-01', count: 3 }, ...]
+ */
+ahaRouter.get('/stats', requireAuth, (req: Request, res: Response) => {
+  const userId = (req as any).userId
+  const all = db
+    .prepare(`SELECT type, mood, storage, created_at FROM aha_moments WHERE user_id = ?`)
+    .all(userId) as { type: string; mood: string | null; storage: string; created_at: number }[]
+
+  const byMood: Record<string, number> = {}
+  const byType: Record<string, number> = { text: 0, audio: 0 }
+  const byStorage: Record<string, number> = { cloud: 0, local: 0 }
+  const byDayMap: Record<string, number> = {}
+  const dayMs = 24 * 60 * 60 * 1000
+  const now = Date.now()
+  const thirtyDaysAgo = now - 30 * dayMs
+
+  for (const r of all) {
+    if (r.mood) byMood[r.mood] = (byMood[r.mood] || 0) + 1
+    byType[r.type] = (byType[r.type] || 0) + 1
+    byStorage[r.storage] = (byStorage[r.storage] || 0) + 1
+    if (r.created_at >= thirtyDaysAgo) {
+      const d = new Date(r.created_at)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      byDayMap[key] = (byDayMap[key] || 0) + 1
+    }
+  }
+
+  // 30 天数组(没数据的天补 0)
+  const byDay: { date: string; count: number }[] = []
+  for (let i = 29; i >= 0; i--) {
+    const t = now - i * dayMs
+    const d = new Date(t)
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    byDay.push({ date: key, count: byDayMap[key] || 0 })
+  }
+
+  return res.json({
+    ok: true,
+    total: all.length,
+    byMood,
+    byType,
+    byStorage,
+    byDay,
   })
 })
 

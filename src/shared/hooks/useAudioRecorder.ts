@@ -46,6 +46,7 @@ export function useAudioRecorder() {
     level: 0,
   })
   const [result, setResult] = useState<AhaAudioResult | null>(null)
+  const [peaks, setPeaks] = useState<number[]>([])
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -56,6 +57,7 @@ export function useAudioRecorder() {
   const analyserRef = useRef<AnalyserNode | null>(null)
   const rafRef = useRef<number | null>(null)
   const stoppedResolveRef = useRef<((v: AhaAudioResult) => void) | null>(null)
+  const lastPeakTimeRef = useRef<number>(0)
 
   // cleanup
   useEffect(() => {
@@ -72,12 +74,21 @@ export function useAudioRecorder() {
     const data = new Uint8Array(analyserRef.current.frequencyBinCount)
     analyserRef.current.getByteTimeDomainData(data)
     let sum = 0
+    let max = 0
     for (const v of data) {
       const n = (v - 128) / 128
+      const abs = Math.abs(n)
       sum += n * n
+      if (abs > max) max = abs
     }
     const rms = Math.sqrt(sum / data.length)
     setState((s) => ({ ...s, level: Math.min(1, rms * 4) }))
+    // V4.3 波形累积:每 200ms push 一个 peak
+    const now = Date.now()
+    if (now - lastPeakTimeRef.current >= 200) {
+      lastPeakTimeRef.current = now
+      setPeaks((p) => [...p, Math.min(1, max * 1.5)].slice(-80))  // 保留最近 80 个
+    }
     rafRef.current = requestAnimationFrame(updateLevel)
   }, [])
 
@@ -130,6 +141,8 @@ export function useAudioRecorder() {
       }
       recorder.start()
       startTimeRef.current = Date.now()
+      lastPeakTimeRef.current = Date.now()
+      setPeaks([])  // 重置
       setState({ status: 'recording', durationMs: 0, level: 0 })
 
       // 计时器
@@ -158,12 +171,14 @@ export function useAudioRecorder() {
 
   const reset = useCallback(() => {
     setResult(null)
+    setPeaks([])
     setState({ status: 'idle', durationMs: 0, level: 0 })
   }, [])
 
   return {
     state,
     result,
+    peaks,
     start,
     stop,
     reset,
