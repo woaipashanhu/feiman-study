@@ -1019,12 +1019,20 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **估时**: 2-3 天(主要是配置)
 - **不做理由**: 你现在一个用户,带宽根本不是瓶颈
 
-#### P2-6 · PM2 cluster 多核
+#### P2-6 · PM2 cluster 多核 ⚠️ 2026-06-07 评估后回退 fork
 
 - **场景**: 单进程 Node.js 用不满多核
 - **做多少**: `pm2 start dist/index.js -i max`
 - **估时**: 5 分钟
 - **不做理由**: 单进程 QPS 几十一百够用,等你 QPS 上 1000 再上
+- **2026-06-07 评估**: cluster 模式实装后**回退**到 fork 模式。**核心问题**:
+  1. WS `userSockets` 是 module-level Map,**每个 worker 独立**一份
+  2. PM2 cluster **不内置 worker 间 broadcast**,需 Redis pub/sub 或自写 master 转发
+  3. 收信 WS 推送是核心功能(用户 5 秒内收到"有人收藏/写信给你"),50% worker 错配时**推送会丢**
+  4. V3 用户量 < 100,单 worker 1k+ RPS 足够
+- **代码保留**: `server/src/ws.ts` 加了 `broadcastToAllWorkers()` + `setupClusterBroadcastListener()` 框架,fork 模式默认走 `pushToUser` 分支(无副作用)。将来真上 cluster 只需在 `index.ts` 调 `setupClusterBroadcastListener()` + 加 Redis pub/sub
+- **重新启用条件**: QPS > 1k 或 DB 查询慢到阻塞 + 配 Redis pub/sub
+- **结论**: **当前 fork 模式最佳**(简单 + WS 可靠 + 内存 < 115MB)
 
 ---
 

@@ -1,3 +1,61 @@
+### 2026-06-07 会话 #43 — P2-6 PM2 cluster 评估后回退 fork(WS 推送安全优先)
+
+#### 本次会话目标
+
+按 §13.4 P2-6,把 PM2 改成 cluster 模式利用多核。
+
+#### 评估结论: ⚠️ 回退 fork 模式
+
+**核心问题**: cluster 模式下,WS `userSockets` 是 module-level Map,每个 worker 独立一份。PM2 cluster **不内置 worker 间 broadcast**,跨 worker 推送需要 Redis pub/sub 或自写 master 转发。**收信 WS 推送是核心功能,50% 推送会丢**。
+
+#### 改动
+
+**1. 实装 cluster 试跑(临时) ⚠️**
+- `pm2 delete` + `pm2 start -i max`: 2 worker 起来
+- 日志确认 2 个 worker 都 `[Sentry] backend initialized`
+- health 4 次连发全 200,uptime 同步,说明 2 worker 都接流量
+
+**2. 评估 WS 推送风险 ⚠️**
+- API 请求被 nginx round-robin 分到任一 worker
+- 用户 WS 连接后被 sticky 到某 worker
+- Worker 0 收到"给 user X 推信"请求,但 user X 的 socket 在 worker 1 → 推送丢失
+- 收信通知是核心 UX,不能丢
+
+**3. 回退 fork 模式 ✅**
+- `pm2 delete letters-server` + `pm2 start`(无 -i)
+- 1 worker, 24MB 内存(后续涨到 113MB 正常)
+- `[Sentry] backend initialized` 1 次,health 200
+
+**4. 代码预留 cluster 框架(无副作用) ✅**
+- `server/src/ws.ts` 加 `broadcastToAllWorkers(userId, msg)`: fork 模式走 `pushToUser`,cluster 模式走 `process.send`
+- 加 `setupClusterBroadcastListener()`: worker 启动时监听 master 广播,fork 模式不调
+- 将来真上 cluster: `index.ts` 调 listener + 加 Redis pub/sub
+
+**5. 文档更新 ✅**
+- `ARCHITECTURE.md §13.4 P2-6`: 状态从 `❌ 不做理由` → `⚠️ 2026-06-07 评估后回退 fork`
+- 记录"重新启用条件"(QPS > 1k 或 DB 阻塞)
+- 保留 cluster 框架说明
+
+#### 关键判断
+
+- **WS 推送可靠 > 多核利用**: 收信通知 5 秒内送达,丢 50% 是 UX 灾难
+- **PM2 cluster 不内置 broadcast**: Redis pub/sub 才能 cluster,引入 Redis 是 V4 工作
+- **当前 QPS 几十一百**: 单 worker 1k+ RPS 足够,没必要现在为 cluster 加复杂度
+- **V4 触发条件**: QPS > 1k / 慢查询阻塞 / WS 推送量大
+
+#### 文件变更
+
+- `server/src/ws.ts`: +29 行(`broadcastToAllWorkers` + `setupClusterBroadcastListener`)
+- `ARCHITECTURE.md`: §13.4 P2-6 状态更新
+- 服务器 PM2: fork 模式(1 worker)
+- CHANGELOG: 本条
+
+#### 后续(用户)
+
+无操作。当前 fork 模式最佳。
+
+---
+
 ### 2026-06-07 会话 #42 — P3-1 错误监控 Sentry(占位就绪,等真实 DSN 激活)
 
 #### 本次会话目标

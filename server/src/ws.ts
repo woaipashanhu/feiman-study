@@ -99,7 +99,49 @@ export function notifyLetterAuthor(letterId: string, event: WSMessage): number {
     .prepare('SELECT author_user_id FROM letters WHERE id = ?')
     .get(letterId) as { author_user_id: string | null } | undefined
   if (!row || !row.author_user_id) return 0
-  return pushToUser(row.author_user_id, event)
+  return broadcastToAllWorkers(row.author_user_id, event)
+}
+
+/**
+ * V3.6 PM2 cluster 模式: 每个 worker 独立的 userSockets,
+ * 推送需要广播到所有 worker(同 user 的 WS 可能连在不同 worker)。
+ *
+ * 方案: 用 PM2 内置的 process.send 广播机制
+ *   - master 收到 type='ws:broadcast' 消息,自动 fan-out 到所有 worker
+ *   - 每个 worker 监听 process.on('message'),收到后调 pushToUser
+ */
+function broadcastToAllWorkers(userId: string, msg: WSMessage): number {
+  if (process.send) {
+    // PM2 cluster 模式: 发到 master,master 广播到所有 worker
+    try {
+      process.send({
+        type: 'process:msg',
+        data: { type: 'ws:broadcast', userId, msg },
+      })
+      return 1  // 表示已发送(实际推送数由各 worker 返回,这里只统计 1 次"尝试")
+    } catch (err) {
+      console.warn('[ws] broadcast failed:', err)
+      // 失败时回退到本进程推送
+      return pushToUser(userId, msg)
+    }
+  }
+  // fork 模式: 直接本进程推送
+  return pushToUser(userId, msg)
+}
+
+// =============== Cluster worker 消息监听 ===============
+
+/** 每个 worker 启动时调一次,监听 master 广播的 ws:broadcast 消息 */
+export function setupClusterBroadcastListener() {
+  if (!process.send) return  // 非 cluster 模式,跳过
+  process.on('message', (raw: any) => {
+    // PM2 包装: 消息体在 raw.data(我们发的 type='process:msg')
+    const data = raw?.data ?? raw
+    if (data?.type === 'ws:broadcast') {
+      pushToUser(data.userId, data.msg)
+    }
+  })
+  console.log('[ws] cluster broadcast listener enabled')
 }
 
 // =============== 启动 ===============
