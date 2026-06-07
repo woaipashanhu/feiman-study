@@ -37,6 +37,7 @@ import { requireAuth, getCurrentUser } from './auth.js'
 import { ensureSmsTables } from './sms-provider.js'
 import { ensureWechatTables } from './wechat-provider.js'
 import { getStorageProvider } from './storage-provider.js'
+import { getDbAdapter } from './db-adapter.js'
 import { generateOpenAPIDocument, registry, InboxResponse, ErrorResponse } from './openapi-registry.js'
 import { z } from 'zod'
 
@@ -261,6 +262,8 @@ const server = app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] SMS provider: ${process.env.SMS_PROVIDER || 'mock'}`)
   // V3.8 主动初始化 storage provider 以打日志
   getStorageProvider()
+  // V3.8 主动初始化 db adapter 以打日志
+  getDbAdapter()
 })
 
 // V3.8 SMS 表启动时建
