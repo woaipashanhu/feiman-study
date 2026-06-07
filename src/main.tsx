@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
 import './index.css'
+import './i18n/i18n'  // V3.8 i18n 初始化
 import App from './App'
 import { initGlobalErrorListeners } from '@/shared/utils/error-reporter'
 

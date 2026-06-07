@@ -21,14 +21,17 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, LayoutGroup } from 'framer-motion'
 import { ArrowLeft, EnvelopeSimple, Lock, User, CheckCircle, Phone, ShieldCheck } from 'phosphor-react'
+import { useTranslation } from 'react-i18next'
 import { useAuth } from '@/shared/hooks/useAuth'
 import { LETTER_PALETTE } from '@/shared/components/LetterPaper/palette'
+import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher'
 
 type Channel = 'email' | 'phone'
 type EmailMode = 'login' | 'register'
 
 export default function AuthPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { login, register, loading, error } = useAuth()
 
   // 渠道: 邮箱 / 手机号
@@ -179,8 +182,10 @@ export default function AuthPage() {
           className="font-semibold text-text text-base"
           style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}
         >
-          登录 / 注册
+          {t('auth.title')}
         </h1>
+        <div className="flex-1" />
+        <LanguageSwitcher />
       </header>
 
       {/* 渠道 Segmented: 邮箱 / 手机号 */}
@@ -207,7 +212,7 @@ export default function AuthPage() {
                       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     />
                   )}
-                  {c === 'email' ? '邮箱' : '手机号'}
+                  {c === 'email' ? t('auth.emailTab') : t('auth.phoneTab')}
                 </button>
               )
             })}
@@ -242,7 +247,7 @@ export default function AuthPage() {
                           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                         />
                       )}
-                      {m === 'login' ? '登录' : '注册'}
+                      {m === 'login' ? t('auth.login') : t('auth.register')}
                     </button>
                   )
                 })}
@@ -255,16 +260,16 @@ export default function AuthPage() {
               className="text-[28px] font-bold text-text leading-tight mb-1"
               style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}
             >
-              {emailMode === 'login' ? '欢迎回来' : '加入小纸条'}
+              {emailMode === 'login' ? t('auth.welcomeBack') : t('auth.joinUs')}
             </h2>
             <p className="text-sm text-text-secondary mb-6">
-              {emailMode === 'login' ? '登录后,你写的信会留在这里' : '一个邮箱 + 一个昵称,30 秒搞定'}
+              {emailMode === 'login' ? t('auth.emailLoginHint') : t('auth.registerHint')}
             </p>
 
             {emailMode === 'register' && (
               <Field
                 icon={<User size={16} weight="regular" />}
-                placeholder="昵称"
+                placeholder={t('auth.nickname')}
                 value={nickname}
                 onChange={setNickname}
                 maxLength={20}
@@ -272,7 +277,7 @@ export default function AuthPage() {
             )}
             <Field
               icon={<EnvelopeSimple size={16} weight="regular" />}
-              placeholder="邮箱"
+              placeholder={t('auth.email')}
               value={email}
               onChange={setEmail}
               type="email"
@@ -280,7 +285,7 @@ export default function AuthPage() {
             />
             <Field
               icon={<Lock size={16} weight="regular" />}
-              placeholder="密码(至少 6 位)"
+              placeholder={t('auth.password')}
               value={password}
               onChange={setPassword}
               type="password"
@@ -306,28 +311,26 @@ export default function AuthPage() {
               {justOK ? (
                 <>
                   <CheckCircle size={16} weight="fill" />
-                  {emailMode === 'login' ? '登录成功' : '注册成功'}
+                  {emailMode === 'login' ? t('auth.loginSuccess') : t('auth.registerSuccess')}
                 </>
               ) : loading ? (
-                '处理中…'
+                t('common.loading')
               ) : emailMode === 'login' ? (
-                '登录'
+                t('auth.login')
               ) : (
-                '注册并登录'
+                t('auth.loginOrRegister')
               )}
             </motion.button>
 
             <p className="text-[11px] text-text-tertiary text-center mt-4 leading-relaxed">
-              登录即表示你同意
-              <br />
-              做一个温暖的小纸条用户 🤝
+              {t('auth.agreementHint')}
             </p>
 
             {/* V3.8 微信登录按钮(占位 + 第三方 OAuth,等用户给 appid 激活) */}
             <div className="mt-6 flex flex-col items-center gap-2">
               <div className="flex items-center gap-3 w-full">
                 <div className="flex-1 h-px bg-black/10" />
-                <span className="text-[11px] text-text-tertiary">或</span>
+                <span className="text-[11px] text-text-tertiary">{t('common.or')}</span>
                 <div className="flex-1 h-px bg-black/10" />
               </div>
               <motion.a
@@ -338,7 +341,7 @@ export default function AuthPage() {
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM9.5 4C5.36 4 2 6.91 2 10.5c0 2.07 1.13 3.9 2.9 5.1L4 18l2.5-1.4c.92.3 1.93.5 3 .5.21 0 .42-.01.63-.02-.41-.71-.63-1.52-.63-2.38 0-3.31 3.13-6 7-6 .21 0 .42.01.62.03C16.61 6.06 13.36 4 9.5 4zm10 5c-3.59 0-6.5 2.46-6.5 5.5S15.91 20 19.5 20c.85 0 1.66-.13 2.4-.36L24 21l-.7-1.9c1.46-1 2.4-2.5 2.4-4.1 0-3.04-2.91-5.5-6.5-5.5z"/>
                 </svg>
-                微信登录
+                {t('auth.wechatLogin')}
               </motion.a>
             </div>
           </form>
@@ -353,18 +356,18 @@ export default function AuthPage() {
             手机号登录
           </h2>
           <p className="text-sm text-text-secondary mb-6">
-            没注册过会自动创建账号,验证码 5 分钟内有效
+            {t('auth.phoneLoginHint')}
           </p>
 
-          <Field
-            icon={<Phone size={16} weight="regular" />}
-            placeholder="手机号"
-            value={phone}
-            onChange={setPhone}
-            type="tel"
-            maxLength={11}
-            autoComplete="tel"
-          />
+            <Field
+              icon={<Phone size={16} weight="regular" />}
+              placeholder={t('auth.phone')}
+              value={phone}
+              onChange={setPhone}
+              type="tel"
+              maxLength={11}
+              autoComplete="tel"
+            />
           <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-white/80 border border-black/5 mb-3">
             <span className="text-text-tertiary">
               <ShieldCheck size={16} weight="regular" />
@@ -374,7 +377,7 @@ export default function AuthPage() {
               inputMode="numeric"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 5))}
-              placeholder="5 位验证码"
+              placeholder={t('auth.code')}
               maxLength={5}
               className="flex-1 bg-transparent outline-none text-sm text-text placeholder:text-text-tertiary"
             />
@@ -388,8 +391,8 @@ export default function AuthPage() {
               {sendingCode
                 ? '发送中…'
                 : codeCooldown > 0
-                ? `${codeCooldown}s`
-                : '获取验证码'}
+                ? t('auth.resendIn', { sec: codeCooldown })
+                : t('auth.getCode')}
             </motion.button>
           </div>
 
@@ -415,20 +418,19 @@ export default function AuthPage() {
             style={{ backgroundColor: justOK ? '#10B981' : '#1A1D2B' }}
           >
             {justOK ? (
-              <>
-                <CheckCircle size={16} weight="fill" />
-                登录成功
-              </>
-            ) : phoneLoginLoading ? (
-              '处理中…'
-            ) : (
-              '登录 / 注册'
-            )}
+                <>
+                  <CheckCircle size={16} weight="fill" />
+                  {t('auth.loginSuccess')}
+                </>
+              ) : phoneLoginLoading ? (
+                t('common.loading')
+              ) : (
+                t('auth.loginOrRegister')
+              )}
           </motion.button>
 
           <p className="text-[11px] text-text-tertiary text-center mt-4 leading-relaxed">
-            没收到短信?<br />
-            请检查手机号是否正确,或稍后重试
+            {t('auth.smsNotReceived')}
           </p>
         </form>
       )}
