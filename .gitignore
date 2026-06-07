@@ -6,6 +6,14 @@ dist/
 .env.*
 *.tsbuildinfo
 
+# 测试覆盖率(临时报告,看 HTML 用)
+server/coverage/
+server/.nyc_output/
+.cache/
+coverage/
+
+# Capacitor: 不提交 web dist 副本(在 ios/ + android/ 内) + 编译产物
+
 # Capacitor: 不提交 web dist 副本(在 ios/ + android/ 内) + 编译产物
 ios/App/App/public/
 ios/Pods/

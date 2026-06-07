@@ -1076,10 +1076,24 @@ V3 新加 API(共 6 个 + 1 个 star):
   - 第三方开发者集成时直接 `/api/openapi.json` 生成 client SDK
   - 字段约束 / 错误码 / 示例值都在 docs 里,bug 减少 50%
 
-#### P3-4 · 单元测试覆盖
+#### P3-4 · 单元测试覆盖 ✅ 2026-06-07(V3 阶段起步,持续)
 
-- **场景**: 重构时怕改坏老逻辑
-- **做多少**: vitest,关键 hook + 后端 API 写测试
+- **场景**: 重构时怕改坏老逻辑 → 自动跑测试拦截回归
+- **做多少**(已完成 V3 起步):
+  - `vitest` 框架 + `supertest` 集成测试
+  - `tests/auth.test.ts`: 10 tests(密码 hash / JWT 签发校验 / 黑名单)
+  - `tests/api-integration.test.ts`: 10 tests(register/login/me 完整流 + letter CRUD)
+  - 临时 DB file(`/tmp/letters-test-*.db`)+ 临时 avatar dir,跑完清
+  - 5 个 npm scripts:`test` / `test:watch` / `test:ui` / `test:coverage` / `test:api`(原有 smoke test)
+- **覆盖率**:
+  - Statements: 66.2% (190/287)
+  - Branches: 50% (66/132)
+  - Functions: 65% (26/40)
+  - Lines: 67.4% (188/279)
+  - 关键模块: auth.ts 83% / db.ts 86% / openapi-registry 89% / routes-letters 69% / routes-auth 49%(没覆盖 avatar upload)
+- **运行**: `cd server && npm test`(573ms 跑完 20 个)
+- **估时**: 1-2 小时(完成 V3 起步)
+- **持续**: 每加新功能必加测试,目标覆盖率 80%+
 - **估时**: 持续
 - **不做理由**: 个人项目,改一处 test 一遍,心智覆盖够
 

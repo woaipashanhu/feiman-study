@@ -1,3 +1,85 @@
+### 2026-06-07 会话 #45 — P3-4 单元测试起步(20 tests + 66% 覆盖率)
+
+#### 本次会话目标
+
+按 §13.5 P3-4,装 vitest + 给后端关键模块写单元 + 集成测试,作为后续重构的安全网。
+
+#### 完成的工作
+
+**1. 测试基础设施 ✅**
+- server 装 `vitest` + `@vitest/ui` + `@vitest/coverage-v8` + `supertest` + `@types/supertest`
+- `server/vitest.config.ts` + 5 个 npm scripts:`test` / `test:watch` / `test:ui` / `test:coverage` / `test:api`
+
+**2. 单元测试(auth.test.ts — 10 tests)✅**
+- 密码 hash/verify round-trip + bcrypt 格式校验
+- 同密码不同 hash(salt)
+- JWT access/refresh round-trip
+- token 改一个字符 → null
+- refresh secret 验证 access token → null
+- 乱写 token / 空 / 'a.b.c' → null
+- 黑名单: 新签 token 不在,addToBlacklist 后拒绝
+
+**3. 集成测试(api-integration.test.ts — 10 tests)✅**
+- 用 supertest 跑真实 Express + 真实 SQLite(临时文件 `/tmp/letters-test-*.db`)
+- register → login → me 完整流
+- 重复 email 注册 → 409
+- me 不带 token → 401 / 错 token → 401
+- 短密码注册 → 400
+- 登录用户 create + list letter
+- 空内容 create → 400
+- 不登录匿名 create letter
+- 按 shareToken 读 letter(无 auth 也能)
+- collect 多次增加计数
+- 临时 DB + 头像目录测试完自动清理
+
+**4. 覆盖率报告 ✅**
+```
+Statements   : 66.2% ( 190/287 )
+Branches     : 50%   (  66/132 )
+Functions    : 65%   (  26/40 )
+Lines        : 67.4% ( 188/279 )
+- auth.ts:           83% lines
+- db.ts:             86% lines
+- openapi-registry:  89% lines
+- routes-letters:    69% lines
+- routes-auth:       49% lines (没覆盖 avatar upload)
+```
+
+**5. 文档更新 ✅**
+- `ARCHITECTURE.md §13.5 P3-4`: `❌` → `✅ 2026-06-07(V3 阶段起步,持续)`
+
+#### 关键判断
+
+- **先单元后集成**: auth 工具函数 → API 路由,渐进式覆盖
+- **临时 DB file 不污染生产**: `/tmp/letters-test-<timestamp>.db` 跑完删
+- **super-test 不起真服务**: 用 in-process 模拟 HTTP,573ms 跑完 20 个测试
+- **覆盖率 66% 够起步**: V3 阶段关键路径已覆盖,后续每加新功能补测试到 80%+
+- **前端测试先不做**: vite/import.meta 兼容 + React 测试配置复杂,先放后端安全网
+- **`tsc -b` 编译时跑 test 同步**: V3.9 阶段加 CI(等 P3-2)
+
+#### 文件变更
+
+- `server/package.json`: +4 scripts + 3 devDeps
+- `server/vitest.config.ts`: 新增
+- `server/tests/auth.test.ts`: +75 行
+- `server/tests/api-integration.test.ts`: +200 行
+- `server/package.json`: devDeps: vitest + supertest + @vitest/ui + @vitest/coverage-v8
+- `ARCHITECTURE.md`: §13.5 P3-4 状态更新
+- CHANGELOG: 本条
+
+#### 验证
+
+- `npm test` → 20/20 tests passed in 573ms
+- `npm run test:coverage` → 报告 66.2% statements
+- 临时 DB + 头像目录测试完自动清理
+- 无副作用,生产 DB 不受影响
+
+#### 后续(用户)
+
+无操作。本地开发时跑 `npm test` 验证;后续每加新功能必加测试。
+
+---
+
 ### 2026-06-07 会话 #44 — P3-3 OpenAPI 文档完成(swagger UI 上线)
 
 #### 本次会话目标
