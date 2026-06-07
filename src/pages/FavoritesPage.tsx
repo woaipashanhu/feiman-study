@@ -96,54 +96,56 @@ export default function FavoritesPage() {
                     style={{ backgroundColor: '#EF4444' }}
                   />
 
-                  {/* 2x2 预览网格 */}
+                  {/* 2x2 预览网格 — 缩小居中，完整展示 */}
                   {all.length > 0 && (
-                    <div className="absolute inset-3 grid grid-cols-2 grid-rows-2 gap-2 z-10">
-                      {all.slice(0, 4).map((item, idx) => (
-                        <motion.div
-                          key={item.id}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 0.1 + idx * 0.06, type: 'spring', stiffness: 300, damping: 25 }}
-                          className="relative rounded-xl overflow-hidden bg-gray-900/50"
-                          onClick={() => handleItemClick(item.boardId, item.contentId)}
-                        >
-                          {item.videoUrl ? (
-                            <VideoPreview
-                              src={item.videoUrl}
-                              poster={item.cover}
-                              fallbackColor={BOARD_COLORS[item.boardId]}
-                              rounded={12}
-                              className="w-full h-full"
-                              fallback={
-                                <span className="text-xl font-bold" style={{ color: BOARD_COLORS[item.boardId] }}>
-                                  {idx + 1}
-                                </span>
-                              }
-                            />
-                          ) : item.cover ? (
-                            <img
-                              src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
-                              alt={item.title}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div
-                              className="w-full h-full flex items-center justify-center"
-                              style={{
-                                background: `linear-gradient(135deg, ${BOARD_COLORS[item.boardId]}40, ${BOARD_COLORS[item.boardId]}20)`,
-                              }}
-                            >
-                              <span className="text-3xl">{BOARD_EMOJIS[item.boardId]}</span>
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="grid grid-cols-2 grid-rows-2 gap-2.5">
+                        {all.slice(0, 4).map((item, idx) => (
+                          <motion.div
+                            key={item.id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.1 + idx * 0.06, type: 'spring', stiffness: 300, damping: 25 }}
+                            className="relative w-[72px] h-[72px] rounded-xl overflow-hidden bg-gray-900/50 shadow-md"
+                            onClick={() => handleItemClick(item.boardId, item.contentId)}
+                          >
+                            {item.videoUrl ? (
+                              <VideoPreview
+                                src={item.videoUrl}
+                                poster={item.cover}
+                                fallbackColor={BOARD_COLORS[item.boardId]}
+                                rounded={12}
+                                className="w-full h-full"
+                                fallback={
+                                  <span className="text-sm font-bold" style={{ color: BOARD_COLORS[item.boardId] }}>
+                                    {idx + 1}
+                                  </span>
+                                }
+                              />
+                            ) : item.cover ? (
+                              <img
+                                src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
+                                alt={item.title}
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div
+                                className="w-full h-full flex items-center justify-center"
+                                style={{
+                                  background: `linear-gradient(135deg, ${BOARD_COLORS[item.boardId]}40, ${BOARD_COLORS[item.boardId]}20)`,
+                                }}
+                              >
+                                <span className="text-2xl">{BOARD_EMOJIS[item.boardId]}</span>
+                              </div>
+                            )}
+                            {/* 序号角标 */}
+                            <div className="absolute top-1 left-1 w-4 h-4 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                              <span className="text-[9px] font-bold text-white">{idx + 1}</span>
                             </div>
-                          )}
-                          {/* 序号角标 */}
-                          <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                            <span className="text-[10px] font-bold text-white">{idx + 1}</span>
-                          </div>
-                        </motion.div>
-                      ))}
+                          </motion.div>
+                        ))}
+                      </div>
                     </div>
                   )}
 
