@@ -23,6 +23,7 @@ import { Router, type Request, type Response } from 'express'
 import { z } from 'zod'
 import { db, rowToLetter, type LetterRow, rowToUser, type UserRow } from './db.js'
 import { requireAuth, optionalAuth, getCurrentUser } from './auth.js'
+import { notifyLetterAuthor } from './ws.js'
 
 export const lettersRouter = Router()
 
@@ -174,7 +175,7 @@ lettersRouter.get('/:id', (req: Request, res: Response) => {
 
 // =============== POST /api/letters/:id/collect ===============
 
-lettersRouter.post('/:id/collect', (req: Request, res: Response) => {
+lettersRouter.post('/:id/collect', optionalAuth, (req: Request, res: Response) => {
   const id = String(req.params.id)
   if (!id || !/^lt_[a-z0-9]+$/i.test(id)) {
     return res.status(400).json({ error: 'invalid_id_format' })

@@ -27,6 +27,7 @@ import cors from 'cors'
 import { lettersRouter } from './routes-letters.js'
 import { authRouter } from './routes-auth.js'
 import { aiRouter } from './routes-ai.js'
+import { attachWebSocketServer } from './ws.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
 
@@ -124,9 +125,12 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
 })
 
 // 启动
-app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, HOST, () => {
   console.log(`[feiman-letters] listening on http://${HOST}:${PORT}`)
   console.log(`[feiman-letters] CORS origin: ${CORS_ORIGIN}`)
-  console.log(`[feiman-letters] version 0.2.0 (auth + letters v3)`)
+  console.log(`[feiman-letters] version 0.3.0 (auth + letters + AI + WS)`)
   console.log(`[feiman-letters] LONGCAT_API_KEY: ${process.env.LONGCAT_API_KEY ? '✓ set' : '✗ not set (will use mock)'}`)
 })
+
+// 挂 WebSocket
+attachWebSocketServer(server)
