@@ -322,6 +322,25 @@ export default function AuthPage() {
               <br />
               做一个温暖的小纸条用户 🤝
             </p>
+
+            {/* V3.8 微信登录按钮(占位 + 第三方 OAuth,等用户给 appid 激活) */}
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <div className="flex items-center gap-3 w-full">
+                <div className="flex-1 h-px bg-black/10" />
+                <span className="text-[11px] text-text-tertiary">或</span>
+                <div className="flex-1 h-px bg-black/10" />
+              </div>
+              <motion.a
+                href="/api/auth/wechat/start"
+                whileTap={{ scale: 0.96 }}
+                className="w-full py-3 rounded-2xl text-sm font-semibold bg-[#07C160] text-white flex items-center justify-center gap-2"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM9.5 4C5.36 4 2 6.91 2 10.5c0 2.07 1.13 3.9 2.9 5.1L4 18l2.5-1.4c.92.3 1.93.5 3 .5.21 0 .42-.01.63-.02-.41-.71-.63-1.52-.63-2.38 0-3.31 3.13-6 7-6 .21 0 .42.01.62.03C16.61 6.06 13.36 4 9.5 4zm10 5c-3.59 0-6.5 2.46-6.5 5.5S15.91 20 19.5 20c.85 0 1.66-.13 2.4-.36L24 21l-.7-1.9c1.46-1 2.4-2.5 2.4-4.1 0-3.04-2.91-5.5-6.5-5.5z"/>
+                </svg>
+                微信登录
+              </motion.a>
+            </div>
           </form>
         </>
       ) : (

@@ -32,6 +32,7 @@ import {
 } from './auth.js'
 import { sendVerificationCode, verifyCode, findOrCreatePhoneUser } from './sms-provider.js'
 import { getStorageProvider } from './storage-provider.js'
+import { buildWechatAuthUrl, isWechatConfigured, wechatLogin } from './wechat-provider.js'
 import { registry, RegisterRequest, LoginRequest, AuthSuccessResponse, RefreshRequest, RefreshResponse, ErrorResponse } from './openapi-registry.js'
 
 export const authRouter = Router()
@@ -398,6 +399,51 @@ authRouter.post('/phone-login', async (req: Request, res: Response) => {
       createdAt: user.createdAt,
     },
   })
+})
+
+// =============== V3.8 微信 OAuth ===============
+
+// 启动微信授权
+authRouter.get('/wechat/start', (req: Request, res: Response) => {
+  if (!isWechatConfigured()) {
+    return res.status(503).json({ error: 'wechat_not_configured', message: '微信登录未配置(等用户给 appid + secret)' })
+  }
+  // state 简单做 CSRF 防护(可放 userId 等)
+  const state = Math.random().toString(36).slice(2, 14)
+  // state 也存 cookie 5min 验证
+  res.cookie('wechat_state', state, { maxAge: 5 * 60 * 1000, httpOnly: true, sameSite: 'lax' })
+  const url = buildWechatAuthUrl(state)
+  // 直接重定向
+  return res.redirect(url)
+})
+
+// 微信回调
+authRouter.get('/wechat/callback', async (req: Request, res: Response) => {
+  const code = String(req.query.code || '')
+  const state = String(req.query.state || '')
+  const savedState = req.cookies?.wechat_state
+
+  if (!code) {
+    return res.status(400).send('缺少 code 参数')
+  }
+  // state 验证(简单防 CSRF)
+  if (state && savedState && state !== savedState) {
+    return res.status(403).send('state 不匹配,可能 CSRF 攻击')
+  }
+  // 清 cookie
+  res.clearCookie('wechat_state')
+
+  try {
+    const result = await wechatLogin(code)
+    if (!result.ok) {
+      return res.status(500).send(`微信登录失败: ${result.error}`)
+    }
+    // 重定向回前端,带 token
+    const frontendRedirect = `/auth/wechat-callback?token=${encodeURIComponent(result.accessToken!)}&refresh=${encodeURIComponent(result.refreshToken!)}`
+    return res.redirect(frontendRedirect)
+  } catch (err: any) {
+    return res.status(500).send(`微信登录异常: ${err.message}`)
+  }
 })
 
 // =============== POST /api/auth/avatar (V3.5 头像上传,V3.8 改用 StorageProvider) ===============

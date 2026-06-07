@@ -24,6 +24,7 @@
  */
 import express, { type Request, type Response, type NextFunction } from 'express'
 import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import * as Sentry from '@sentry/node'
 import swaggerUi from 'swagger-ui-express'
 import { lettersRouter } from './routes-letters.js'
@@ -34,6 +35,7 @@ import { startBlacklistCleanup } from './auth.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
 import { ensureSmsTables } from './sms-provider.js'
+import { ensureWechatTables } from './wechat-provider.js'
 import { getStorageProvider } from './storage-provider.js'
 import { generateOpenAPIDocument, registry, InboxResponse, ErrorResponse } from './openapi-registry.js'
 import { z } from 'zod'
@@ -90,6 +92,37 @@ registry.registerPath({
   },
 })
 
+// V3.8 Wechat OAuth 注解
+registry.registerPath({
+  method: 'get',
+  path: '/api/auth/wechat/start',
+  tags: ['Auth'],
+  summary: '启动微信 OAuth 授权(redirect 到微信)',
+  responses: {
+    302: { description: '重定向到微信授权页' },
+    503: { description: '微信登录未配置(等用户给 appid+secret)', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/auth/wechat/callback',
+  tags: ['Auth'],
+  summary: '微信 OAuth 回调(微信 server-to-server 调用,带 code + state)',
+  request: {
+    query: z.object({
+      code: z.string(),
+      state: z.string().optional(),
+    }),
+  },
+  responses: {
+    302: { description: '登录成功,重定向到 /auth/wechat-callback?token=...&refresh=...' },
+    400: { description: '缺少 code', content: { 'application/json': { schema: ErrorResponse } } },
+    403: { description: 'state 不匹配(CSRF)', content: { 'application/json': { schema: ErrorResponse } } },
+    500: { description: '微信登录失败', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
 const PORT = parseInt(process.env.PORT || '3000', 10)
 const HOST = process.env.HOST || '0.0.0.0'
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*'
@@ -124,6 +157,7 @@ app.use(
   })
 )
 app.use(express.json({ limit: '64kb' }))
+app.use(cookieParser())
 
 // 静态服务 — 头像图片
 import { existsSync, mkdirSync } from 'node:fs'
@@ -231,6 +265,7 @@ const server = app.listen(PORT, HOST, () => {
 
 // V3.8 SMS 表启动时建
 ensureSmsTables()
+ensureWechatTables()
 
 // 启动黑名单定期清理
 startBlacklistCleanup()
