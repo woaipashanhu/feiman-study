@@ -30,8 +30,87 @@ import {
   requireAuth,
   getCurrentUser,
 } from './auth.js'
+import { registry, RegisterRequest, LoginRequest, AuthSuccessResponse, RefreshRequest, RefreshResponse, ErrorResponse } from './openapi-registry.js'
 
 export const authRouter = Router()
+
+// =============== OpenAPI 注解 ===============
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/register',
+  tags: ['Auth'],
+  summary: '注册新用户',
+  request: {
+    body: {
+      content: { 'application/json': { schema: RegisterRequest } },
+    },
+  },
+  responses: {
+    200: { description: '注册成功,返回 access + refresh + user', content: { 'application/json': { schema: AuthSuccessResponse } } },
+    400: { description: '邮箱已注册 / 参数错误', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/login',
+  tags: ['Auth'],
+  summary: '登录获取 JWT',
+  request: {
+    body: { content: { 'application/json': { schema: LoginRequest } } },
+  },
+  responses: {
+    200: { description: '登录成功', content: { 'application/json': { schema: AuthSuccessResponse } } },
+    401: { description: '邮箱或密码错误', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/auth/me',
+  tags: ['Auth'],
+  summary: '当前用户信息(需 Authorization)',
+  security: [{ bearerAuth: [] }],
+  responses: {
+    200: { description: '当前用户', content: { 'application/json': { schema: AuthSuccessResponse } } },
+    401: { description: '未登录 / token 过期', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/refresh',
+  tags: ['Auth'],
+  summary: 'refresh token 换新 access token',
+  request: {
+    body: { content: { 'application/json': { schema: RefreshRequest } } },
+  },
+  responses: {
+    200: { description: '换新成功', content: { 'application/json': { schema: RefreshResponse } } },
+    401: { description: 'refresh token 无效或已撤销', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/auth/logout',
+  tags: ['Auth'],
+  summary: '登出(access token 入黑名单)',
+  security: [{ bearerAuth: [] }],
+  responses: {
+    200: { description: '登出成功' },
+    401: { description: '未登录', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+// 注册 bearerAuth 安全方案
+registry.registerComponent('securitySchemes', 'bearerAuth', {
+  type: 'http',
+  scheme: 'bearer',
+  bearerFormat: 'JWT',
+  description: '从 /api/auth/login 或 /api/auth/refresh 获取 accessToken,放 Authorization 头',
+})
 
 // =============== Zod ===============
 

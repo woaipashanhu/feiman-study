@@ -11,8 +11,10 @@
     "test:api": "bash ./scripts/smoke-test.sh"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^8.5.0",
     "@sentry/node": "^10.56.0",
     "@types/multer": "^2.1.0",
+    "@types/swagger-ui-express": "^4.1.8",
     "@types/ws": "^8.18.1",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^11.5.0",
@@ -20,6 +22,7 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.3",
     "multer": "^2.1.1",
+    "swagger-ui-express": "^5.0.1",
     "ws": "^8.21.0",
     "zod": "^4.4.3"
   },

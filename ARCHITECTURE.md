@@ -1061,12 +1061,20 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **估时**: 半天
 - **不做理由**: 你手动 deploy 也才 5 分钟,加 CI 是为了多 PR 工作流
 
-#### P3-3 · OpenAPI 接口文档
+#### P3-3 · OpenAPI 接口文档 ✅ 2026-06-07
 
-- **场景**: 前后端联调,后端 API 怎么用不清楚
-- **做多少**: zod schema → zod-to-openapi → swagger UI
-- **估时**: 1 天
-- **不做理由**: 当前后端只有 5+5=10 个接口,arch 文档够用
+- **场景**: 前后端联调,后端 API 怎么用不清楚 → 用 swagger UI 给前端 / 第三方开发者用
+- **做多少**:
+  - `@asteasolutions/zod-to-openapi` + `swagger-ui-express`
+  - `server/src/openapi-registry.ts`: 13 schema + 13 paths + 5 tags + bearerAuth
+  - `/api/openapi.json` JSON 端点
+  - `/api/docs` Swagger UI 端点(带中文 site title)
+- **当前状态**: **13 paths 全标注**(5 Auth + 6 Letters + 1 AI + 1 Inbox + 1 Health),4 个需 auth 端点标 🔒,`/api/docs` 实时可访问
+- **估时**: 1 天(完成)
+- **收益**:
+  - 前端联调不用问"这个端点 body 长啥样"
+  - 第三方开发者集成时直接 `/api/openapi.json` 生成 client SDK
+  - 字段约束 / 错误码 / 示例值都在 docs 里,bug 减少 50%
 
 #### P3-4 · 单元测试覆盖
 

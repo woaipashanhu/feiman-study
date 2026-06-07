@@ -24,8 +24,98 @@ import { z } from 'zod'
 import { db, rowToLetter, type LetterRow, rowToUser, type UserRow } from './db.js'
 import { requireAuth, optionalAuth, getCurrentUser } from './auth.js'
 import { notifyLetterAuthor } from './ws.js'
+import { registry, CreateLetterRequest, Letter, ListLettersResponse, ErrorResponse } from './openapi-registry.js'
 
 export const lettersRouter = Router()
+
+// =============== OpenAPI 注解 ===============
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/letters',
+  tags: ['Letters'],
+  summary: '创建一张小纸条',
+  description: '可不登录创建(匿名),登录后创建会关联到用户',
+  request: {
+    body: { content: { 'application/json': { schema: CreateLetterRequest } } },
+  },
+  responses: {
+    200: { description: '创建成功,返回完整 letter(带 shareToken)', content: { 'application/json': { schema: z.object({ ok: z.boolean(), letter: Letter }) } } },
+    400: { description: '参数错误', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/letters',
+  tags: ['Letters'],
+  summary: '列出最近的公开纸条',
+  request: {
+    query: z.object({
+      limit: z.string().optional().openapi({ description: '1-100,默认 20' }),
+    }),
+  },
+  responses: {
+    200: { description: '列表', content: { 'application/json': { schema: ListLettersResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/letters/{id}',
+  tags: ['Letters'],
+  summary: '按 id 读(需 shareToken 或登录)',
+  request: {
+    params: z.object({ id: z.string().uuid() }),
+  },
+  responses: {
+    200: { description: 'letter', content: { 'application/json': { schema: Letter } } },
+    404: { description: '不存在', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/letters/by-token/{token}',
+  tags: ['Letters'],
+  summary: '按分享 token 读(无 token 也能看)',
+  request: {
+    params: z.object({ token: z.string() }),
+  },
+  responses: {
+    200: { description: 'letter', content: { 'application/json': { schema: Letter } } },
+    404: { description: '不存在', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/letters/{id}/collect',
+  tags: ['Letters'],
+  summary: '全局收藏(增加 collectCount)',
+  request: {
+    params: z.object({ id: z.string().uuid() }),
+  },
+  responses: {
+    200: { description: '收藏成功', content: { 'application/json': { schema: z.object({ ok: z.boolean(), collectCount: z.number().int() }) } } },
+    404: { description: '不存在', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/letters/{id}/star',
+  tags: ['Letters'],
+  summary: '收藏到"时空纸条"(需登录,关联 user)',
+  security: [{ bearerAuth: [] }],
+  request: {
+    params: z.object({ id: z.string().uuid() }),
+  },
+  responses: {
+    200: { description: 'star 成功', content: { 'application/json': { schema: z.object({ ok: z.boolean(), isStarred: z.boolean(), starCount: z.number().int() }) } } },
+    401: { description: '未登录', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
 
 // =============== Zod schemas ===============
 

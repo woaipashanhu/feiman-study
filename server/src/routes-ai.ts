@@ -18,8 +18,26 @@
 import { Router, type Request, type Response } from 'express'
 import { z } from 'zod'
 import { db } from './db.js'
+import { registry, TransformRequest, TransformResponse, ErrorResponse } from './openapi-registry.js'
 
 export const aiRouter = Router()
+
+// =============== OpenAPI 注解 ===============
+
+registry.registerPath({
+  method: 'post',
+  path: '/api/ai/transform',
+  tags: ['AI'],
+  summary: 'AI 润色/改写/翻译(LongCat)',
+  description: '优先用 LongCat API,失败/超时降级到 mock。前端永远拿到 200 + content。',
+  request: {
+    body: { content: { 'application/json': { schema: TransformRequest } } },
+  },
+  responses: {
+    200: { description: '成功(content 总是有值,fallback=true 表示 mock)', content: { 'application/json': { schema: TransformResponse } } },
+    400: { description: '参数错误', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
 
 const TransformBody = z.object({
   content: z.string().min(2).max(2000),

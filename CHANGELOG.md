@@ -1,3 +1,65 @@
+### 2026-06-07 会话 #44 — P3-3 OpenAPI 文档完成(swagger UI 上线)
+
+#### 本次会话目标
+
+按 §13.5 P3-3,给 13 个 API 端点加 OpenAPI 注解 + swagger UI 端点,产出可交互文档。
+
+#### 完成的工作
+
+**1. swagger 基础设施 ✅**
+- 装 `@asteasolutions/zod-to-openapi` + `swagger-ui-express`(本地 + 服务器)
+- `server/src/openapi-registry.ts`(+200 行): 13 schema + extendZodWithOpenApi + generateOpenAPIDocument
+- `server/src/index.ts` 加 `/api/openapi.json` + `/api/docs` 端点
+- 服务器 npm 装新包 + dist 同步 + pm2 restart
+
+**2. 13 个端点 OpenAPI 注解 ✅**
+- 5 Auth: register / login / me / refresh / logout(bearerAuth 🔒 on me + logout)
+- 6 Letters: create / list / by-token/{token} / {id} / {id}/collect / {id}/star(🔒 star)
+- 1 AI: transform
+- 1 Inbox: /api/me/inbox(🔒)
+- 1 Health: /api/health
+- bearerAuth 安全方案注册(用 Authorization: Bearer <token>)
+
+**3. 文档 + 部署验证 ✅**
+- `/api/docs` → 200 OK(swagger UI 渲染)
+- `/api/openapi.json` → 13 paths + 13 schemas + 5 tags + bearerAuth
+- `ARCHITECTURE.md §13.5 P3-3` 状态从 `❌` → `✅`
+
+**4. 后续无需操作 ✅**
+- 访问 https://47.99.101.168:8890/api/docs 看 swagger UI
+- 第三方集成时 GET /api/openapi.json 生成 client SDK(typescript-fetch / axios / openapi-generator)
+
+#### 关键判断
+
+- **用 zod-to-openapi 不用手写 OpenAPI**:现有 zod schema 复用,改一个地方两处生效,bug 不会两边漂
+- **不在前端维护 API 文档**:API 文档是后端责任,后端是 source of truth
+- **不引 GraphQL**:13 个端点用 OpenAPI 足够,GraphQL 复杂度太高,不值
+- **不集成 Postman / Insomnia 导出**:swagger UI 自带"Try it out"功能,够用
+
+#### 文件变更
+
+- `server/src/openapi-registry.ts`: 新增(+ 200 行)
+- `server/src/index.ts`: +29 行(swagger UI + 2 端点注解)
+- `server/src/routes-auth.ts`: +78 行(5 端点注解 + bearerAuth 注册)
+- `server/src/routes-letters.ts`: +90 行(6 端点注解)
+- `server/src/routes-ai.ts`: +18 行(1 端点注解)
+- `server/package.json`: +2 deps
+- `ARCHITECTURE.md`: §13.5 P3-3 状态更新
+- CHANGELOG: 本条
+
+#### 验证
+
+- `npx tsc --noEmit` 通过(本地)
+- 服务器 npm 装包 + dist 同步 + pm2 restart OK
+- `/api/docs` 200,`/api/openapi.json` 200 + 13 paths
+- 日志确认 `[docs] Swagger UI: /api/docs  |  OpenAPI JSON: /api/openapi.json`
+
+#### 后续(用户)
+
+无操作。你可以直接打开 https://47.99.101.168:8890/api/docs 看 swagger UI(中文标题"小纸条 V3 API 文档")。
+
+---
+
 ### 2026-06-07 会话 #43 — P2-6 PM2 cluster 评估后回退 fork(WS 推送安全优先)
 
 #### 本次会话目标

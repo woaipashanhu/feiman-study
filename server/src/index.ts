@@ -25,6 +25,7 @@
 import express, { type Request, type Response, type NextFunction } from 'express'
 import cors from 'cors'
 import * as Sentry from '@sentry/node'
+import swaggerUi from 'swagger-ui-express'
 import { lettersRouter } from './routes-letters.js'
 import { authRouter } from './routes-auth.js'
 import { aiRouter } from './routes-ai.js'
@@ -32,6 +33,35 @@ import { attachWebSocketServer } from './ws.js'
 import { startBlacklistCleanup } from './auth.js'
 import { db, rowToLetter, type LetterRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
+import { generateOpenAPIDocument, registry, InboxResponse, ErrorResponse } from './openapi-registry.js'
+import { z } from 'zod'
+
+// =============== OpenAPI 注解 ===============
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/me/inbox',
+  tags: ['Inbox'],
+  summary: '当前用户的收件箱(我写的 + 我 star 过的)',
+  security: [{ bearerAuth: [] }],
+  request: {
+    query: z.object({ limit: z.string().optional() }),
+  },
+  responses: {
+    200: { description: '收件箱', content: { 'application/json': { schema: InboxResponse } } },
+    401: { description: '未登录', content: { 'application/json': { schema: ErrorResponse } } },
+  },
+})
+
+registry.registerPath({
+  method: 'get',
+  path: '/api/health',
+  tags: ['Health'],
+  summary: '健康检查(给 nginx / 阿里云监控)',
+  responses: {
+    200: { description: 'ok' },
+  },
+})
 
 const PORT = parseInt(process.env.PORT || '3000', 10)
 const HOST = process.env.HOST || '0.0.0.0'
@@ -121,6 +151,18 @@ app.get('/api/health', (_req: Request, res: Response) => {
     ts: Date.now(),
   })
 })
+
+// =============== OpenAPI / Swagger UI ===============
+
+const openapiDocument = generateOpenAPIDocument()
+app.get('/api/openapi.json', (_req: Request, res: Response) => {
+  res.json(openapiDocument)
+})
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapiDocument, {
+  customSiteTitle: '小纸条 V3 API 文档',
+  customCss: '.topbar { display: none }',  // 隐藏 swagger 顶部条
+}))
+console.log('[docs] Swagger UI: /api/docs  |  OpenAPI JSON: /api/openapi.json')
 
 // 根路径
 app.get('/', (_req: Request, res: Response) => {
