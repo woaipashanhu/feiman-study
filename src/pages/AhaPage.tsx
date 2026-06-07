@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Microphone, Stop, PaperPlaneTilt, FloppyDisk, Trash, CloudArrowUp, DeviceMobile, Play, Pause, PencilSimple, MagnifyingGlass, X, DownloadSimple, UploadSimple, ChartBar } from 'phosphor-react'
 import { useAudioRecorder, saveAudioToLocalDB, getAudioFromLocalDB } from '@/shared/hooks/useAudioRecorder'
+import { useReminder } from '@/shared/hooks/useReminder'
 import { useAuth } from '@/shared/hooks/useAuth'
 import { LETTER_PALETTE } from '@/shared/components/LetterPaper/palette'
 import { LanguageSwitcher } from '@/shared/components/LanguageSwitcher'
@@ -56,6 +57,8 @@ export default function AhaPage() {
   // V4.6: 统计
   const [stats, setStats] = useState<AhaStats | null>(null)
   const [showStats, setShowStats] = useState(false)
+  // V4.7: 每日提醒
+  const reminder = useReminder()
   const [saving, setSaving] = useState(false)
   const [playingId, setPlayingId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -345,9 +348,9 @@ export default function AhaPage() {
   return (
     <>
       <AnimatePresence>
-        {showStats && stats && (
-          <StatsPanel stats={stats} onClose={() => setShowStats(false)} />
-        )}
+          {showStats && stats && (
+            <StatsPanel stats={stats} onClose={() => setShowStats(false)} reminder={reminder} />
+          )}
       </AnimatePresence>
       <div className="h-full flex flex-col" style={{ backgroundColor: LETTER_PALETTE.ivory }}>
       {/* Header */}
@@ -858,7 +861,7 @@ const MOOD_COLORS: Record<string, string> = {
   '✨': '#F5222D',
 }
 
-function StatsPanel({ stats, onClose }: { stats: AhaStats; onClose: () => void }) {
+function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: () => void; reminder: ReturnType<typeof useReminder> }) {
   const maxDay = Math.max(...stats.byDay.map((d) => d.count), 1)
   const totalMood = Object.values(stats.byMood).reduce((a, b) => a + b, 0) || 1
 
@@ -957,6 +960,49 @@ function StatsPanel({ stats, onClose }: { stats: AhaStats; onClose: () => void }
           {stats.total === 0 && (
             <p className="text-center text-text-tertiary text-sm py-8">还没有记录,先去记录第一条灵感吧</p>
           )}
+
+          {/* V4.7 每日提醒设置 */}
+          <section className="pt-2 border-t border-black/5">
+            <h3 className="text-sm font-semibold text-text mb-3">每日提醒</h3>
+            <div className="flex items-center justify-between bg-white rounded-2xl p-3 border border-black/5">
+              <div className="flex-1">
+                <p className="text-sm text-text">每天提醒我记录灵感</p>
+                <p className="text-[10px] text-text-tertiary mt-0.5">
+                  PWA 通知(需浏览器授权)
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {reminder.enabled && (
+                  <input
+                    type="time"
+                    value={reminder.time}
+                    onChange={(e) => reminder.setTime(e.target.value)}
+                    className="px-2 py-1 rounded-lg bg-black/5 text-[12px] outline-none"
+                  />
+                )}
+                <button
+                  onClick={() => reminder.setEnabled(!reminder.enabled)}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${
+                    reminder.enabled ? 'bg-brand' : 'bg-black/15'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
+                      reminder.enabled ? 'translate-x-5' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
+              </div>
+            </div>
+            {reminder.enabled && (
+              <button
+                onClick={reminder.testNow}
+                className="mt-2 w-full py-2 rounded-xl bg-black/5 text-text text-[12px] font-medium"
+              >
+                立即测试通知
+              </button>
+            )}
+          </section>
         </div>
       </motion.div>
     </motion.div>
