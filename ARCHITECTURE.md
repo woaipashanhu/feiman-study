@@ -871,7 +871,14 @@ V3 新加 API(共 6 个 + 1 个 star):
 
 ### 13.2 🟥 P0 — 不做会出事(必做,优先做)
 
-#### P0-1 · 数据备份 cron(必做,30 分钟)
+> **状态: ✅ 4/4 全部完成 (2026-06-07, commit f0f6cf4)**
+> - P0-1 数据备份 cron ✅
+> - P0-2 PM2 守护进程 ✅
+> - P0-3 PWA 升级策略 ✅
+> - P0-4 JWT secret 改生产值 ✅
+> 基础设施兜底完成,后面可以安心做 P1 产品体验。
+
+#### P0-1 · 数据备份 cron ✅ (30 分钟)
 
 - **为啥紧急**: `/var/lib/feiman-letters/letters.db` 是单点。阿里云磁盘抽风 / 误 `rm -rf` / 系统升级失败 → 所有用户数据全丢。用户已经问过这事。
 - **做多少**:
@@ -882,7 +889,7 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **验收**: 跑一次,看 `/var/backups/letters-YYYYMMDD.tar.gz` 存在 + 解压能恢复
 - **不做后果**: 数据丢 0 恢复
 
-#### P0-2 · PM2 守护进程(必做,20 分钟)
+#### P0-2 · PM2 守护进程 ✅ (20 分钟)
 
 - **为啥紧急**: 当前 `nohup node dist/index.js` 进程死了不会自启。某天阿里云重启 / 部署 npm 报错 / 内存泄漏,后端进程悄无声息挂掉,前端 502,**用户写信都写不进去没人知道**。
 - **做多少**:
@@ -893,7 +900,7 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **验收**: `pm2 status` 显示 online;`pm2 logs letters-server` 看实时日志;`kill -9 <pid>` 后 pm2 自动拉起
 - **不做后果**: 服务挂了 0 报警 0 自愈
 
-#### P0-3 · PWA Service Worker 升级策略(必做,15 分钟)
+#### P0-3 · PWA Service Worker 升级策略 ✅ (15 分钟)
 
 - **为啥紧急**: 用户已经亲历 — 部署新 dist 后,旧 SW 没被替换,iOS PWA 缓存顽固,前端白屏。当前 vite-plugin-pwa 默认 `skipWaiting` 行为不够强。
 - **做多少**:
@@ -902,7 +909,7 @@ V3 新加 API(共 6 个 + 1 个 star):
 - **验收**: 部署后用户收到更新提示,点刷新切到新版本不再白屏
 - **不做后果**: 每次部署用户都得手动清缓存
 
-#### P0-4 · JWT secret 改生产值(必做,5 分钟)
+#### P0-4 · JWT secret 改生产值 ✅ (5 分钟)
 
 - **为啥紧急**: 当前 `JWT_ACCESS_SECRET` / `JWT_REFRESH_SECRET` 没设 env,后端用 dev default `dev-access-secret-please-change-in-production`。任何拿到源码的人都能伪造 admin token。**安全漏洞**。
 - **做多少**:
