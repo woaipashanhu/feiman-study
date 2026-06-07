@@ -15,7 +15,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Microphone, Stop, PaperPlaneTilt, FloppyDisk, Trash, CloudArrowUp, DeviceMobile, Play, Pause, PencilSimple, MagnifyingGlass, X, DownloadSimple, UploadSimple } from 'phosphor-react'
+import { ArrowLeft, Microphone, Stop, PaperPlaneTilt, FloppyDisk, Trash, CloudArrowUp, DeviceMobile, Play, Pause, PencilSimple, MagnifyingGlass, X, DownloadSimple, UploadSimple, ChartBar } from 'phosphor-react'
 import { useAudioRecorder, saveAudioToLocalDB, getAudioFromLocalDB } from '@/shared/hooks/useAudioRecorder'
 import { useAuth } from '@/shared/hooks/useAuth'
 import { LETTER_PALETTE } from '@/shared/components/LetterPaper/palette'
@@ -53,6 +53,9 @@ export default function AhaPage() {
   const [searchQ, setSearchQ] = useState('')
   const [filterType, setFilterType] = useState<'all' | 'text' | 'audio'>('all')
   const [filterMood, setFilterMood] = useState<string | null>(null)
+  // V4.6: 统计
+  const [stats, setStats] = useState<AhaStats | null>(null)
+  const [showStats, setShowStats] = useState(false)
   const [saving, setSaving] = useState(false)
   const [playingId, setPlayingId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -83,6 +86,18 @@ export default function AhaPage() {
   useEffect(() => {
     loadMoments()
   }, [isAuthenticated, searchQ, filterType, filterMood])
+
+  // V4.6: 加载统计
+  const loadStats = async () => {
+    if (!isAuthenticated) return
+    try {
+      const res = await fetch('/api/aha/stats', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('feiman_auth_access') || ''}` },
+      })
+      const data = await res.json()
+      if (data.ok) setStats(data)
+    } catch {}
+  }
 
   // 保存文字
   const saveText = async () => {
@@ -328,7 +343,13 @@ export default function AhaPage() {
   }
 
   return (
-    <div className="h-full flex flex-col" style={{ backgroundColor: LETTER_PALETTE.ivory }}>
+    <>
+      <AnimatePresence>
+        {showStats && stats && (
+          <StatsPanel stats={stats} onClose={() => setShowStats(false)} />
+        )}
+      </AnimatePresence>
+      <div className="h-full flex flex-col" style={{ backgroundColor: LETTER_PALETTE.ivory }}>
       {/* Header */}
       <header className="flex items-center gap-3 px-4 pt-4 pb-3 shrink-0">
         <motion.button
@@ -342,6 +363,15 @@ export default function AhaPage() {
           啊哈时刻
         </h1>
         <div className="flex-1" />
+        {/* V4.6 统计按钮 */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => { setShowStats(true); loadStats() }}
+          className="w-10 h-10 rounded-full bg-white/80 border border-black/5 flex items-center justify-center shadow-sm"
+          aria-label="统计"
+        >
+          <ChartBar size={18} weight="regular" className="text-text" />
+        </motion.button>
         <LanguageSwitcher />
       </header>
 
@@ -599,9 +629,10 @@ export default function AhaPage() {
             onPromote={() => promoteToLetter(m.id)}
             formatTime={formatTime}
           />
-        ))}
+         ))}
       </div>
-    </div>
+      </div>
+    </>
   )
 }
 
@@ -801,6 +832,144 @@ function StaticWaveform({ peaks, height }: { peaks: number[]; height: number }) 
           style={{ width: 2, height: Math.max(2, p * height * 0.85) }}
         />
       ))}
+    </div>
+  )
+}
+
+
+// =============== V4.6 统计面板 ===============
+
+interface AhaStats {
+  total: number
+  byMood: Record<string, number>
+  byType: Record<string, number>
+  byStorage: Record<string, number>
+  byDay: { date: string; count: number }[]
+}
+
+const MOOD_COLORS: Record<string, string> = {
+  '💡': '#FFB800',
+  '❤️': '#FF4F6D',
+  '🌱': '#52C41A',
+  '⚡': '#FFC53D',
+  '🔭': '#722ED1',
+  '🎯': '#1890FF',
+  '🌀': '#13C2C2',
+  '✨': '#F5222D',
+}
+
+function StatsPanel({ stats, onClose }: { stats: AhaStats; onClose: () => void }) {
+  const maxDay = Math.max(...stats.byDay.map((d) => d.count), 1)
+  const totalMood = Object.values(stats.byMood).reduce((a, b) => a + b, 0) || 1
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black/30 flex items-end justify-center"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg bg-[#FAF7F2] rounded-t-3xl max-h-[80vh] overflow-y-auto"
+      >
+        <div className="sticky top-0 bg-[#FAF7F2]/95 backdrop-blur px-5 pt-4 pb-3 flex items-center justify-between border-b border-black/5">
+          <h2 className="text-lg font-semibold text-text" style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}>
+            灵感统计
+          </h2>
+          <button onClick={onClose} className="text-text-tertiary text-sm">
+            关闭
+          </button>
+        </div>
+
+        <div className="p-5 space-y-6">
+          {/* 4 个统计卡片 */}
+          <div className="grid grid-cols-2 gap-3">
+            <StatCard label="总数" value={stats.total} color="#1A1D2B" />
+            <StatCard label="文字" value={stats.byType.text || 0} color="#4F6EF7" />
+            <StatCard label="录音" value={stats.byType.audio || 0} color="#00C9A7" />
+            <StatCard label="云端/本地" value={`${stats.byStorage.cloud || 0}/${stats.byStorage.local || 0}`} color="#FF9F43" />
+          </div>
+
+          {/* 心情饼图 */}
+          {Object.keys(stats.byMood).length > 0 && (
+            <section>
+              <h3 className="text-sm font-semibold text-text mb-3">心情分布</h3>
+              <div className="space-y-2">
+                {Object.entries(stats.byMood)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([mood, count]) => {
+                    const pct = Math.round((count / totalMood) * 100)
+                    return (
+                      <div key={mood} className="flex items-center gap-2">
+                        <span className="text-lg w-6">{mood}</span>
+                        <div className="flex-1 h-6 bg-black/5 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${pct}%` }}
+                            className="h-full rounded-full"
+                            style={{ backgroundColor: MOOD_COLORS[mood] || '#888' }}
+                          />
+                        </div>
+                        <span className="text-xs text-text-tertiary tabular-nums w-12 text-right">
+                          {count} · {pct}%
+                        </span>
+                      </div>
+                    )
+                  })}
+              </div>
+            </section>
+          )}
+
+          {/* 30 天柱状图 */}
+          {stats.byDay.length > 0 && (
+            <section>
+              <h3 className="text-sm font-semibold text-text mb-3">最近 30 天</h3>
+              <div className="flex items-end gap-[2px] h-24">
+                {stats.byDay.map((d) => {
+                  const h = (d.count / maxDay) * 100
+                  return (
+                    <div
+                      key={d.date}
+                      className="flex-1 rounded-t-sm"
+                      style={{
+                        backgroundColor: d.count > 0 ? '#C73E3A' : 'rgba(0,0,0,0.06)',
+                        height: `${Math.max(h, 4)}%`,
+                      }}
+                      title={`${d.date} · ${d.count} 条`}
+                    />
+                  )
+                })}
+              </div>
+              <div className="flex justify-between text-[10px] text-text-tertiary mt-1">
+                <span>{stats.byDay[0]?.date.slice(5)}</span>
+                <span>{stats.byDay[15]?.date.slice(5)}</span>
+                <span>{stats.byDay[29]?.date.slice(5)}</span>
+              </div>
+            </section>
+          )}
+
+          {stats.total === 0 && (
+            <p className="text-center text-text-tertiary text-sm py-8">还没有记录,先去记录第一条灵感吧</p>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+function StatCard({ label, value, color }: { label: string; value: number | string; color: string }) {
+  return (
+    <div className="bg-white rounded-2xl p-4 border border-black/5">
+      <p className="text-[11px] text-text-tertiary mb-1">{label}</p>
+      <p className="text-2xl font-bold tabular-nums" style={{ color }}>
+        {value}
+      </p>
     </div>
   )
 }
