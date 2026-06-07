@@ -5,3 +5,24 @@ dist/
 .env
 .env.*
 *.tsbuildinfo
+
+# Capacitor: 不提交 web dist 副本(在 ios/ + android/ 内) + 编译产物
+ios/App/App/public/
+ios/Pods/
+ios/App/Pods/
+ios/App/build/
+android/app/src/main/assets/public/
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+android/capacitor-cordova-android-plugins/
+
+# Xcode 用户文件
+*.xcuserstate
+xcuserdata/
+
+# IDE
+.idea/
+.vscode/
+
