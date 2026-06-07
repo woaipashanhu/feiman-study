@@ -195,6 +195,31 @@ export default function AhaPage() {
     }
   }
 
+  // V4.5: aha → letter 一键转公开
+  const promoteToLetter = async (ahaId: string) => {
+    if (!confirm('这条啊哈时刻会转成公开小纸条,确认吗?')) return
+    try {
+      const res = await fetch(`/api/aha/moments/${ahaId}/promote`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('feiman_auth_access') || ''}` },
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        if (data.letterId) {
+          alert('已经转过了,跳到小纸条查看')
+          navigate(`/letters/letter/${data.letterId}`)
+          return
+        }
+        alert(data.message || '转公开失败')
+        return
+      }
+      alert('已转成公开小纸条!')
+      navigate(`/letters/letter/${data.letterId}`)
+    } catch (err: any) {
+      alert('失败:' + err.message)
+    }
+  }
+
   // 播放音频
   const playAudio = async (m: AhaMoment) => {
     if (audioRef.current) {
@@ -571,6 +596,7 @@ export default function AhaPage() {
             isPlaying={playingId === m.id}
             onPlay={() => playAudio(m)}
             onDelete={() => deleteMoment(m.id)}
+            onPromote={() => promoteToLetter(m.id)}
             formatTime={formatTime}
           />
         ))}
@@ -598,11 +624,12 @@ function StorageToggle({ storage, onChange }: { storage: Storage; onChange: (s: 
   )
 }
 
-function MomentCard({ moment: m, isPlaying, onPlay, onDelete, formatTime }: {
+function MomentCard({ moment: m, isPlaying, onPlay, onDelete, onPromote, formatTime }: {
   moment: AhaMoment
   isPlaying: boolean
   onPlay: () => void
   onDelete: () => void
+  onPromote: () => void
   formatTime: (ts: number) => string
 }) {
   return (
@@ -651,13 +678,25 @@ function MomentCard({ moment: m, isPlaying, onPlay, onDelete, formatTime }: {
             )}
           </div>
         </div>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={onDelete}
-          className="w-7 h-7 rounded-full bg-black/5 flex items-center justify-center shrink-0"
-        >
-          <Trash size={14} className="text-text-tertiary" />
-        </motion.button>
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          {m.type === 'text' && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={onPromote}
+              className="w-7 h-7 rounded-full bg-[#C73E3A]/10 flex items-center justify-center"
+              title="转成公开小纸条"
+            >
+              <PaperPlaneTilt size={14} weight="fill" style={{ color: '#C73E3A' }} />
+            </motion.button>
+          )}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onDelete}
+            className="w-7 h-7 rounded-full bg-black/5 flex items-center justify-center"
+          >
+            <Trash size={14} className="text-text-tertiary" />
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   )

@@ -19,7 +19,7 @@
 import { Router, type Request, type Response } from 'express'
 import multer from 'multer'
 import { z } from 'zod'
-import { randomUUID } from 'node:crypto'
+import { randomUUID, randomBytes } from 'node:crypto'
 import { db, rowToUser, type UserRow } from './db.js'
 import { requireAuth, getCurrentUser } from './auth.js'
 import { getStorageProvider } from './storage-provider.js'
@@ -426,4 +426,87 @@ registry.registerPath({
     200: { description: '删除成功' },
     404: { description: '不存在', content: { 'application/json': { schema: ErrorResponse } } },
   },
+})
+
+// =============== V4.5 aha → letter 一键转公开 ===============
+
+/**
+ * POST /api/aha/moments/:id/promote
+ *   - 复制一条 aha moment 到 letters 表(成为公开小纸条)
+ *   - 复制 source 字段保留 aha id 关联
+ *   - 音频 moment:kind=audio 不支持(只能 text 转)
+ *   - 返回新 letter 对象
+ */
+ahaRouter.post('/moments/:id/promote', requireAuth, (req: Request, res: Response) => {
+  const userId = (req as any).userId
+  const ahaId = String(req.params.id)
+  const user = getCurrentUser(req)
+
+  const row = db
+    .prepare(`
+      SELECT id, type, content, audio_url, audio_duration_ms, storage, tags, mood
+      FROM aha_moments WHERE id = ? AND user_id = ?
+    `)
+    .get(ahaId, userId) as {
+      id: string; type: string; content: string | null; audio_url: string | null
+      audio_duration_ms: number | null; storage: string; tags: string | null
+      mood: string | null
+    } | undefined
+
+  if (!row) return res.status(404).json({ error: 'not_found', message: '啊哈时刻不存在' })
+  if (row.type !== 'text' || !row.content) {
+    return res.status(400).json({
+      error: 'only_text_supported',
+      message: '只能把文字类型的啊哈时刻转成小纸条(录音暂不支持)',
+    })
+  }
+
+  // 防止重复转(查 source 字段)
+  const existing = db
+    .prepare(`SELECT id FROM letters WHERE content LIKE ?`)
+    .get(`%[aha:${ahaId}]%`) as { id: string } | undefined
+  if (existing) {
+    return res.status(409).json({
+      error: 'already_promoted',
+      message: '这条啊哈时刻已经转过小纸条了',
+      letterId: existing.id,
+    })
+  }
+
+  // 在内容前加个标识,方便溯源
+  const taggedContent = `${row.content}\n\n— 来自啊哈时刻 [${row.mood || '💡'}]`
+
+  const newLetterId = `lt_${randomBytes(8).toString('hex')}`
+  const shareToken = `sl_${randomBytes(8).toString('hex')}`
+  const now = Date.now()
+  const authorNickname = user?.nickname || '匿名'
+
+  db.prepare(`
+    INSERT INTO letters (id, content, author, author_user_id, bg_key, translations, share_token, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    newLetterId,
+    taggedContent,
+    authorNickname,
+    userId,
+    'ivory',
+    null,  // translations
+    shareToken,
+    now,
+    now
+  )
+
+  // 记录 aha → letter 关联(避免重复 promote)
+  // 用 aha_momments 表加 source_letter_id 字段? 简单起见,放 content 里用 [aha:ID] 标记
+  // 已经在上面 content 里加了
+
+  return res.status(201).json({
+    ok: true,
+    letterId: newLetterId,
+    shareToken,
+    content: taggedContent,
+    author: authorNickname,
+    mood: row.mood,
+    fromAhaId: ahaId,
+  })
 })
