@@ -354,7 +354,7 @@ export default function AhaPage() {
         </header>
         {/* 空状态: 居中 + 充足留白 */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-brand-soft flex items-center justify-center mb-6">
+          <div className="w-20 h-20 rounded-3xl flex items-center justify-center mb-6" style={{ backgroundColor: LETTER_PALETTE.vermilion + '14' }}>
             <Microphone size={32} weight="regular" className="text-brand" />
           </div>
           <p className="text-text text-base font-medium mb-2">记录你每一次"啊哈"</p>
@@ -363,7 +363,7 @@ export default function AhaPage() {
           </p>
           <button
             onClick={() => navigate('/auth')}
-            className="px-6 py-3 rounded-2xl bg-brand text-white text-sm font-semibold shadow-warm active:scale-95 transition-transform"
+            className="px-6 py-3 rounded-2xl text-white text-sm font-semibold shadow-warm active:scale-95 transition-transform" style={{ backgroundColor: LETTER_PALETTE.vermilion }}
           >
             去登录
           </button>
@@ -413,7 +413,7 @@ export default function AhaPage() {
               key={tt}
               onClick={() => { setTab(tt); recorder.reset() }}
               className="relative flex-1 py-2 text-[13px] font-medium z-10 transition-colors"
-              style={{ color: tab === tt ? '#1A1D2B' : 'rgba(26,29,43,0.55)' }}
+              style={{ color: tab === tt ? LETTER_PALETTE.ink : 'rgba(26,29,43,0.55)' }}
             >
               {tab === tt && (
                 <motion.div
@@ -474,7 +474,8 @@ export default function AhaPage() {
                   whileTap={{ scale: 0.96 }}
                   onClick={saveText}
                   disabled={!text.trim() || saving}
-                  className="px-4 py-2 rounded-xl bg-brand text-white text-[12px] font-semibold disabled:opacity-40 inline-flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-xl text-white text-[12px] font-semibold disabled:opacity-40 inline-flex items-center gap-1.5"
+                    style={{ backgroundColor: LETTER_PALETTE.vermilion }}
                 >
                   {saving ? '保存中…' : <><PaperPlaneTilt size={14} weight="fill" />保存</>}
                 </motion.button>
@@ -495,7 +496,8 @@ export default function AhaPage() {
                     <motion.button
                       whileTap={{ scale: 0.95 }}
                       onClick={recorder.start}
-                      className="w-20 h-20 rounded-full bg-[#C73E3A] text-white shadow-lg flex items-center justify-center"
+                      className="w-20 h-20 rounded-full text-white shadow-lg flex items-center justify-center"
+                    style={{ backgroundColor: LETTER_PALETTE.vermilion }}
                     >
                       <Microphone size={32} weight="fill" />
                     </motion.button>
@@ -516,7 +518,8 @@ export default function AhaPage() {
                     <motion.button
                       whileTap={{ scale: 0.95 }}
                       onClick={recorder.stop}
-                      className="w-20 h-20 rounded-full bg-[#C73E3A] text-white shadow-lg flex items-center justify-center"
+                      className="w-20 h-20 rounded-full text-white shadow-lg flex items-center justify-center"
+                    style={{ backgroundColor: LETTER_PALETTE.vermilion }}
                       animate={{ scale: [1, 1.05, 1] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
@@ -571,7 +574,8 @@ export default function AhaPage() {
                         whileTap={{ scale: 0.96 }}
                         onClick={saveAudio}
                         disabled={saving}
-                        className="px-3 py-2 rounded-xl bg-brand text-white text-[12px] font-semibold disabled:opacity-40 inline-flex items-center gap-1"
+                        className="px-3 py-2 rounded-xl text-white text-[12px] font-semibold disabled:opacity-40 inline-flex items-center gap-1"
+                    style={{ backgroundColor: LETTER_PALETTE.vermilion }}
                       >
                         {saving ? '保存中…' : <><FloppyDisk size={14} weight="fill" />保存</>}
                       </motion.button>
@@ -710,7 +714,7 @@ function MomentCard({ moment: m, isPlaying, onPlay, onDelete, onPromote, formatT
               <motion.button
                 whileTap={{ scale: 0.95 }}
                 onClick={onPlay}
-                className="w-9 h-9 rounded-full bg-brand text-white flex items-center justify-center shrink-0"
+                className="w-9 h-9 rounded-full text-white flex items-center justify-center shrink-0" style={{ backgroundColor: LETTER_PALETTE.vermilion }}
               >
                 {isPlaying ? <Pause size={14} weight="fill" /> : <Play size={14} weight="fill" />}
               </motion.button>
@@ -744,10 +748,11 @@ function MomentCard({ moment: m, isPlaying, onPlay, onDelete, onPromote, formatT
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={onPromote}
-              className="w-7 h-7 rounded-full bg-[#C73E3A]/10 flex items-center justify-center"
+              className="w-7 h-7 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: LETTER_PALETTE.vermilion + '1A' }}
               title="转成公开小纸条"
             >
-              <PaperPlaneTilt size={14} weight="fill" style={{ color: '#C73E3A' }} />
+              <PaperPlaneTilt size={14} weight="fill" style={{ color: LETTER_PALETTE.vermilion }} />
             </motion.button>
           )}
           <motion.button
@@ -767,12 +772,14 @@ function MomentCard({ moment: m, isPlaying, onPlay, onDelete, onPromote, formatT
 // =============== V4.1 FilterChip ===============
 function FilterChip({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
   const cls = `px-2.5 py-1 rounded-full text-[12px] font-medium shrink-0 transition-colors ${
-    active ? 'bg-brand text-white' : 'bg-white/80 border border-black/5 text-text-secondary'
+    active ? 'text-white' : 'bg-white/80 border border-black/5 text-text-secondary'
   }`
+  const activeStyle = active ? { backgroundColor: LETTER_PALETTE.vermilion } : undefined
   return (
     <button
       onClick={onClick}
       className={cls}
+      style={activeStyle}
     >
       {label}
     </button>
@@ -825,7 +832,7 @@ function Waveform({ active, blob, peaks: livePeaks, height = 32 }: { active?: bo
     const w = canvas.width
     const h = canvas.height
     ctx.clearRect(0, 0, w, h)
-    ctx.fillStyle = '#C73E3A'
+    ctx.fillStyle = LETTER_PALETTE.vermilion
     const p = livePeaks || []
     const barWidth = w / Math.max(p.length, 1)
     for (let i = 0; i < p.length; i++) {
@@ -858,8 +865,8 @@ function StaticWaveform({ peaks, height }: { peaks: number[]; height: number }) 
       {peaks.map((p, i) => (
         <div
           key={i}
-          className="bg-[#C73E3A]/60 rounded-sm"
-          style={{ width: 2, height: Math.max(2, p * height * 0.85) }}
+          className="rounded-sm"
+          style={{ backgroundColor: LETTER_PALETTE.vermilion + '99', width: 2, height: Math.max(2, p * height * 0.85) }}
         />
       ))}
     </div>
@@ -878,14 +885,14 @@ interface AhaStats {
 }
 
 const MOOD_COLORS: Record<string, string> = {
-  '💡': '#FFB800',
-  '❤️': '#FF4F6D',
+  '💡': LETTER_PALETTE.vermilion,
+  '❤️': LETTER_PALETTE.vermilionLight,
   '🌱': '#52C41A',
-  '⚡': '#FFC53D',
-  '🔭': '#722ED1',
-  '🎯': '#1890FF',
-  '🌀': '#13C2C2',
-  '✨': '#F5222D',
+  '⚡': LETTER_PALETTE.gold,
+  '🔭': LETTER_PALETTE.inkSoft,
+  '🎯': LETTER_PALETTE.vermilion,
+  '🌀': LETTER_PALETTE.inkSoft,
+  '✨': LETTER_PALETTE.gold,
 }
 
 function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: () => void; reminder: ReturnType<typeof useReminder> }) {
@@ -906,9 +913,9 @@ function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: ()
         exit={{ y: '100%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-lg bg-[#FAF7F2] rounded-t-3xl max-h-[80vh] overflow-y-auto"
+        className="w-full max-w-lg rounded-t-3xl max-h-[80vh] overflow-y-auto" style={{ backgroundColor: LETTER_PALETTE.ivory }}
       >
-        <div className="sticky top-0 bg-[#FAF7F2]/95 backdrop-blur px-5 pt-4 pb-3 flex items-center justify-between border-b border-black/5">
+        <div className="sticky top-0 backdrop-blur px-5 pt-4 pb-3 flex items-center justify-between border-b border-black/5" style={{ backgroundColor: LETTER_PALETTE.ivory + 'F2' }}>
           <h2 className="text-lg font-semibold text-text" style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}>
             灵感统计
           </h2>
@@ -920,10 +927,10 @@ function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: ()
         <div className="p-5 space-y-6">
           {/* 4 个统计卡片 */}
           <div className="grid grid-cols-2 gap-3">
-            <StatCard label="总数" value={stats.total} color="#1A1D2B" />
-            <StatCard label="文字" value={stats.byType.text || 0} color="#4F6EF7" />
-            <StatCard label="录音" value={stats.byType.audio || 0} color="#00C9A7" />
-            <StatCard label="云端/本地" value={`${stats.byStorage.cloud || 0}/${stats.byStorage.local || 0}`} color="#FF9F43" />
+            <StatCard label="总数" value={stats.total} color={LETTER_PALETTE.ink} />
+            <StatCard label="文字" value={stats.byType.text || 0} color={LETTER_PALETTE.vermilion} />
+            <StatCard label="录音" value={stats.byType.audio || 0} color={LETTER_PALETTE.vermilionLight} />
+            <StatCard label="云端/本地" value={`${stats.byStorage.cloud || 0}/${stats.byStorage.local || 0}`} color={LETTER_PALETTE.gold} />
           </div>
 
           {/* 心情饼图 */}
@@ -968,7 +975,7 @@ function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: ()
                       key={d.date}
                       className="flex-1 rounded-t-sm"
                       style={{
-                        backgroundColor: d.count > 0 ? '#C73E3A' : 'rgba(0,0,0,0.06)',
+                        backgroundColor: d.count > 0 ? LETTER_PALETTE.vermilion : 'rgba(0,0,0,0.06)',
                         height: `${Math.max(h, 4)}%`,
                       }}
                       title={`${d.date} · ${d.count} 条`}
@@ -1010,8 +1017,9 @@ function StatsPanel({ stats, onClose, reminder }: { stats: AhaStats; onClose: ()
                 <button
                   onClick={() => reminder.setEnabled(!reminder.enabled)}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
-                    reminder.enabled ? 'bg-brand' : 'bg-black/15'
+                    reminder.enabled ? '' : 'bg-black/15'
                   }`}
+                  style={reminder.enabled ? { backgroundColor: LETTER_PALETTE.vermilion } : undefined}
                 >
                   <span
                     className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform ${
