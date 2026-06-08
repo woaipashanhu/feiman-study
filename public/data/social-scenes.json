@@ -5,7 +5,7 @@
   "carnegieCatalog": [
     {
       "id": "s-01",
-      "title": "S-01 我生气了",
+      "title": "我生气了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -13,7 +13,7 @@
     },
     {
       "id": "s-11",
-      "title": "11-我也有害怕的东西",
+      "title": "我也有害怕的东西",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -21,7 +21,7 @@
     },
     {
       "id": "s-12",
-      "title": "12-安静也可以是好孩子",
+      "title": "安静也可以是好孩子",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -29,7 +29,7 @@
     },
     {
       "id": "s-13",
-      "title": "13-我和别人不一样没关系",
+      "title": "我和别人不一样没关系",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -37,7 +37,7 @@
     },
     {
       "id": "s-14",
-      "title": "14-不开心的时候做什么",
+      "title": "不开心的时候做什么",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -45,7 +45,7 @@
     },
     {
       "id": "s-15",
-      "title": "15-太兴奋也要安静下来",
+      "title": "太兴奋也要安静下来",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -53,7 +53,7 @@
     },
     {
       "id": "s-16",
-      "title": "16-说不出口的委屈",
+      "title": "说不出口的委屈",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -61,7 +61,7 @@
     },
     {
       "id": "s-17",
-      "title": "17-有时候什么都不想做",
+      "title": "有时候什么都不想做",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -69,7 +69,7 @@
     },
     {
       "id": "s-18",
-      "title": "18-换一种方式试试",
+      "title": "换一种方式试试",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -77,7 +77,7 @@
     },
     {
       "id": "s-19",
-      "title": "19-完美不需要",
+      "title": "完美不需要",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -85,7 +85,7 @@
     },
     {
       "id": "s-20",
-      "title": "20-我在慢慢长大",
+      "title": "我在慢慢长大",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -93,7 +93,7 @@
     },
     {
       "id": "s-21",
-      "title": "21-你好我叫阿布",
+      "title": "你好我叫阿布",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -101,7 +101,7 @@
     },
     {
       "id": "s-22",
-      "title": "22-可以和你一起玩吗",
+      "title": "可以和你一起玩吗",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -109,7 +109,7 @@
     },
     {
       "id": "s-23",
-      "title": "23-主动打招呼",
+      "title": "主动打招呼",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -117,7 +117,7 @@
     },
     {
       "id": "s-24",
-      "title": "24-找到共同喜欢的东西",
+      "title": "找到共同喜欢的东西",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -125,7 +125,7 @@
     },
     {
       "id": "s-25",
-      "title": "25-倾听也是一种关心",
+      "title": "倾听也是一种关心",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -133,7 +133,7 @@
     },
     {
       "id": "s-26",
-      "title": "26-记住别人的名字",
+      "title": "记住别人的名字",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -141,7 +141,7 @@
     },
     {
       "id": "s-27",
-      "title": "27-不勉强别人",
+      "title": "不勉强别人",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -149,7 +149,7 @@
     },
     {
       "id": "s-28",
-      "title": "28-有时候一个人玩也挺好",
+      "title": "有时候一个人玩也挺好",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -157,7 +157,7 @@
     },
     {
       "id": "s-29",
-      "title": "29-朋友之间也会吵架",
+      "title": "朋友之间也会吵架",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -165,7 +165,7 @@
     },
     {
       "id": "s-30",
-      "title": "30-吵架之后和好",
+      "title": "吵架之后和好",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -173,7 +173,7 @@
     },
     {
       "id": "s-31",
-      "title": "31-对不起我错了",
+      "title": "对不起我错了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -181,7 +181,7 @@
     },
     {
       "id": "s-32",
-      "title": "32-我原谅你了",
+      "title": "我原谅你了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -189,7 +189,7 @@
     },
     {
       "id": "s-33",
-      "title": "33-不喜欢的触摸要说\"不\"",
+      "title": "不喜欢的触摸要说\"不\"",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -197,7 +197,7 @@
     },
     {
       "id": "s-34",
-      "title": "34-我不想拥抱",
+      "title": "我不想拥抱",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -205,7 +205,7 @@
     },
     {
       "id": "s-35",
-      "title": "35-秘密可以不说",
+      "title": "秘密可以不说",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -213,7 +213,7 @@
     },
     {
       "id": "s-36",
-      "title": "36-朋友不只是一个",
+      "title": "朋友不只是一个",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -221,7 +221,7 @@
     },
     {
       "id": "s-37",
-      "title": "37-被拒绝不丢人",
+      "title": "被拒绝不丢人",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -229,7 +229,7 @@
     },
     {
       "id": "s-38",
-      "title": "38-朋友搬家了",
+      "title": "朋友搬家了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -237,7 +237,7 @@
     },
     {
       "id": "s-39",
-      "title": "39-新同学来了",
+      "title": "新同学来了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -245,7 +245,7 @@
     },
     {
       "id": "s-40",
-      "title": "40-安慰伤心的朋友",
+      "title": "安慰伤心的朋友",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -253,7 +253,7 @@
     },
     {
       "id": "s-41",
-      "title": "41-别人难过时我在旁边",
+      "title": "别人难过时我在旁边",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -261,7 +261,7 @@
     },
     {
       "id": "s-42",
-      "title": "42-我需要帮助要说",
+      "title": "我需要帮助要说",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -269,7 +269,7 @@
     },
     {
       "id": "s-43",
-      "title": "43-帮别人也要问一下",
+      "title": "帮别人也要问一下",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -277,7 +277,7 @@
     },
     {
       "id": "s-44",
-      "title": "44-说谢谢",
+      "title": "说谢谢",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -285,7 +285,7 @@
     },
     {
       "id": "s-45",
-      "title": "45-保持距离说话",
+      "title": "保持距离说话",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -293,7 +293,7 @@
     },
     {
       "id": "s-46",
-      "title": "46-这个玩具可以一起玩",
+      "title": "这个玩具可以一起玩",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -301,7 +301,7 @@
     },
     {
       "id": "s-47",
-      "title": "47-轮流玩",
+      "title": "轮流玩",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -309,7 +309,7 @@
     },
     {
       "id": "s-48",
-      "title": "48-借东西要还",
+      "title": "借东西要还",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -317,7 +317,7 @@
     },
     {
       "id": "s-49",
-      "title": "49-别人的东西不能随便拿",
+      "title": "别人的东西不能随便拿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -325,7 +325,7 @@
     },
     {
       "id": "s-50",
-      "title": "50-一起搭积木",
+      "title": "一起搭积木",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -333,7 +333,7 @@
     },
     {
       "id": "s-51",
-      "title": "51-小组作业怎么做",
+      "title": "小组作业怎么做",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -341,7 +341,7 @@
     },
     {
       "id": "s-52",
-      "title": "52-听听别人的想法",
+      "title": "听听别人的想法",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -349,7 +349,7 @@
     },
     {
       "id": "s-53",
-      "title": "53-分工合作",
+      "title": "分工合作",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -357,7 +357,7 @@
     },
     {
       "id": "s-54",
-      "title": "54-有人不配合怎么办",
+      "title": "有人不配合怎么办",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -365,7 +365,7 @@
     },
     {
       "id": "s-55",
-      "title": "55-公平不是一模一样",
+      "title": "公平不是一模一样",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -373,7 +373,7 @@
     },
     {
       "id": "s-56",
-      "title": "56-我不想分享了",
+      "title": "我不想分享了",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -381,7 +381,7 @@
     },
     {
       "id": "s-57",
-      "title": "57-别人不愿分享怎么办",
+      "title": "别人不愿分享怎么办",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -389,7 +389,7 @@
     },
     {
       "id": "s-58",
-      "title": "58-一起想办法",
+      "title": "一起想办法",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -397,7 +397,7 @@
     },
     {
       "id": "s-59",
-      "title": "59-妥协是一种智慧",
+      "title": "妥协是一种智慧",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -405,7 +405,7 @@
     },
     {
       "id": "s-60",
-      "title": "60-赢了不要太得意",
+      "title": "赢了不要太得意",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -413,7 +413,7 @@
     },
     {
       "id": "s-61",
-      "title": "61-输了不生气",
+      "title": "输了不生气",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -421,7 +421,7 @@
     },
     {
       "id": "s-62",
-      "title": "62-比赛规则要遵守",
+      "title": "比赛规则要遵守",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -429,7 +429,7 @@
     },
     {
       "id": "s-63",
-      "title": "63-团队里有不同的角色",
+      "title": "团队里有不同的角色",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -437,7 +437,7 @@
     },
     {
       "id": "s-64",
-      "title": "64-帮助比自己小的",
+      "title": "帮助比自己小的",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -445,7 +445,7 @@
     },
     {
       "id": "s-65",
-      "title": "65-一起收拾",
+      "title": "一起收拾",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -477,7 +477,7 @@
     },
     {
       "id": "s09-让对",
-      "title": "S09 - 让对方感到重要（每个人都有闪光点）",
+      "title": "让对方感到重要（每个人都有闪光点）",
       "principle": "让对方感到自己重要",
       "difficulty": 2,
       "unlocked": true,
@@ -501,7 +501,7 @@
     },
     {
       "id": "s10-避免",
-      "title": "S10 - 避免争论（霸王龙是最强的）",
+      "title": "避免争论（霸王龙是最强的）",
       "principle": "避免争论",
       "difficulty": 2,
       "unlocked": true,
@@ -509,7 +509,7 @@
     },
     {
       "id": "s11-老师",
-      "title": "S11 明天不用上学吗 — 精炼双语文字稿",
+      "title": "明天不用上学吗 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -517,7 +517,7 @@
     },
     {
       "id": "s12-我搞",
-      "title": "S12 我搞砸了怎么办 — 精炼双语文字稿",
+      "title": "我搞砸了怎么办 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -525,7 +525,7 @@
     },
     {
       "id": "s13-借壮",
-      "title": "S13 借壮壮的足球 — 精炼双语文字稿",
+      "title": "借壮壮的足球 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -533,7 +533,7 @@
     },
     {
       "id": "s14-交换",
-      "title": "S14 交换课间游戏 — 精炼双语文字稿",
+      "title": "交换课间游戏 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -541,7 +541,7 @@
     },
     {
       "id": "s15-秋游",
-      "title": "S15 秋游去哪里 — 精炼双语文字稿",
+      "title": "秋游去哪里 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -549,7 +549,7 @@
     },
     {
       "id": "s16-小豆",
-      "title": "S16 小豆收拾房间 — 精炼双语文字稿",
+      "title": "小豆收拾房间 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -557,7 +557,7 @@
     },
     {
       "id": "s17-棉花",
-      "title": "S17 棉花考砸了 — 精炼双语文字稿",
+      "title": "棉花考砸了 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -565,7 +565,7 @@
     },
     {
       "id": "s18-球球",
-      "title": "S18 球球的虫子去世了 — 精炼双语文字稿",
+      "title": "球球的虫子去世了 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -573,7 +573,7 @@
     },
     {
       "id": "s19-跳跳",
-      "title": "S19 跳跳偷懒了 — 精炼双语文字稿",
+      "title": "跳跳偷懒了 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -581,7 +581,7 @@
     },
     {
       "id": "s20-河边",
-      "title": "S20 河边的故事 — 精炼双语文字稿",
+      "title": "河边的故事 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -589,7 +589,7 @@
     },
     {
       "id": "s21-读书",
-      "title": "S21 读书挑战赛 — 精炼双语文字稿",
+      "title": "读书挑战赛 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -597,7 +597,7 @@
     },
     {
       "id": "s22-壮壮",
-      "title": "S22 壮壮做值日 — 精炼双语文字稿",
+      "title": "壮壮做值日 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -605,7 +605,7 @@
     },
     {
       "id": "s23-小豆",
-      "title": "S23 小豆写反了b和d — 精炼双语文字稿",
+      "title": "小豆写反了b和d — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -613,7 +613,7 @@
     },
     {
       "id": "s24-妈妈",
-      "title": "S24 妈妈小时候也考砸过 — 精炼双语文字稿",
+      "title": "妈妈小时候也考砸过 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -621,7 +621,7 @@
     },
     {
       "id": "s25-作业",
-      "title": "S25 作业还是先吃饭 — 精炼双语文字稿",
+      "title": "作业还是先吃饭 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -629,7 +629,7 @@
     },
     {
       "id": "s26-合作",
-      "title": "S26 合作搭积木 — 精炼双语文字稿",
+      "title": "合作搭积木 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -637,7 +637,7 @@
     },
     {
       "id": "s27-棉花",
-      "title": "S27 棉花学骑车 — 称赞细小进步",
+      "title": "棉花学骑车 — 称赞细小进步",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -663,7 +663,7 @@
   "socialStoryCatalog": [
     {
       "id": "social-02",
-      "title": "S-02 心里不舒服的时候 — 精炼双语文字稿",
+      "title": "心里不舒服的时候 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -671,7 +671,7 @@
     },
     {
       "id": "social-03",
-      "title": "S-03 难过的时候可以哭 — 精炼双语文字稿",
+      "title": "难过的时候可以哭 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -679,7 +679,7 @@
     },
     {
       "id": "social-04",
-      "title": "S-04 害怕不丢人 — 精炼双语文字稿",
+      "title": "害怕不丢人 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,
@@ -687,7 +687,7 @@
     },
     {
       "id": "social-05",
-      "title": "S-05 开心可以分享 — 精炼双语文字稿",
+      "title": "开心可以分享 — 精炼双语文字稿",
       "principle": "",
       "difficulty": 1,
       "unlocked": true,

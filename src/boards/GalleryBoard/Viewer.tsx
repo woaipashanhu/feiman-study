@@ -329,7 +329,7 @@ export default function GalleryViewer() {
                   >
                     <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0">
                       {art.image ? (
-                        <img src={art.image} alt={art.title} className="w-full h-full object-cover" />
+                        <img src={art.image} alt={art.title} className="w-full h-full object-contain" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-xs font-bold bg-purple-500/20 text-purple-400">{i + 1}</div>
                       )}

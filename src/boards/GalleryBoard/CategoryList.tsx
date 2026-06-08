@@ -97,9 +97,9 @@ export default function GalleryCategoryList() {
           {artworks.length > 0 && (
             <div className="absolute inset-0 flex flex-col gap-3 justify-center py-4 overflow-hidden">
               {/* 第 1 排 */}
-              <MarqueeRow artworks={artworks} duration={90} reverse={false} />
+              <MarqueeRow artworks={artworks} duration={90} reverse={false} bgColor={category.color} />
               {/* 第 2 排 — 反向滚动,更"流动" */}
-              <MarqueeRow artworks={artworks} duration={110} reverse={true} />
+              <MarqueeRow artworks={artworks} duration={110} reverse={true} bgColor={category.color} />
             </div>
           )}
 
@@ -168,10 +168,12 @@ function MarqueeRow({
   artworks,
   duration,
   reverse = false,
+  bgColor = '#8B5CF6',
 }: {
   artworks: Artwork[]
   duration: number
   reverse?: boolean
+  bgColor?: string
 }) {
   return (
     <div
@@ -193,13 +195,13 @@ function MarqueeRow({
         {[...artworks, ...artworks].map((art, i) => (
           <div
             key={`${art.id}-${i}`}
-            className="shrink-0 w-28 h-28 rounded-2xl overflow-hidden bg-gray-100 shadow-lg ring-1 ring-white/10"
+            className="shrink-0 w-28 h-28 rounded-2xl overflow-hidden shadow-lg ring-1 ring-white/10" style={{ backgroundColor: bgColor + '18' }}
           >
             {art.image ? (
               <img
                 src={art.image}
                 alt={art.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
                 loading="lazy"
               />
             ) : (
@@ -235,12 +237,12 @@ function ArtworkListItem({
       className="w-full flex items-center gap-4 py-3.5 text-left active:bg-gray-50 transition-colors border-b border-border/40 last:border-b-0"
     >
       {/* 缩略图 - 64x64 iOS Squircle */}
-      <div className="w-16 h-16 rounded-[14px] overflow-hidden shrink-0 relative bg-gray-100">
+      <div className="w-16 h-16 rounded-[14px] overflow-hidden shrink-0 relative" style={{ backgroundColor: (categoryColor || '#8B5CF6') + '18' }}>
         {artwork.image ? (
           <img
             src={artwork.image}
             alt={artwork.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             loading="lazy"
           />
         ) : (

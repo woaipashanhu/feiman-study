@@ -2,15 +2,17 @@
  * ============================================================
  *  童画廊 — 卡片主页（App Store Today 风格）
  *
- *  纵向堆叠大卡片，1 屏 1 主题（参照 Science Home 风格）
- *  大圆角(20px)，上半部分画作缩略图网格 + 下半部分文字
+ *  纵向堆叠大卡片，1 屏 1 主题
+ *  大圆角(20px)，上半部分画作缩略图网格（自动轮播）+ 下半部分文字
+ *  图片容器用主题色低透明度背景，竖画留白更融合
  * ============================================================
  */
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { EnvelopeSimple } from 'phosphor-react'
-import type { GalleryData, GalleryCategory } from '@/types/content'
+import type { GalleryData, GalleryCategory, Artwork } from '@/types/content'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,7 +55,7 @@ export default function GalleryHome() {
 
   return (
     <div className="h-full flex flex-col overflow-y-auto">
-      {/* 顶部栏 — 34px 大标题（参照科学风格，无副标题） */}
+      {/* 顶部栏 — 34px 大标题 */}
       <header className="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
         <h1 className="text-[34px] font-bold text-text font-display leading-[1.1] tracking-tight">童画廊</h1>
         <motion.button
@@ -67,7 +69,7 @@ export default function GalleryHome() {
         </motion.button>
       </header>
 
-      {/* 大卡片列表 - 纵向堆叠,1 屏 1 主题 */}
+      {/* 大卡片列表 - 纵向堆叠 */}
       <motion.div
         className="px-5 pb-32 space-y-4"
         variants={containerVariants}
@@ -100,86 +102,137 @@ function SeriesCard({
   onNavigate: () => void
 }) {
   const artworkCount = category.artworks?.length || 0
-  const previewArtworks = category.artworks?.slice(0, 4) || [] // 4 张预览图
+  const allArtworks = category.artworks || []
+  const totalGroups = Math.max(1, Math.ceil(allArtworks.length / 4))
+
+  // 轮播状态:当前显示第几组(0-indexed)
+  const [groupIndex, setGroupIndex] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => {
+      setGroupIndex((prev) => (prev + 1) % totalGroups)
+    }, 3500)
+  }, [totalGroups])
+
+  useEffect(() => {
+    if (allArtworks.length <= 4) return // 不足4张不轮播
+    startTimer()
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [allArtworks.length, startTimer])
+
+  // 点击时重置计时器
+  const handleClick = () => {
+    onNavigate()
+  }
+
+  // 当前组4张图
+  const startIdx = groupIndex * 4
+  const currentGroup = allArtworks.slice(startIdx, startIdx + 4)
+  // 补足4个占位
+  const displayArtworks: (Artwork | null)[] = [...currentGroup]
+  while (displayArtworks.length < 4) {
+    displayArtworks.push(null)
+  }
+
+  const bgColor = category.color || '#8B5CF6'
 
   return (
     <motion.button
       variants={cardVariants}
       whileHover={{ scale: 1.005 }}
       whileTap={{ scale: 0.99 }}
-      onClick={onNavigate}
+      onClick={handleClick}
       className="relative w-full text-left overflow-hidden block shadow-lg ring-1 ring-black/5"
       style={{
         borderRadius: '20px',
         height: isLast ? 'auto' : 'calc(100vh - 300px)',
         minHeight: '420px',
-        background: `linear-gradient(160deg, ${category.color || '#8B5CF6'}25 0%, #1a1a2e 70%)`,
+        background: `linear-gradient(160deg, ${bgColor}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 画作缩略图网格区 - 2x2 预览(占 70% 上半部,文字区更紧凑) */}
-      <div className="absolute inset-x-0 top-0 h-[70%] p-5 grid grid-cols-2 grid-rows-2 gap-2">
-        {previewArtworks.map((art) => (
-          <div
-            key={art.id}
-            className="rounded-2xl overflow-hidden bg-gray-100 shadow-md"
-          >
-            {art.image ? (
-              <img
-                src={art.image}
-                alt={art.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div
-                className="w-full h-full flex items-center justify-center text-xs"
-                style={{ backgroundColor: (category.color || '#8B5CF6') + '20' }}
-              >
-                🎨
-              </div>
-            )}
-          </div>
-        ))}
-        {/* 占位:画作少于 4 个时填充 */}
-        {previewArtworks.length < 4 && Array.from({ length: 4 - previewArtworks.length }).map((_, i) => (
-          <div
-            key={`empty-${i}`}
-            className="rounded-2xl border-2 border-dashed border-white/15 flex items-center justify-center"
-          >
-            <span className="text-white/30 text-xs">+</span>
-          </div>
-        ))}
+      {/* 画作缩略图网格区 - 2x2 轮播 */}
+      <div className="absolute inset-x-0 top-0 h-[70%] p-5">
+        <div className="relative w-full h-full">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={groupIndex}
+              className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-2"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.04 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+            >
+              {displayArtworks.map((art, i) => (
+                <div
+                  key={art ? art.id : `empty-${i}`}
+                  className="rounded-2xl overflow-hidden shadow-md"
+                  style={{ backgroundColor: bgColor + '18' }}
+                >
+                  {art && art.image ? (
+                    <img
+                      src={art.image}
+                      alt={art.title}
+                      className="w-full h-full object-contain"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div
+                      className="w-full h-full flex items-center justify-center text-xs"
+                      style={{ backgroundColor: bgColor + '10' }}
+                    >
+                      <span style={{ color: bgColor + '60' }}>🎨</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
+
+      {/* 轮播指示点 */}
+      {totalGroups > 1 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+          {Array.from({ length: Math.min(totalGroups, 6) }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width: i === groupIndex % totalGroups ? 16 : 5,
+                height: 5,
+                backgroundColor: i === groupIndex % totalGroups ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.35)',
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* 顶部渐变遮罩 */}
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent pointer-events-none" />
 
-      {/* 画作数量角标 - 内敛样式 */}
-      <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-[11px] text-white/85 font-medium tracking-wide">
+      {/* 画作数量角标 */}
+      <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-[11px] text-white/85 font-medium tracking-wide z-20">
         {artworkCount} 幅作品
       </div>
 
-      {/* 内容区（下半部分） - App Store Today 风格 */}
+      {/* 内容区（下半部分） */}
       <div className="absolute inset-x-0 bottom-0 h-[30%] flex flex-col justify-end p-5 pb-4">
-        {/* 小标签 */}
         <span className="text-[11px] text-white/55 font-semibold uppercase tracking-wider mb-0.5">
           {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
         </span>
-
-        {/* 主标题 - 系列名 */}
         <h3 className="text-[24px] font-bold text-white leading-[1.15] tracking-tight mb-0.5">
           {category.name}
         </h3>
-
-        {/* 描述 - 系列简介 */}
         <p className="text-[13px] text-white/70 leading-relaxed font-normal line-clamp-2">
           {category.description || `${artworkCount} 幅作品等你欣赏`}
         </p>
-
-        {/* 底部色条 */}
         <div
           className="absolute bottom-0 left-0 right-0 h-1"
-          style={{ backgroundColor: category.color || '#8B5CF6' }}
+          style={{ backgroundColor: bgColor }}
         />
       </div>
     </motion.button>

@@ -137,6 +137,7 @@ export default function SciencePlayer() {
                   contentId: id,
                   title: sceneInfo.title,
                   cover: sceneInfo.thumbnail,
+                  videoUrl: sceneInfo.src,
                   subtitle: sceneInfo.description,
                 })
               }

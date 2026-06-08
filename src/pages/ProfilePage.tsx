@@ -6,464 +6,217 @@
  *  顶部用返回按钮，不用关闭按钮
  * ============================================================
  */
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  PencilSimpleLine, Medal,
-  ArrowLeft, FloppyDisk, CheckCircle, ChatCircleText,
-  Sun, Moon, PaperPlaneRight, Heart, CaretRight
+  CaretRight,
+  Quotes, PencilSimpleLine, EnvelopeOpen,
+  Lightning, Sun, Moon
 } from 'phosphor-react'
-import { useLearningTracker, type AchievementState } from '@/shared/hooks/useLearningTracker'
-import { useMoodTracker, type MoodEmoji } from '@/shared/hooks/useMoodTracker'
-import { useFeedback, type FeedbackCategory } from '@/shared/hooks/useFeedback'
-import { useTheme } from '@/shared/hooks/useTheme'
-import { useFavorites } from '@/shared/hooks/useFavorites'
+
 import { useAuth } from '@/shared/hooks/useAuth'
+import { useFavorites } from '@/shared/hooks/useFavorites'
 import { VideoPreview } from '@/shared/components/VideoPreview'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
-  const { getAchievement, getRecords } = useLearningTracker()
+  const { getRecentFavorites } = useFavorites()
 
-  const achievement = getAchievement()
-  const records = getRecords()
-  const todayStr = new Date().toISOString().split('T')[0]
-  const todayRecords = records.filter((r) => r.lastVisitAt && new Date(r.lastVisitAt).toISOString().split('T')[0] === todayStr)
-  const todayStats = {
-    contentCount: todayRecords.length,
-    totalDuration: Math.round(todayRecords.reduce((sum, r) => sum + r.duration, 0) / 60),
-    streakDays: achievement.streakDays,
-  }
+  
 
-  return (
-    <ProfileContent
-      todayStats={todayStats}
-      achievement={achievement}
-      onBack={() => navigate(-1)}
-    />
-  )
-}
-
-interface ProfileContentProps {
-  todayStats?: {
-    contentCount: number
-    totalDuration: number
-    streakDays: number
-  }
-  achievement?: AchievementState
-  onBack: () => void
-}
-
-function ProfileContent({
-  achievement,
-  onBack,
-}: ProfileContentProps) {
-  const navigate = useNavigate()
-  const [moodText, setMoodText] = useState('')
-  const [selectedEmoji, setSelectedEmoji] = useState<MoodEmoji | ''>('')
-  const [saved, setSaved] = useState(false)
-  const [feedbackOpen, setFeedbackOpen] = useState(false)
-
-  const { submitFeedback, feedbackCategories } = useFeedback()
-  const [feedbackText, setFeedbackText] = useState('')
-  const [feedbackCategory, setFeedbackCategory] = useState<FeedbackCategory>('suggestion')
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
-
-  const { isDark, toggleDark } = useTheme()
-  const { getTodayMood, saveMood, getRecentMoods, MOOD_OPTIONS } = useMoodTracker()
-  const { getRecentFavorites, count: countFavorites } = useFavorites()
-
-  useEffect(() => {
-    const todayMood = getTodayMood()
-    if (todayMood) {
-      setMoodText(todayMood.text)
-      setSelectedEmoji(todayMood.emoji)
-      setSaved(true)
-    }
-  }, [getTodayMood])
-
-  const ach = achievement || {
-    totalLearned: 0, totalDuration: 0, streakDays: 0,
-    stars: 0, badges: [], lastLearnDate: '',
-  }
-
-  const handleSaveMood = () => {
-    if (!moodText.trim() || !selectedEmoji) return
-    saveMood(moodText.trim(), selectedEmoji as MoodEmoji)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 3000)
-  }
-
-  const recentMoods = getRecentMoods(5)
   const recentFavorites = getRecentFavorites(6)
-  const totalFavorites = countFavorites()
 
   return (
     <div className="h-full flex flex-col bg-bg overflow-hidden">
-      {/* 顶部栏 — 返回按钮 */}
-      <header className="flex items-center gap-3 px-4 py-3 bg-surface border-b border-border shrink-0">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={onBack}
-          className="w-10 h-10 rounded-full bg-surface border border-border flex items-center justify-center shadow-sm"
-        >
-          <ArrowLeft size={18} weight="regular" className="text-text" />
-        </motion.button>
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-brand flex items-center justify-center text-white text-base font-bold shadow-md">
-            🦊
-          </div>
-          <div>
-            <span className="font-semibold text-text text-sm">个人中心</span>
-            <p className="text-[10px] text-text-tertiary">小纸条 · Letters</p>
-          </div>
-        </div>
-      </header>
-
       {/* 内容区 */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {/* 账号卡 — 未登录显示"去登录",已登录显示昵称 + 登出 */}
         <AuthCard />
 
-        {/* 我的收藏 — App Store Today 大卡片 */}
-        {totalFavorites === 0 ? (
-          <section
-            onClick={() => navigate('/favorites')}
-            className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 bg-surface cursor-pointer active:scale-[0.98] transition-transform"
-          >
-            <div className="p-5 flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center shrink-0">
-                <Heart size={24} weight="fill" className="text-red-400" />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-base font-semibold text-text">我的收藏</h3>
-                <p className="text-[13px] text-text-secondary mt-0.5">
-                  打开任意一封信或啊哈时刻,点右下角 ❤ 就能收藏
-                </p>
-              </div>
-              <CaretRight size={18} className="text-text-tertiary shrink-0" />
-            </div>
-          </section>
-        ) : (
-          <section
-            onClick={() => navigate('/favorites')}
-            className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform"
-            style={{ height: 'calc(100vh - 400px)', minHeight: '320px' }}
-          >
-            {/* 上半部分 — 2×2 收藏预览网格 */}
-            <div className="relative h-[55%] overflow-hidden">
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `linear-gradient(160deg, #EF444430 0%, #0f172a 70%)`,
-                }}
-              />
-              <div
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 rounded-full blur-3xl opacity-15"
-                style={{ backgroundColor: '#EF4444' }}
-              />
-
-              {/* 2×2 预览网格 — 居中放大 */}
-              {recentFavorites.length > 0 && (
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="grid grid-cols-2 grid-rows-2 gap-3">
-                    {recentFavorites.slice(0, 4).map((item, idx) => (
-                      <div
-                        key={item.id}
-                        className="relative w-[80px] h-[80px] rounded-2xl overflow-hidden bg-gray-900/50 shadow-md"
-                      >
-                        {item.videoUrl ? (
-                          <VideoPreview
-                            src={item.videoUrl}
-                            poster={item.cover}
-                            fallbackColor="#EF4444"
-                            rounded={16}
-                            className="w-full h-full"
-                            fallback={
-                              <span className="text-base font-bold text-red-400">{idx + 1}</span>
-                            }
-                          />
-                        ) : item.cover ? (
-                          <img
-                            src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
-                            alt={item.title}
-                            className="w-full h-full object-contain"
-                            loading="lazy"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-red-500/20">
-                            <span className="text-2xl">❤️</span>
-                          </div>
-                        )}
-                        <div className="absolute top-1 left-1 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
-                          <span className="text-[10px] font-bold text-white">{idx + 1}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* 顶部渐变遮罩 */}
-              <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-20" />
-            </div>
-
-            {/* 下半部分 — 文字信息 */}
-            <div className="relative h-[45%] flex flex-col justify-end p-5 bg-surface">
-              {/* 渐变过渡 */}
-              <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/8 to-transparent pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="text-[11px] font-medium text-red-500 tracking-wide">
-                    我的收藏
-                  </span>
-                  <span className="text-[10px] text-text-tertiary px-1.5 py-0.5 rounded-md bg-black/5">
-                    {totalFavorites} 个内容
-                  </span>
-                </div>
-                <h2 className="text-[22px] font-bold text-text leading-tight">
-                  收藏夹
-                </h2>
-                <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
-                  你的小纸条 + 啊哈时刻,纸短情长
-                </p>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* 小纸条入口 — 暖米色卡片(冷暖对比,区别于收藏卡) */}
+        {/* 收藏内容 — 横向跑马灯单行滚动 */}
         <section
-          onClick={() => navigate('/letters/today')}
-          className="relative rounded-2xl p-5 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ring-1 ring-black/5"
-          style={{
-            background: 'linear-gradient(135deg, #FAF7F2 0%, #F0E8D8 100%)',
-          }}
+          onClick={() => navigate('/favorites')}
+          className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 cursor-pointer active:scale-[0.98] transition-transform relative"
+          style={{ height: '180px' }}
         >
-          {/* 装饰:右上角金色光斑 */}
+          {/* 渐变背景 */}
           <div
-            className="absolute -top-6 -right-6 w-20 h-20 rounded-full opacity-40 blur-2xl"
-            style={{ background: 'radial-gradient(circle, #B88840 0%, transparent 70%)' }}
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(160deg, #EF444430 0%, #0f172a 70%)`,
+            }}
           />
-          <div className="relative">
-            <div className="flex items-center justify-between mb-2">
-              <span
-                className="text-[10px] font-bold tracking-[0.18em] px-2 py-0.5 rounded"
-                style={{ backgroundColor: '#C83820', color: '#FAF7F2' }}
-              >
-                LETTERS
-              </span>
-              <CaretRight size={16} className="text-text-tertiary" />
-            </div>
-            <h2
-              className="text-[22px] font-bold text-text leading-tight"
-              style={{ fontFamily: '"Noto Serif SC","Songti SC",serif' }}
-            >
-              一封来自今天的信
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-3xl opacity-15"
+            style={{ backgroundColor: '#EF4444' }}
+          />
+
+          {/* 左上角标题 */}
+          <div className="absolute top-2.5 left-3 z-20">
+            <h2 className="text-[14px] font-bold text-white leading-tight">
+              收藏内容
             </h2>
-            <p className="text-[13px] text-text-secondary mt-1.5 leading-relaxed">
-              写一封信,收一句名言。每日一句,纸短情长。
-            </p>
-          </div>
-        </section>
-
-        {/* 心情记录 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <PencilSimpleLine size={14} weight="bold" />
-            心情记录
-          </h3>
-
-          {/* 表情选择 */}
-          <div className="flex gap-2 mb-3">
-            {MOOD_OPTIONS.map((opt) => (
-              <button
-                key={opt.emoji}
-                onClick={() => setSelectedEmoji(opt.emoji)}
-                className={`w-9 h-9 rounded-lg text-lg flex items-center justify-center transition-all ${
-                  selectedEmoji === opt.emoji
-                    ? 'bg-brand/15 scale-110 shadow-sm'
-                    : 'bg-border-light hover:bg-border'
-                }`}
-                title={opt.label}
-              >
-                {opt.emoji}
-              </button>
-            ))}
           </div>
 
-          {/* 文字输入 */}
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={moodText}
-              onChange={(e) => setMoodText(e.target.value)}
-              placeholder="今天感觉怎么样？"
-              className="flex-1 px-3 py-2 rounded-lg bg-bg border border-border text-sm text-text placeholder:text-text-tertiary focus:outline-none focus:border-brand/50"
-              maxLength={50}
-            />
-            <button
-              onClick={handleSaveMood}
-              disabled={!moodText.trim() || !selectedEmoji}
-              className="px-3 py-2 rounded-lg bg-brand text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-dark transition-colors flex items-center gap-1"
-            >
-              {saved ? <CheckCircle size={16} /> : <FloppyDisk size={16} />}
-              {saved ? '已保存' : '保存'}
-            </button>
+          {/* 右上角箭头 */}
+          <div className="absolute top-2.5 right-3 z-20">
+            <CaretRight size={16} className="text-white/60" />
           </div>
 
-          {/* 最近心情 */}
-          {recentMoods.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border-light">
-              <p className="text-[10px] text-text-tertiary mb-2">最近记录</p>
-              <div className="flex gap-2 flex-wrap">
-                {recentMoods.map((m, i) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-border-light text-xs text-text-secondary"
+          {/* 跑马灯滚动区 */}
+          {recentFavorites.length > 0 && (
+            <div className="absolute inset-x-0 bottom-0 h-[150px] z-10 overflow-hidden">
+              <div className="marquee-track flex items-center gap-3 h-full animate-marquee-left" style={{ animationDuration: '20s' }}>
+                {[...recentFavorites, ...recentFavorites].map((item: any, idx: number) => (
+                  <div
+                    key={`${item.id}-${idx}`}
+                    className="relative w-[130px] h-[130px] rounded-2xl overflow-hidden bg-gray-900/50 shadow-md shrink-0"
                   >
-                    <span>{m.emoji}</span>
-                    <span className="truncate max-w-[80px]">{m.text}</span>
-                  </span>
+                    {item.videoUrl && item.videoUrl.endsWith('.html') ? (
+                      <iframe
+                        src={item.videoUrl}
+                        className="w-full h-full border-0"
+                        style={{
+                          transform: 'scale(0.4)',
+                          transformOrigin: 'top left',
+                          width: '250%',
+                          height: '250%',
+                          pointerEvents: 'none',
+                        }}
+                        loading="lazy"
+                        title={item.title}
+                      />
+                    ) : item.videoUrl ? (
+                      <VideoPreview
+                        src={item.videoUrl}
+                        poster={item.cover}
+                        fallbackColor="#EF4444"
+                        rounded={16}
+                        className="w-full h-full"
+                        fallback={
+                          <span className="text-base font-bold text-red-400">{idx + 1}</span>
+                        }
+                      />
+                    ) : item.cover ? (
+                      <img
+                        src={item.cover.startsWith('data:') || item.cover.startsWith('/') || item.cover.startsWith('http') ? item.cover : '/' + item.cover}
+                        alt={item.title}
+                        className="w-full h-full object-contain"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-red-500/20">
+                        <span className="text-2xl">❤️</span>
+                      </div>
+                    )}
+                    <div className="absolute top-1 left-1 w-5 h-5 rounded-md bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-white">{(idx % recentFavorites.length) + 1}</span>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
           )}
+
+          <div className="absolute inset-x-0 top-0 h-6 bg-gradient-to-b from-black/20 to-transparent pointer-events-none z-20" />
         </section>
 
-        {/* 成就 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-3 flex items-center gap-1.5">
-            <Medal size={14} weight="bold" />
-            成就
-          </h3>
-          <div className="grid grid-cols-4 gap-3">
-            <AchievementItem
-              icon="⭐"
-              value={ach.stars}
-              label="星星"
-            />
-            <AchievementItem
-              icon="📚"
-              value={ach.totalLearned}
-              label="已学"
-            />
-            <AchievementItem
-              icon="⏱️"
-              value={Math.round(ach.totalDuration / 60)}
-              label="分钟"
-            />
-            <AchievementItem
-              icon="🔥"
-              value={ach.streakDays}
-              label="连续"
-            />
+        {/* 小纸条 — 三入口卡片 */}
+        <section className="rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 bg-surface">
+          {/* 标题区 */}
+          <div className="px-5 pt-5 pb-2">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold tracking-[0.18em] px-2 py-0.5 rounded"
+                style={{ backgroundColor: '#C83820', color: '#FAF7F2' }}>
+                小纸条
+              </span>
+            </div>
+            <h2 className="text-[20px] font-bold text-text leading-tight">
+              写一封信,收一句名言
+            </h2>
+            <p className="text-[12px] text-text-secondary mt-1">
+              每日一句,纸短情长
+            </p>
           </div>
-          {ach.badges.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-border-light flex gap-2 flex-wrap">
-              {ach.badges.map((badge) => (
-                <span
-                  key={badge}
-                  className="px-2 py-1 rounded-full bg-amber-50 text-amber-600 text-[10px] font-medium border border-amber-100"
-                >
-                  {badge}
-                </span>
-              ))}
-            </div>
-          )}
+
+          {/* 三个入口 */}
+          <div className="px-5 pb-5 space-y-2">
+            {/* 每日名言 */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/letters/today')}
+              className="w-full flex items-center gap-2 p-3.5 rounded-2xl text-left transition-colors hover:bg-black/[0.03] active:bg-black/[0.06]"
+            >
+              <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                <Quotes size={20} weight="fill" className="text-amber-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[15px] font-semibold text-text">每日名言</h4>
+                <p className="text-[11px] text-text-secondary mt-0.5">拆一封今天的信,收藏一句名言</p>
+              </div>
+              <CaretRight size={16} className="text-text-tertiary shrink-0" />
+            </motion.button>
+
+            {/* 写一封信 */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/letters/compose')}
+              className="w-full flex items-center gap-2 p-3.5 rounded-2xl text-left transition-colors hover:bg-black/[0.03] active:bg-black/[0.06]"
+            >
+              <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center shrink-0">
+                <PencilSimpleLine size={20} weight="fill" className="text-sky-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[15px] font-semibold text-text">写一封信</h4>
+                <p className="text-[11px] text-text-secondary mt-0.5">语音或文字输入,AI 帮你转成古文</p>
+              </div>
+              <CaretRight size={16} className="text-text-tertiary shrink-0" />
+            </motion.button>
+
+            {/* 收到的信 */}
+            <motion.button
+              whileTap={{ scale: 0.98 }}
+              onClick={() => navigate('/letters')}
+              className="w-full flex items-center gap-2 p-3.5 rounded-2xl text-left transition-colors hover:bg-black/[0.03] active:bg-black/[0.06]"
+            >
+              <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
+                <EnvelopeOpen size={20} weight="fill" className="text-rose-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[15px] font-semibold text-text">收到的信</h4>
+                <p className="text-[11px] text-text-secondary mt-0.5">时空纸条、收到的信、写过的信</p>
+              </div>
+              <CaretRight size={16} className="text-text-tertiary shrink-0" />
+            </motion.button>
+          </div>
         </section>
 
-        {/* 反馈 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <button
-            onClick={() => setFeedbackOpen((v) => !v)}
-            className="w-full flex items-center justify-between text-left"
-          >
-            <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-              <ChatCircleText size={14} weight="bold" />
-              意见反馈
-            </h3>
-            <span className="text-text-tertiary text-xs">{feedbackOpen ? '收起' : '展开'}</span>
-          </button>
-
-          {feedbackOpen && (
-            <div className="mt-3 space-y-3">
-              {!feedbackSubmitted ? (
-                <>
-                  <div className="flex gap-2 flex-wrap">
-                    {feedbackCategories.map((cat) => (
-                      <button
-                        key={cat.value}
-                        onClick={() => setFeedbackCategory(cat.value)}
-                        className={`px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                          feedbackCategory === cat.value
-                            ? 'bg-brand text-white'
-                            : 'bg-border-light text-text-secondary hover:bg-border'
-                        }`}
-                      >
-                        {cat.label}
-                      </button>
-                    ))}
-                  </div>
-                  <textarea
-                    value={feedbackText}
-                    onChange={(e) => setFeedbackText(e.target.value)}
-                    placeholder="请输入您的建议或遇到的问题..."
-                    rows={3}
-                    className="w-full px-3 py-2 rounded-lg bg-bg border border-border text-sm text-text placeholder:text-text-tertiary focus:outline-none focus:border-brand/50 resize-none"
-                  />
-                  <button
-                    onClick={() => {
-                      if (!feedbackText.trim()) return
-                      submitFeedback(feedbackText.trim(), feedbackCategory)
-                      setFeedbackSubmitted(true)
-                      setFeedbackText('')
-                      setTimeout(() => {
-                        setFeedbackSubmitted(false)
-                        setFeedbackOpen(false)
-                      }, 3000)
-                    }}
-                    disabled={!feedbackText.trim()}
-                    className="w-full py-2.5 rounded-lg bg-brand text-white text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-brand-dark transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <PaperPlaneRight size={16} />
-                    提交反馈
-                  </button>
-                </>
-              ) : (
-                <div className="py-4 text-center">
-                  <CheckCircle size={32} weight="fill" className="text-success mx-auto mb-2" />
-                  <p className="text-sm text-text">感谢您的反馈！</p>
-                </div>
-              )}
+        {/* 啊哈时刻入口 */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate('/aha')}
+          className="w-full rounded-[20px] overflow-hidden shadow-lg ring-1 ring-black/5 text-left"
+          style={{
+            background: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D 100%)',
+          }}
+        >
+          <div className="p-5 flex items-center gap-2">
+            <div className="w-12 h-12 rounded-2xl bg-amber-400/30 flex items-center justify-center shrink-0">
+              <Lightning size={24} weight="fill" className="text-amber-600" />
             </div>
-          )}
-        </section>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-amber-900">啊哈时刻</h3>
+              <p className="text-[12px] text-amber-700/80 mt-0.5">
+                记录灵感、录音、写写画画
+              </p>
+            </div>
+            <CaretRight size={18} className="text-amber-500 shrink-0" />
+          </div>
+        </motion.button>
 
         {/* 主题切换 */}
-        <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
-              {isDark ? <Moon size={14} weight="bold" /> : <Sun size={14} weight="bold" />}
-              主题模式
-            </h3>
-            <button
-              onClick={toggleDark}
-              className={`relative w-12 h-6 rounded-full transition-colors ${
-                isDark ? 'bg-brand' : 'bg-border'
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
-                  isDark ? 'left-0.5 translate-x-6' : 'left-0.5'
-                }`}
-              />
-            </button>
-          </div>
-        </section>
+        <ThemeToggle />
 
         {/* 底部留白 */}
         <div className="h-6" />
@@ -472,6 +225,45 @@ function ProfileContent({
   )
 }
 
+// ==================== 子组件 ====================
+
+/** 主题切换 */
+function ThemeToggle() {
+  const [isDark, setIsDark] = React.useState(
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  )
+
+  const toggleDark = () => {
+    const html = document.documentElement
+    const next = !isDark
+    html.classList.toggle('dark', next)
+    setIsDark(next)
+    try { localStorage.setItem('theme', next ? 'dark' : 'light') } catch {}
+  }
+
+  return (
+    <section className="bg-surface rounded-xl p-4 border border-border shadow-sm">
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
+          {isDark ? <Moon size={14} weight="bold" /> : <Sun size={14} weight="bold" />}
+          主题模式
+        </h3>
+        <button
+          onClick={toggleDark}
+          className={`relative w-12 h-6 rounded-full transition-colors ${
+            isDark ? 'bg-brand' : 'bg-border'
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+              isDark ? 'left-0.5 translate-x-6' : 'left-0.5'
+            }`}
+          />
+        </button>
+      </div>
+    </section>
+  )
+}
 // ==================== 子组件 ====================
 
 /** 账号卡 — 未登录显示"去登录",已登录显示昵称 + 头像 + 登出 */
@@ -485,17 +277,11 @@ function AuthCard() {
     return (
       <section
         onClick={() => navigate('/auth')}
-        className="relative rounded-2xl p-4 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform ring-1 ring-black/5 bg-surface"
+        className="relative p-4 overflow-hidden cursor-pointer active:scale-[0.98] transition-transform bg-surface border-b border-border"
       >
-        <div className="flex items-center gap-3">
-          <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
-            style={{ backgroundColor: 'rgba(200,56,32,0.1)' }}
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C83820" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
+        <div className="flex items-center gap-2">
+          <div className="w-11 h-11 rounded-full bg-brand flex items-center justify-center text-white text-base font-bold shadow-md shrink-0">
+            🦊
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-base font-semibold text-text">登录 / 注册</h3>
@@ -520,10 +306,10 @@ function AuthCard() {
 
   return (
     <section
-      className="relative rounded-2xl p-4 shadow-sm overflow-hidden ring-1 ring-black/5"
+      className="relative p-4 overflow-hidden"
       style={{ backgroundColor: '#FAF7F2' }}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* 头像 — 点击换头像 */}
         <button
           onClick={() => fileInputRef.current?.click()}
@@ -538,8 +324,8 @@ function AuthCard() {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-white text-base font-bold">
-              {user.nickname.slice(0, 1)}
+            <span className="text-white text-lg font-bold">
+              🦊
             </span>
           )}
           {/* hover 提示 */}
@@ -587,15 +373,5 @@ function AuthCard() {
         </div>
       </div>
     </section>
-  )
-}
-
-function AchievementItem({ icon, value, label }: { icon: string; value: number; label: string }) {
-  return (
-    <div className="text-center">
-      <span className="text-lg">{icon}</span>
-      <p className="text-sm font-bold text-text mt-0.5">{value}</p>
-      <p className="text-[10px] text-text-secondary">{label}</p>
-    </div>
   )
 }

@@ -2,15 +2,16 @@
  * ============================================================
  *  社交绘本 — 卡片主页（App Store Today 风格）
  *
- *  纵向堆叠大卡片，1 屏 1 主题（参照 Science Home 风格）
- *  2 大分类：卡耐基社交智慧 + 社交故事
+ *  纵向堆叠大卡片，1 屏 1 主题
+ *  上半部分 2×2 封面网格自动轮播，下半部分绘本标题
  * ============================================================
  */
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useContentLoader } from '@/shared/hooks'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { EnvelopeSimple } from 'phosphor-react'
-import type { SocialData } from '@/types/content'
+import type { SocialData, SocialCatalogEntry } from '@/types/content'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -49,28 +50,29 @@ export default function SocialHome() {
     )
   }
 
+  const carnegieItems = socialData?.carnegieCatalog || []
+  const storyItems = socialData?.socialStoryCatalog || []
+
   const categories = [
     {
       id: 'carnegie',
       name: '卡耐基社交智慧',
       description: '人际关系的黄金法则',
       color: '#FF9F43',
-      count: socialData?.carnegieCatalog?.length || 0,
-      iconEmoji: '👥', // 用户更易识别的"社交人群"主题
+      items: carnegieItems,
     },
     {
       id: 'social-story',
       name: '社交故事',
       description: '用绘本学社交',
       color: '#A55EEA',
-      count: socialData?.socialStoryCatalog?.length || 0,
-      iconEmoji: '🎭', // 戏剧/故事,比 📖 更"故事感"
+      items: storyItems,
     },
   ]
 
   return (
     <div className="h-full flex flex-col overflow-y-auto">
-      {/* 顶部栏 - 34px 大标题(参照科学风格,无副标题) */}
+      {/* 顶部栏 — 34px 大标题 */}
       <header className="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
         <h1 className="text-[34px] font-bold text-text font-display leading-[1.1] tracking-tight">社交训练</h1>
         <motion.button
@@ -84,7 +86,7 @@ export default function SocialHome() {
         </motion.button>
       </header>
 
-      {/* 大卡片列表 - 纵向堆叠,1 屏 1 主题 */}
+      {/* 大卡片列表 */}
       <motion.div
         className="px-5 pb-32 space-y-4"
         variants={containerVariants}
@@ -95,7 +97,6 @@ export default function SocialHome() {
           <CategoryCard
             key={cat.id}
             category={cat}
-            index={index}
             isLast={index === categories.length - 1}
             onNavigate={() => navigate(`/social/category/${cat.id}`)}
           />
@@ -105,9 +106,13 @@ export default function SocialHome() {
   )
 }
 
+/**
+ * 单个分类大卡片
+ * 上半部分：单张封面自动轮播（不加标题文字）
+ * 下半部分：当前绘本标题 + 系列名标签
+ */
 function CategoryCard({
   category,
-  index,
   isLast,
   onNavigate,
 }: {
@@ -116,13 +121,35 @@ function CategoryCard({
     name: string
     description: string
     color: string
-    count: number
-    iconEmoji: string
+    items: SocialCatalogEntry[]
   }
-  index: number
   isLast: boolean
   onNavigate: () => void
 }) {
+  const allItems = category.items || []
+  const total = allItems.length
+  const [currentIdx, setCurrentIdx] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % total)
+    }, 3500)
+  }, [total])
+
+  useEffect(() => {
+    if (total <= 1) return
+    startTimer()
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [total, startTimer])
+
+  const currentItem = allItems[currentIdx]
+  const currentTitle = currentItem?.title || category.name
+  const bgColor = category.color || '#FF9F43'
+
   return (
     <motion.button
       variants={cardVariants}
@@ -134,51 +161,67 @@ function CategoryCard({
         borderRadius: '20px',
         height: isLast ? 'auto' : 'calc(100vh - 300px)',
         minHeight: '420px',
-        background: `linear-gradient(160deg, ${category.color}25 0%, #1a1a2e 70%)`,
+        background: `linear-gradient(160deg, ${bgColor}25 0%, #1a1a2e 70%)`,
       }}
     >
-      {/* 大图标区(占 70% 上半部) - 居中大图标(去掉孤立小图标) */}
-      <div className="absolute inset-x-0 top-0 h-[70%] flex items-center justify-center">
-        {/* 装饰光晕 */}
+      {/* 封面区 — 单图轮播 */}
+      <div className="absolute inset-x-0 top-0 h-[68%] p-5 overflow-hidden">
         <div
-          className="absolute w-72 h-72 rounded-full blur-3xl opacity-30"
-          style={{ backgroundColor: category.color }}
-        />
-        {/* 主图标 - 大号 emoji */}
-        <div className="text-[160px] relative z-10 drop-shadow-2xl">
-          {category.iconEmoji}
+          className="relative w-full h-full rounded-2xl overflow-hidden shadow-md"
+          style={{ backgroundColor: bgColor + '18' }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIdx}
+              className="absolute inset-0"
+              initial={{ opacity: 0, x: 60 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -60 }}
+              transition={{ duration: 0.5, ease: 'easeInOut' }}
+              style={{
+                backgroundImage: currentItem?.coverImage ? `url(${currentItem.coverImage})` : undefined,
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: bgColor + '18',
+              }}
+            >
+              {!currentItem?.coverImage && (
+                <div className="w-full h-full flex items-center justify-center">
+                  <span className="text-4xl opacity-40">📖</span>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
+
+
 
       {/* 顶部渐变遮罩 */}
       <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#1a1a2e] to-transparent pointer-events-none" />
 
-      {/* 数量角标 */}
-      <div className="absolute top-4 right-4 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md text-[11px] text-white/85 font-medium tracking-wide">
-        {category.count} 个场景
-      </div>
+      {/* 内容区（下半部分）— 三层文字布局 */}
+      <div className="absolute inset-x-0 bottom-0 h-[32%] flex flex-col justify-center px-7 pb-5">
+        {/* 第1层：小字标签（类似"常玩常新"） */}
+        <p className="text-[14px] text-white/55 font-medium tracking-wider uppercase mb-1.5">
+          {category.description}
+        </p>
 
-      {/* 内容区(下半部分 30%) */}
-      <div className="absolute inset-x-0 bottom-0 h-[30%] flex flex-col justify-end p-5 pb-4">
-        {/* 小标签 */}
-        <span className="text-[11px] text-white/55 font-semibold uppercase tracking-wider mb-0.5">
-          {index === 0 ? '今日推荐' : `专题 ${index + 1}`}
-        </span>
-
-        {/* 主标题 */}
-        <h3 className="text-[24px] font-bold text-white leading-[1.15] tracking-tight mb-0.5">
+        {/* 第2层：系列主标题（类似"我的猫猫去过太空"） */}
+        <h3 className="text-[28px] font-bold text-white leading-[1.1] tracking-tight mb-2.5">
           {category.name}
         </h3>
 
-        {/* 描述 */}
-        <p className="text-[13px] text-white/70 leading-relaxed font-normal line-clamp-2">
-          {category.description}
+        {/* 第3层：当前绘本标题（类似"我的汤姆猫二"） */}
+        <p className="text-[16px] text-white/70 font-normal leading-snug">
+          {currentTitle}
         </p>
 
         {/* 底部色条 */}
         <div
           className="absolute bottom-0 left-0 right-0 h-1"
-          style={{ backgroundColor: category.color }}
+          style={{ backgroundColor: bgColor }}
         />
       </div>
     </motion.button>
