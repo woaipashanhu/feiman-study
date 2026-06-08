@@ -3569,3 +3569,107 @@ session rotation 后接手,核 handoff 列出的"V1 七项任务上线 (commit 5
 - [ ] 语音输入(讯飞/Whisper)
 - [ ] LetterInboxPage token 真实解析(后端查询 letter)
 - [ ] 主页 TabBar 6th 讨论(小纸条入口是否进 TabBar)
+
+---
+
+### 2026-06-07 会话 #50 — UI 收口 + E2E 永久化 + ui-review skill 跨项目交付
+
+#### 本次会话目标
+
+V4 aha 时刻后端+前端都收口后,做最后一道防线:**(1) 用户体验/美学审查、(2) 端到端测试套件**,让以后加新功能不破旧路径。顺手把"7 维度 UI 审查"抽成跨项目可复用 skill。
+
+#### 完成的工作
+
+**1. iOS 真机调试指南 (commit `cb2c1c3`) ✅**
+- `CAPACITOR_IOS_DEVICE_DEBUG.md`(13 节,从准备到上 Mac 跑 Xcode)
+- 强调:**不用花 1 块钱**(免费 Apple ID 7 天签名)
+- 全程命令行 / Xcode 截图替代品
+- V3 特有:麦克风/相册/相机权限调试清单
+
+**2. E2E 试验发现 6 真 bug (commit `dff42cb`) ✅**
+| # | Bug | 影响 |
+|---|---|---|
+| 1 | Sentry placeholder DSN 每页 400 噪声 | main.tsx 加 placeholder 检测,占位 DSN 跳过 init |
+| 2 | vite dev/preview 没 proxy /api | vite.config.ts 加 server.proxy + preview.proxy,默认 47.99.101.168:8890 |
+| 3 | AuthPage phone-login 不存 token | AuthPage.tsx 加 setItem('feiman_auth_access'/'refresh') |
+| 4 | save 后 URL = `/letters/letter/[object Object]` | LetterComposePage.tsx 用 letter.id 而非 id |
+| 5 | LETTERS_KEY 双前缀 bug,实际 key = `feiman_feiman_letters` | types/letters.ts 改 `'letters'`,saveSecure 加前缀 = `feiman_letters` |
+| 6 | LettersPage 默认 tab = quote,看不到刚写的信 | LettersPage.tsx 接受 ?tab= + 读 feiman_last_compose_ts 自动切 compose |
+
+**3. UI 美化审查 7 修 (commit `05f8f12`) ✅**
+- `index.html`:title / description / apple-mobile-web-app-title 全改"小纸条" + 加 OG/Twitter Card
+- `AhaPage.tsx`:登录态加 NavBar(返回+标题+语言切换)+ 居中空状态(icon + 描述 + CTA)
+- `zh-CN.json`:加 `auth.emailLoginHint` + `auth.registerHint` 2 个 key(原显示 raw key)
+- `ProfilePage.tsx`:副标题"小纸条 · Letters",删 3 个老 5-tab 区块(今日学习/树洞/最近学习)
+- `FavoritesPage.tsx`:文案改"打开任意一封信或啊哈时刻"
+- 临时文件清理
+
+**4. E2E 永久套件 (commit `be99a57`) ✅**
+- `e2e/_runner.mjs` + `_helpers.mjs` + `tests/01..04.test.mjs` + `README.md`
+- 4 条关键路径(全 25s 通过):
+  1. 手机号注册 → 写一封信 → /letters 看到
+  2. 文字 aha 创建/搜索/stats/tags/删除
+  3. aha → 转公开 letter → 访客 shareToken 访问
+  4. 用户 A 发信 → 用户 B 在线 → 收 WS 推送
+- `npm run test:e2e` script
+- 已知限制:重复 promote 409 防呆(PM2 跑老 server 失效,deploy 后会过)
+
+**5. 跨项目交付:ui-review skill 永久化 ✅**
+- 位置:`~/.mavis/agents/mavis/skills/ui-review/`
+- 100 行 SKILL.md + 2 个 references (7-dimensions.md + report-template.md)
+- 评测:跟 baseline 对比"略优"(报告篇幅几乎一样 + severity ladder 校准降级 5 P0 起到真作用)
+- 留下 1 个真实弱点:self-check 单向(只查 P0 漏不查 P0 矫枉过正),留作生产用时发现再补
+
+#### 关键判断
+
+- **E2E 比单元测试晚一步加**:vitest 跑通后才做 E2E,因为 E2E 容易暴露"环境问题"(如 _dev-preview.mjs 的 query string bug),单元测试先稳后 E2E 才高效
+- **没用 Playwright**:中国网络下不动 chromium,puppeteer 替代,跟系统 Chrome 解耦
+- **5 个改进意见进 ui-review skill**:老费曼报告"建立规范"那种空头条款 → 改成"每条 finding 必带 估时 + 文件路径 + 类名",skill 直接 enforce
+- **不修 placeholder DSN 进生产**:`.env.local` 写的是开发占位,Vite build 时静态替换,占位 DSN 不会激活,加 placeholder 字符串检测双保险
+- **LETTERS_KEY 不写兼容老数据**:测试环境 localStorage 干净,改完直接生效,生产也无 V1 用户数据可迁
+- **不 bundle 截图脚本进 skill**:1-shot 任务无 ROI,留 `npx vite build + 写 .mjs 循环 navigate + screenshot` 模式让用户自己组合
+- **不 iter 修 self-check 单向**:25min 跑一轮 vs 1 个生产用时能发现的弱点,ROI 不够
+
+#### 文件变更
+
+- `CAPACITOR_IOS_DEVICE_DEBUG.md`: 新增(342 行)
+- `server/src/main.tsx`: Sentry placeholder 检测(±12 行)
+- `vite.config.ts`: server.proxy + preview.proxy(±16 行)
+- `src/pages/AuthPage.tsx`: phone-login 存 token(±3 行)
+- `src/pages/LetterComposePage.tsx`: id → letter.id(±1 行)
+- `src/types/letters.ts`: LETTERS_KEY 双前缀(±1 行)
+- `src/pages/LettersPage.tsx`: 默认 tab 接受 url param + localStorage 提示(±14 行)
+- `index.html`: 品牌 + OG/Twitter Card(±10 行)
+- `src/pages/AhaPage.tsx`: 登录态 NavBar + 居中空状态(±26 行)
+- `src/i18n/locales/zh-CN.json`: +2 i18n key
+- `src/pages/ProfilePage.tsx`: 副标题 + 删 3 老区块(±16 行)
+- `src/pages/FavoritesPage.tsx`: 文案改(±2 行)
+- `e2e/`: 永久 E2E 套件(8 文件,670 行,新增)
+- `package.json`: +1 npm script
+- `UI_REVIEW_AHA.md`: 新增(22 finding AhaPage 审查,跨项目)
+- `~/.mavis/agents/mavis/skills/ui-review/`: 跨项目 skill 永久化
+- CHANGELOG: 本会话 #50
+
+#### 验证结果
+
+```
+✅ TypeScript 编译: 零错误
+✅ Vite 生产构建: 2.74s,95 entries (1836 KiB)
+✅ 后端 vitest: 37/37 pass
+✅ E2E suite: 4/4 pass (25s 总耗时)
+✅ ui-review skill lint: 8/8 OK
+✅ ui-review skill eval: 与 baseline 对比"略优"
+```
+
+#### 待后续完善
+
+- [ ] Push 85 commits 到 origin(用户决定时机)
+- [ ] Deploy 新 server 到 PM2(老代码还在跑,新功能 aha taggedContent / 重复 promote 防呆 / Sentry 都未上线)
+- [ ] Apple Developer 申请($99/年,真要上架时)
+- [ ] SSL 证书(真要上架时)
+- [ ] 真机测试(用户 Mac + iPhone 跟 CAPACITOR_IOS_DEVICE_DEBUG.md 走)
+- [ ] 新模块 / V5 需求(等用户提出)
+- [ ] ui-review skill 的 self-check 单向弱点(留作生产用时发现再 iter)
+- [ ] P2 #29 跨用户收信(自建后端 vs LeanCloud vs Supabase,等用户决策)
+- [ ] P2 #30 真实 DeepSeek API 接入
+- [ ] P2 #31 主页 TabBar 6th 讨论(小纸条入口是否进 TabBar)
